@@ -12,8 +12,8 @@ export default function Signin() {
   const navigate = useNavigate()
 
   const admin = {
-    email: 'cm',
-    pass: 'cm'
+    email: 'dea',
+    pass: 'dea'
   }
 
   const checkCreds = () => {

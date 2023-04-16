@@ -1,3 +1,20 @@
+/* poppins font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+/* montserrat font */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
+/* tailwind css imports */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+/* custom classes here */
+.poppins {
+  font-family: 'Poppins', sans-serif;
+}
+
+.mont {
+  font-family: 'Montserrat', sans-serif;
+}

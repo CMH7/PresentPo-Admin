@@ -5,7 +5,7 @@ import logo from '../assets/PresentPo Logo.png'
 const QueryResult = ({ loading, error, data, children }) => {
   console.log(data)
   if (error) {
-    return <p>ERROR: {error.message}</p>;
+    return <p className="poppins text-4xl lg:text-5xl text-white font-semibold select-none">ERROR: {error.message}</p>;
   }
   if (loading) {
     return (
@@ -18,7 +18,7 @@ const QueryResult = ({ loading, error, data, children }) => {
     );
   }
   if (!data || !data.studentsForManageStudentsPage) {
-    return <p>Nothing to show...</p>;
+    return <p className="poppins text-4xl lg:text-5xl text-white font-semibold select-none">Nothing to show...</p>;
   }
   if (data) {
     return children;

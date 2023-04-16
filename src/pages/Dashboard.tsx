@@ -15,13 +15,18 @@ export default function Dashboard() {
   const [ checkAdminCredentials, { loading, data} ] = useLazyQuery(CHECK_ADMIN_CREDENTIALS)
 
   const checkCreds = () => {
-    checkAdminCredentials({ variables: { email: localStorage.getItem('email'), password: localStorage.getItem('pass') } })
-    
-    if (!data?.checkAdminCredentials) {
-      navigate('/dashboard', {
+    checkAdminCredentials({ variables: { email: localStorage.getItem('email'), password: localStorage.getItem('pass') } }).then(res => {
+      if (!res?.data?.checkAdminCredentials) {
+        navigate('/', {
+          replace: true
+        })
+      }
+    }).catch(err => {
+      navigate('/', {
         replace: true
       })
-    }
+    })
+    
   }
 
   useEffect(() => {

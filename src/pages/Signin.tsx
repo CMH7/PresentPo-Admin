@@ -5,29 +5,54 @@ import PTextfield from "../components/forms/PTextfield";
 import PPassfield from "../components/forms/PPassfield";
 import { useNavigate } from 'react-router-dom'
 import PrimaryButton from "../components/buttons/PrimaryButton";
+import { gql, useLazyQuery } from "@apollo/client";
+import QueryResult from "../components/QueryResult";
+import { PropagateLoader } from "react-spinners";
+
+const CHECK_ADMIN_CREDENTIALS = gql`
+  query CheckAdminCredentials($email: String!, $password: String!) {
+    checkAdminCredentials(email: $email, password: $password)
+  }
+`
 
 export default function Signin() {
   const [email, setEmail] = useState('')
-  const [pass, setPass] = useState('')
+  const [password, setPass] = useState('')
   const navigate = useNavigate()
 
-  const admin = {
-    email: 'dea',
-    pass: 'dea'
-  }
+  const [ checkAdminCredentials, { loading, data} ] = useLazyQuery(CHECK_ADMIN_CREDENTIALS)
 
   const checkCreds = () => {
-    if (email === admin.email && pass === admin.pass) {
-      // navigate to '/AdminPanel'
-      localStorage.setItem('email', email)
-      localStorage.setItem('pass', pass)
+    if (email !== '' && password !== '') {
+      checkAdminCredentials({ variables: { email, password } })
+      
+      if (data?.checkAdminCredentials) {        
+        localStorage.setItem('email', email)
+        localStorage.setItem('pass', password)
+  
+        navigate('/dashboard', {
+          replace: true
+        })
+      } else {
+        // show a modal that email or password is incorrect.
+        localStorage.clear()
+      }
+    } else  if (localStorage.getItem('email') != null && localStorage.getItem('pass') != null) {
+      checkAdminCredentials({ variables: { email: localStorage.getItem('email'), password: localStorage.getItem('pass') } })
 
-      navigate('/students', {
-        replace: true
-      })
-    } else {
-      // show a modal that email or password is incorrect.
-      localStorage.clear()
+      if (data?.checkAdminCredentials) {
+        console.log('navigating');
+        
+        localStorage.setItem('email', email)
+        localStorage.setItem('pass', password)
+  
+        navigate('/dashboard', {
+          replace: true
+        })
+      } else {
+        // show a modal that email or password is incorrect.
+        localStorage.clear()
+      }
     }
   }
 
@@ -48,14 +73,16 @@ export default function Signin() {
         </div>
 
         <div className="w-full lg:w-3/5">
-          <PPassfield value={pass} valueSetter={setPass} />
+          <PPassfield value={password} valueSetter={setPass} />
         </div>
       </div>
 
-      <div className="w-3/5 lg:w-[236px] h-14 mt-16">      
-        <PrimaryButton name="Sign in" onClick={checkCreds} />
+      <div className="w-3/5 lg:w-[236px] h-14 mt-16 flex justify-center items-center">
+        {loading ? 
+          <PropagateLoader color="#fff" /> :
+          <PrimaryButton name="Sign in" onClick={checkCreds} />
+        }
       </div>
-
     </Wrapper>
   )
 }

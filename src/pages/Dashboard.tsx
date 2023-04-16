@@ -1,23 +1,34 @@
 import { useEffect } from "react";
 import Wrapper from "../components/Wrapper";
 import { useNavigate } from "react-router-dom";
+import { gql, useLazyQuery } from "@apollo/client";
+import QueryResult from "../components/QueryResult";
+
+const CHECK_ADMIN_CREDENTIALS = gql`
+  query CheckAdminCredentials($email: String!, $password: String!) {
+    checkAdminCredentials(email: $email, password: $password)
+  }
+`
 
 export default function Dashboard() {
-  const admin = {
-    email: 'cm',
-    pass: 'cm'
-  }
-
   const navigate = useNavigate()
+  const [ checkAdminCredentials, { loading, data} ] = useLazyQuery(CHECK_ADMIN_CREDENTIALS)
+
+  const checkCreds = () => {
+    checkAdminCredentials({ variables: { email: localStorage.getItem('email'), password: localStorage.getItem('pass') } })
+    
+    if (!data?.checkAdminCredentials) {
+      navigate('/dashboard', {
+        replace: true
+      })
+    }
+  }
 
   useEffect(() => {
     document.title = 'Dashboard';
+
     if (localStorage.getItem('email') != null && localStorage.getItem('pass') != null) {
-      if (admin.email !== localStorage.getItem('email') && admin.pass !== localStorage.getItem('pass')) {
-        navigate('/', {
-          replace: true
-        })
-      }
+      checkCreds()
     } else {
       navigate('/', {
         replace: true
@@ -26,8 +37,10 @@ export default function Dashboard() {
   }, [])
 
   return (
-    <Wrapper>
-      <h1>Admin Panel</h1>
+    <Wrapper centered={true}>
+      <QueryResult loading={loading} data={data?.checkAdminCredentials} error={null}>
+        <h1>Dashboard</h1>
+      </QueryResult>
     </Wrapper>
   )
 }

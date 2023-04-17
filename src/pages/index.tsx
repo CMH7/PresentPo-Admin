@@ -11,7 +11,7 @@ export default function Pages() {
         <Route element={<Signin />} path='/' />
         <Route element={<Dashboard />} path='/dashboard' />
         <Route element={<Students />} path='/students' />
-        <Route element={<AddStudent />} path='addstudent' />
+        <Route element={<AddStudent />} path='/addstudent' />
       </Routes>
     </BrowserRouter>
   )

@@ -8,8 +8,7 @@ export default function EditFaculty() {
             <div className="flex justify-between pt-10 px-56">
                 <button className="bg-gray-700 hover:bg-[#1672ec] text-white font-bold py-2 px-20 rounded-full focus:outline-none focus:shadow-outline"
                         type="button">Back</button>
-                <h1 className="py-3 px-20 font-extrabold text-[#072d5f] text-3xl"
-                        type="text">Edit Faculty</h1>
+                <h1 className="py-3 px-20 font-extrabold text-[#072d5f] text-3xl">Edit Faculty</h1>
                 <button className="bg-[#11CF00] hover:bg-[#1672ec] text-white font-bold py-2 px-20 rounded-full focus:outline-none focus:shadow-outline"
                         type="submit">Save</button>
             </div>

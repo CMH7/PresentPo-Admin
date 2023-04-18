@@ -1,4 +1,5 @@
 import Wrapper from "../components/Wrapper";
+import backIcon from '../assets/left-arrow 1.png'
 
 /*stated na page na yung 'Add Faculty'
 after this, go to index.tsx to import the page*/
@@ -6,8 +7,15 @@ export default function AddStudent() {
     return(
         <Wrapper>
             <div className="flex justify-between pt-10 px-56">
-                <button className="bg-gray-700 hover:bg-[#1672ec] text-white font-bold py-2 px-20 rounded-full focus:outline-none focus:shadow-outline"
-                        type="button">Back</button>
+
+                {/* back button  */}
+                <div className="flex items-center">
+                    <img className="w-[25px] h-[25px] mr-[30px]" src={backIcon} alt="back icon" />
+                    <div className="poppins font-bold text-[40px] text-primary-2">
+                        Add Student
+                    </div>
+                </div>
+
                 <h1 className="py-3 px-20 font-extrabold text-[#072d5f] text-3xl">Add Student</h1>
                 <button className="bg-[#11CF00] hover:bg-[#1672ec] text-white font-bold py-2 px-20 rounded-full focus:outline-none focus:shadow-outline"
                         type="submit">Save</button>

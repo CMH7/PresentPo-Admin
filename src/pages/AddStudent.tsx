@@ -1,7 +1,7 @@
 import Wrapper from "../components/Wrapper";
 import backIcon from '../assets/left-arrow 1.png'
 
-/*stated na page na yung 'Add Student'
+/*stated na page na yung 'Edit Student'
 after this, go to index.tsx to import the page*/
 export default function AddStudent() {
   return(
@@ -26,7 +26,7 @@ export default function AddStudent() {
       </div>
 
       {/* add 2 columns */}
-      <div className=" grid grid-cols-2 gap-x-[160px] poppins px-80 mt-[94px]">
+      <div className=" grid grid-cols-2 gap-x-[166px] poppins px-80 mt-[166px]">
                 
 				{/* column 1 */}
 				<div className="col-span-1">

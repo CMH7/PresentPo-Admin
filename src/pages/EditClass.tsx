@@ -14,7 +14,7 @@ export default function AddClass() {
 				/>
 				{/* add button  */}
 				<div className="poppins font-bold text-[40px] text-primary-2">
-					Add Class
+					Edit Class
 				</div>
 			</div>
 

@@ -17,3 +17,13 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     </ApolloProvider>
   </React.StrictMode>,
 )
+
+const withMT = require("@material-tailwind/html/utils/withMT");
+ 
+module.exports = withMT({
+  content: ["./index.html"],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+});

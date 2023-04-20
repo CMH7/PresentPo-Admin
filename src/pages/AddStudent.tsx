@@ -53,23 +53,15 @@ export default function AddStudent() {
 							<input className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="middle-name" type="text" placeholder="Enter middle name"
 							/>
 					</div>
-
-					<div className="pb-[50px]">
-						<label className="block text-white font-semibold pb-[10px]">
-							Subjects Handled
-						</label>
-							<input className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="subjects-handled" type="text" placeholder="Enter subjects handled"
-							/>
-					</div>
 				</div>
 
 				{/* column 2 */}
 				<div className="col-span-1">
 					<div className="pb-[50px]">
 						<label className="block text-white font-semibold pb-[10px]">
-							Sections Handled
+							Name Extension
 						</label>
-							<input className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="sections-handled" type="text" placeholder="Enter sections handled"
+							<input className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="sections-handled" type="text" placeholder="e.g. JR."
 							/>
 					</div>
 

@@ -3,7 +3,6 @@ import backIcon from '../assets/left-arrow 1.png'
 
 /*stated na page na yung 'Edit Student'
 after this, go to index.tsx to import the page*/
-
 export default function EditStudent() {
   return(
     <Wrapper>
@@ -14,7 +13,7 @@ export default function EditStudent() {
 				<div className="flex items-center mt-[50px] ml-[100px]">
 					<img className="w-[25px] h-[25px] mr-[30px]" src={backIcon} alt="back icon"
 					/>
-					{/* edit label  */}
+					{/* add button  */}
 					<div className="poppins font-bold text-[40px] text-primary-2">
 						Edit Student
 					</div>
@@ -62,6 +61,7 @@ export default function EditStudent() {
 							<input className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="sections-handled" type="text" placeholder="e.g. JR."
 							/>
 					</div>
+					
 				</div>
 
 				{/* column 2 */}

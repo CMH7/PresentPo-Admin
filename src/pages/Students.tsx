@@ -9,16 +9,14 @@ const GET_ALL_STUDENTS = gql`
       id
       name {
         first
+        middle
+        last
       }
       school_id
       age
       sex
       email
       password
-      year
-      section
-      semester
-      subjects
     }
   }
 `

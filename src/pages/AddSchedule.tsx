@@ -14,13 +14,13 @@ export default function AddSchedule() {
 				/>
 				{/* add button  */}
 				<div className="poppins font-bold text-[40px] text-primary-2">
-					Add Class
+					Add Schedule
 				</div>
 			</div>
 
 			{/* save button */}
 			<button className="flex justify-center items-center mt-[50px] mr-[100px] bg-[#11CF00] hover:bg-[#1672ec] text-white font-semibold py-2 px-20 rounded-[50px] focus:outline-none focus:shadow-outline w-[218px] h-[55px]" type="submit">
-				Save
+				Add
 			</button>
 			</div>
 

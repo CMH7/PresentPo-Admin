@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Signin from './Signin';
 import Dashboard from './Dashboard';
 import Students from './Students';
+import EditAdmin from './EditAdmin';
 import EditSubject from './EditSubject';
 import AddSubject from './AddSubject';
 import EditClass from './EditClass';
@@ -18,6 +19,7 @@ export default function Pages() {
         <Route element={<Signin />} path='/' />
         <Route element={<Dashboard />} path='/dashboard' />
         <Route element={<Students />} path='/students' />
+        <Route element={<EditAdmin />} path='/editadmin' />
         <Route element={<EditSubject />} path='/editsubject' />
         <Route element={<AddSubject />} path='/addsubject' />
         <Route element={<EditClass />} path='editclass' />

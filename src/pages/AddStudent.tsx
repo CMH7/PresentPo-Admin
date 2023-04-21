@@ -1,95 +1,111 @@
 import Wrapper from "../components/Wrapper";
-import backIcon from '../assets/left-arrow 1.png'
+import backIcon from '../assets/left-arrow 1.png';
 
-/*stated na page na yung 'Add Student'
+/*stated na page na yung 'Edit Student'
 after this, go to index.tsx to import the page*/
 export default function AddStudent() {
-  return(
-    <Wrapper>
-      {/* top */}
-      <div className="flex justify-between">
+    return(
+        <Wrapper>
+           {/* top */}
+			<div className="flex justify-between">
 
-				{/* back button  */}
-				<div className="flex items-center mt-[50px] ml-[100px]">
-					<img className="w-[25px] h-[25px] mr-[30px]" src={backIcon} alt="back icon"
-					/>
-					{/* add button  */}
-					<div className="poppins font-bold text-[40px] text-primary-2">
-						Add Student
-					</div>
-				</div>
+    {/* back button  */}
+    <div className="flex items-center mt-[50px] ml-[100px]">
+        <img className="w-[25px] h-[25px] mr-[30px]" src={backIcon} alt="back icon"
+        />
+        {/* add label  */}
+        <div className="poppins font-bold text-[40px] text-primary-2">
+            Add Student
+        </div>
+    </div>
 
-				{/* save button */}
-				<button className="flex justify-center items-center mt-[50px] mr-[100px] bg-[#11CF00] hover:bg-[#1672ec] text-white font-semibold py-2 px-20 rounded-full focus:outline-none focus:shadow-outline w-[218px] h-[55px]" type="submit">
-					Save
-				</button>
-      </div>
+    {/* add button */}
+    <button className="flex justify-center items-center mt-[50px] mr-[100px] bg-[#11CF00] hover:bg-[#1672ec] text-white font-semibold py-2 px-20 rounded-[50px] focus:outline-none focus:shadow-outline w-[218px] h-[55px]" type="submit">
+        Add
+    </button>
+    </div>
 
-      {/* add 2 columns */}
-      <div className=" grid grid-cols-2 gap-x-[160px] poppins px-80 mt-[94px]">
-                
-				{/* column 1 */}
-				<div className="col-span-1">
-					<div className="pb-[50px]">
-						<label className="block text-white poppins font-semibold pb-[10px]">
-							Last Name
-						</label>
-							<input className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="last-name" type="text" placeholder="Enter last name"
-							/>
-					</div>
-
-					<div className="pb-[50px]">
+    <div className="mx-auto my-20 grid grid-cols-2 gap-x-64 poppins px-80">
+        <div className="col-span-1">
+            <form>
+                <div className="pb-10">
+                  <label className="block text-white poppins font-bold mb-3">Last Name</label>
+                        <input className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            id="last-name"
+                            type="text"
+                            placeholder="Enter last name"/>
+                </div>
+            </form>
+            <form>
+                <div className="pb-10">
+                    <label className="block text-white poppins font-bold mb-3">First Name</label>
+                        <input className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            id="first-name"
+                            type="text"
+                            placeholder="Enter first name"/>
+                </div>
+            </form>
+            <form>
+                <div className="pb-10">
+                    <label className="block text-white font-bold mb-3">Middle Name</label>
+                        <input className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            id="middle-name"
+                            type="text"
+                            placeholder="Enter middle name"/>
+                </div>
+            </form>
+            <form>
+                <div className="pb-10">
+                    <label className="block text-white font-bold mb-3">Name Extension</label>
+                        <input className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            id="Name Extension"
+                            type="text"
+                            placeholder="e.g. JR."/>
+                </div>
+            </form>
+        </div>
+        
+        <div className="col-span-1">
+        <div className="pb-[50px]">
 							<label className="block text-white poppins font-semibold pb-[10px]">
-								First Name
+								Sex
 							</label>
-								<input className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="first-name" type="text" placeholder="Enter first name"
-								/>
-					</div>
 
-					<div className="pb-[50px]">
-						<label className="block text-white font-semibold pb-[10px]">
-							Middle Name
-						</label>
-							<input className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="middle-name" type="text" placeholder="Enter middle name"
-							/>
-					</div>
-
-					<div className="pb-[50px]">
-						<label className="block text-white font-semibold pb-[10px]">
-							Subjects Handled
-						</label>
-							<input className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="subjects-handled" type="text" placeholder="Enter subjects handled"
-							/>
-					</div>
-				</div>
-
-				{/* column 2 */}
-				<div className="col-span-1">
-					<div className="pb-[50px]">
-						<label className="block text-white font-semibold pb-[10px]">
-							Sections Handled
-						</label>
-							<input className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="sections-handled" type="text" placeholder="Enter sections handled"
-							/>
-					</div>
-
-					<div className="pb-[50px]">
-						<label className="block text-white font-semibold pb-[10px]">
-							Email
-						</label>
-							<input className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="Enter email address"
-							/>
-					</div>
-
-					<div className="pb-[50px]">
-						<label className="block text-white font-semibold pb-[10px]">
-							Password
-						</label>
-							<input className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="Enter password"
-							/>
-					</div>
-				</div>
-			</div>
-    </Wrapper>
-  )
+								<select className="flex h-[38px] w-[515px] border rounded border-blue-gray-200 bg-white poppins text-[16px] font-semibold text-[#072D5F] outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
+									<option value="Male">Male</option>
+									<option value="Female">Female</option>
+								</select>
+						</div>
+            <form>
+                <div className="pb-10">
+                    <label className="block text-white font-bold mb-3">Age</label>
+                        <input className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            id="age"
+                            type="age"
+                            placeholder="Enter age"/>
+                </div>
+            </form>
+            <form>
+                <div className="pb-10">
+                    <label className="block text-white font-bold mb-3">Email</label>
+                        <input className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            id="email"
+                            type="email"
+                            placeholder="Enter email"/>
+                </div>
+            </form>
+            <form>
+                <div className="pb-10">
+                    <label className="block text-white font-bold mb-3">Password</label>
+                        <input className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            id="password"
+                            type="password"
+                            placeholder="Enter password"/>
+                </div>
+            </form>
+        </div>
+</div>
+        </Wrapper>
+    )
 }
+

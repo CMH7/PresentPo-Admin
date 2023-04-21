@@ -6,6 +6,7 @@ import EditStudent from './EditStudent';
 import AddStudent from './AddStudent';
 import EditFaculty from './EditFaculty';
 import AddFaculty from './AddFaculty';
+import AddClass from './AddClass';
 
 export default function Pages() {
   return (
@@ -18,6 +19,7 @@ export default function Pages() {
         <Route element={<AddStudent />} path='/addstudent' />
         <Route element={<EditFaculty />} path='/editfaculty' />
         <Route element={<AddFaculty />} path='/addfaculty' />
+        <Route element={<AddClass />} path='/addclass' />
       </Routes>
     </BrowserRouter>
   )

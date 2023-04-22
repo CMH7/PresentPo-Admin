@@ -12,6 +12,7 @@ import EditStudent from './EditStudent';
 import AddStudent from './AddStudent';
 import EditFaculty from './EditFaculty';
 import AddFaculty from './AddFaculty';
+import AdminDashboard from './AdminDashboard';
 import AddClass from './AddClass';
 
 export default function Pages() {
@@ -31,6 +32,7 @@ export default function Pages() {
         <Route element={<AddStudent />} path='/addstudent' />
         <Route element={<EditFaculty />} path='/editfaculty' />
         <Route element={<AddFaculty />} path='/addfaculty' />
+        <Route element={<AdminDashboard />} path='/admindashboard' />
         <Route element={<AddClass />} path='/addclass' />
       </Routes>
     </BrowserRouter>

@@ -7,14 +7,56 @@ import subjects from '../assets/subjects.png';
 import schedules from '../assets/schedules.png';
 import reports from '../assets/report-dark.png';
 import account1 from '../assets/account 1.png';
+import logoutwhite from '../assets/logoutwhite.png';
 import logout1 from '../assets/logout 1.png';
-import React from 'react';
+import { useNavigate } from "react-router";
+import { useState } from "react";
 
 /*stated na page na yung 'Admin Dashboard'
 after this, go to index.tsx to import the page*/
 export default function AdminDashboard() {
+  const [showModal, setShowModal] = useState(false)
+
+  const navigate = useNavigate()
+
+  const logout = async () => {
+    localStorage.clear()
+    navigate('/', { replace: true })
+  }
+
   return(
     <Wrapper>
+      {/* confirmation modal  */}
+      {
+        showModal ?
+          <div className="absolute w-screen h-screen z-50 bg-black/50 backdrop-blur-md flex justify-center items-center poppins text-[16px]">
+            <div className="w-[500px] h-[205px] bg-white rounded-[20px] flex flex-col items-center pt-[55px] relative">
+              {/* message  */}
+              <div className="w-[388px] overflow-hidden text-clip text-center">
+                Are you sure you want to log out?
+              </div>
+
+              {/* divider  */}
+              <div className="absolute bottom-[46px] w-[388px] h-0.5 border-t-0 bg-[#072D5F] opacity-25" />
+
+              {/* buttons  */}
+              <div className="w-full flex justify-evenly absolute bottom-[11px]">
+                {/* proceed button  */}
+                <div onClick={logout} className="text-[#D80000] h-full w-2/4 cursor-pointer flex justify-center items-center hover:font-bold">
+                  Logout
+                </div>
+
+                {/* cancel button  */}
+                <div onClick={() => setShowModal(false)} className="text-primary-2 h-full w-2/4 cursor-pointer flex justify-center items-center hover:font-bold">
+                  Cancel
+                </div>
+              </div>
+            </div>
+          </div>
+          :
+          <></>
+      }
+
       {/* columns*/}
     	<div className="flex justify-evenly gap-x-[10px] poppins">
 
@@ -27,8 +69,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Line Break */}
-          <div className="ml-[20px] w-[283px] h-0.5 border-t-0 bg-[#072D5F] opacity-50">
-          </div>
+          <div className="ml-[20px] w-[283px] h-0.5 border-t-0 bg-[#072D5F] opacity-25" />
 
           {/* manage faculty  */}
           <div className=" flex w-[261px] h-[60px] ml-[32px] mt-[25px]">
@@ -99,9 +140,10 @@ export default function AdminDashboard() {
                 Username
               </div> 
 
-              <button className="flex justify-center items-center ml-[22px] mt-[30px] mr-[100px] bg-transparent hover:bg-[#1672ec] text-[#072D5F] font-semibold rounded-full border-[2px] border-[#072D5F] focus:outline-none focus:shadow-outline w-[283px] h-[55px]" type="submit">
+              <button onClick={() => setShowModal(true)} className="group flex justify-center items-center ml-[22px] mt-[30px] mr-[100px] bg-transparent hover:bg-primary-2 text-primary-2 hover:text-white font-semibold rounded-full border-[2px] border-[#072D5F] focus:outline-none focus:shadow-outline w-[283px] h-[55px]" type="submit">
                 <div className="flex w-[20px] h-[20px] mr-[10px]">
-                  <img src={logout1} alt="logout1"/>
+                  <img className="group-hover:hidden" src={logout1} alt="logout1"/>
+                  <img className="hidden group-hover:block" src={logoutwhite} alt="logoutwhite"/>
                 </div>
                   Logout
 							</button>

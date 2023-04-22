@@ -131,7 +131,7 @@ export default function Signin() {
               <div className="poppins text-4xl lg:text-5xl text-white font-semibold select-none">
                 Welcome back, {data?.getAllAdminWithFilters?.data[0]?.name?.first} {data?.getAllAdminWithFilters?.data[0]?.name?.middle} {data?.getAllAdminWithFilters?.data[0]?.name?.last} {data?.getAllAdminWithFilters?.data[0]?.name?.extension}
               </div>
-              <Link to='/dashboard' replace={true}>
+              <Link to='/admindashboard' replace={true}>
                 <div className="w-3/5 lg:w-[236px] h-14 mt-14">
                   <PrimaryButton name="Next" />
                 </div>

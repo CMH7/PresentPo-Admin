@@ -56,8 +56,7 @@ export default function Signin() {
             theme: "light",
           });
   
-          localStorage.setItem('email', email)
-          localStorage.setItem('pass', password)
+          localStorage.setItem('admin', JSON.stringify(res.data?.getAllAdminWithFilters?.data[0]))
           
           dispatch(setAdmin(res.data.getAllAdminWithFilters.data[0]))
   

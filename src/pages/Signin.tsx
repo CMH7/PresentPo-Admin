@@ -9,7 +9,7 @@ import { gql, useLazyQuery } from "@apollo/client";
 import { PropagateLoader } from "react-spinners";
 import { useDispatch, useSelector } from 'react-redux'
 import { setAdmin } from '../features/admins/adminsSlice'
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const CHECK_ADMIN_CREDENTIALS = gql`
@@ -88,23 +88,7 @@ export default function Signin() {
 
   return (
     <Wrapper centered={true}>
-      <div className="absolute">
-        <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-
-          />
-      </div>
       {/* Same as */}
-      <ToastContainer />
       {
         loading ?
           <PropagateLoader color="#fff" />

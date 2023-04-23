@@ -2,6 +2,7 @@ import Wrapper from "../components/Wrapper";
 import logo from '../assets/logo.png';
 import faculty from '../assets/faculty-dark.png';
 import students from '../assets/students-dark.png';
+import studentsWhite from '../assets/studentsWhite.png';
 import classes from '../assets/classes.png';
 import subjects from '../assets/subjects.png';
 import schedules from '../assets/schedules.png';
@@ -11,6 +12,7 @@ import logoutwhite from '../assets/logoutwhite.png';
 import logout1 from '../assets/logout 1.png';
 import { useNavigate } from "react-router";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 /*stated na page na yung 'Admin Dashboard'
 after this, go to index.tsx to import the page*/
@@ -72,24 +74,27 @@ export default function AdminDashboard() {
           <div className="ml-[20px] w-[283px] h-0.5 border-t-0 bg-[#072D5F] opacity-25" />
 
           {/* manage faculty  */}
-          <div className=" flex w-[261px] h-[60px] ml-[32px] mt-[25px]">
-            <div className="flex w-[35px] h-[35px] mt-[3px] ml-[22px]">
+          <div className="group flex items-center w-[261px] h-[60px] ml-[32px] mt-[25px] hover:bg-primary-2 rounded-[50px] transition-all duration-300 cursor-pointer">
+            <div className="flex w-[35px] h-[35px] ml-[22px]">
               <img src={faculty} alt="faculty-dark"/> 
             </div>
-            <div className="flex poppins font-bold text-[16px] mt-[10px] ml-[15px] text-primary-2">
+            <div className="flex poppins font-bold text-[16px] ml-[15px] text-primary-2 select-none group-hover:text-white">
 							Manage Faculty
 						</div>
         	</div>
 
-        	{/* manage students  */}
-          <div className=" flex w-[261px] h-[60px] ml-[32px] mt-[25px]">
-            <div className="flex w-[35px] h-[35px] mt-[3px] ml-[22px]">
-              <img src={students} alt="students-dark"/> 
+          {/* manage students  */}
+          <Link to='/admindashboard/managestudents'>
+            <div className="group flex items-center w-[261px] h-[60px] ml-[32px] mt-[25px] hover:bg-primary-2 rounded-[50px] transition-all duration-300 cursor-pointer">
+              <div className="flex w-[35px] h-[35px] ml-[22px]">
+                <img className="group-hover:hidden" src={students} alt="students-dark"/>
+                <img className="hidden group-hover:block" src={studentsWhite} alt="students-white"/>
+              </div>
+              <div className="flex poppins font-bold text-[16px] ml-[15px] text-primary-2 select-none group-hover:text-white">
+                Manage Students
+              </div>
             </div>
-          <div className="flex poppins font-bold text-[16px] mt-[10px] ml-[15px] text-primary-2">
-						Manage Students
-					</div>
-            </div>
+          </Link>
 
             {/* manage classes  */}
             <div className=" flex w-[261px] h-[60px] ml-[32px] mt-[25px]">

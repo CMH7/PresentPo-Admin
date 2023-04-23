@@ -1,5 +1,6 @@
-import Wrapper from "../components/Wrapper";
-import backIcon from '../assets/left-arrow 1.png';
+import Wrapper from "../../components/Wrapper";
+import backIcon from '../../assets/left-arrow 1.png';
+import { Link } from "react-router-dom";
 
 /*stated na page na yung 'Edit Student'
 after this, go to index.tsx to import the page*/
@@ -11,10 +12,14 @@ export default function AddStudent() {
 
 				{/* back button  */}
 				<div className="flex items-center mt-[50px] ml-[100px]">
-					<img className="w-[25px] h-[25px] mr-[30px]" src={backIcon} alt="back icon"/>
+					<Link to='/admindashboard/managestudents' replace={true}>
+						<div className="aspect-square w-[25px] h-auto cursor-pointer">
+							<img src={backIcon} alt="chevron left" />
+						</div>
+					</Link>
 
 					{/* add label  */}
-					<div className="poppins font-bold text-[40px] text-primary-2">
+					<div className="ml-[30px] poppins font-bold text-[40px] text-primary-2 ">
 						Add Student
 					</div>
 				</div>

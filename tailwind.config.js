@@ -9,6 +9,7 @@ export default {
 				"primary-2": "#072d5f",
 				"prm-btn-hover": "#1550a0",
 				"green": '11CF00',
+				'phGray': '#BEBEBE'
 			},
 		},
 	},

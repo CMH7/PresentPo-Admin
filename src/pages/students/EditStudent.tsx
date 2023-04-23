@@ -1,9 +1,13 @@
-import Wrapper from "../components/Wrapper";
-import backIcon from '../assets/left-arrow 1.png'
+import Wrapper from "../../components/Wrapper";
+import backIcon from '../../assets/left-arrow 1.png'
+import { Link, useParams } from 'react-router-dom';
+
 
 /*stated na page na yung 'Edit Student'
 after this, go to index.tsx to import the page*/
 export default function EditStudent() {
+	const { id } = useParams<{ id: string }>();
+
   return(
     <Wrapper>
       {/* top */}
@@ -11,10 +15,14 @@ export default function EditStudent() {
 
 				{/* back button  */}
 				<div className="flex items-center mt-[50px] ml-[100px]">
-					<img className="w-[25px] h-[25px] mr-[30px]" src={backIcon} alt="back icon"
-					/>
+					<Link to='/admindashboard/managestudents' replace={true}>
+						<div className="aspect-square w-[25px] h-auto cursor-pointer">
+							<img src={backIcon} alt="chevron left" />
+						</div>
+					</Link>
+
 					{/* add button  */}
-					<div className="poppins font-bold text-[40px] text-primary-2">
+					<div className=" ml-[30px] poppins font-bold text-[40px] text-primary-2">
 						Edit Student
 					</div>
 				</div>
@@ -34,7 +42,7 @@ export default function EditStudent() {
 						<label className="block text-white poppins font-semibold pb-[10px]">
 							Last Name
 						</label>
-							<input className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="last-name" type="text" placeholder="Enter last name"
+							<input value={id} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="last-name" type="text" placeholder="Enter last name"
 							/>
 					</div>
 

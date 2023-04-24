@@ -6,7 +6,7 @@ import { useState } from "react";
 import { PropagateLoader } from "react-spinners";
 import { ToastContainer, toast } from "react-toastify";
 
-const ADD_STUDENT_OPS = gql`
+const ADD_FACULTY_OPS = gql`
 	mutation AddStudent($newFaculty: newFaculty!) {
 		addFaculty(newFaculty: $newFaculty) {
 			error

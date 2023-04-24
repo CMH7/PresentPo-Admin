@@ -1,7 +1,7 @@
 import Wrapper from "../components/Wrapper";
 import backIcon from '../assets/left-arrow 1.png'
 
-/*stated na page na yung 'Edit Admit'
+/*stated na page na yung 'Edit Admin'
 after this, go to index.tsx to import the page*/
 export default function EditAdmin() {
   return(

@@ -1,5 +1,4 @@
 import Wrapper from "../components/Wrapper";
-import { Select, Option } from "@material-tailwind/react";
 import backIcon from '../assets/left-arrow 1.png';
 
 export default function AddSchedule() {

@@ -79,7 +79,7 @@ export default function AdminDashboard() {
           <div className="ml-[20px] w-[283px] h-0.5 border-t-0 bg-[#072D5F] opacity-25" />
 
           {/* manage faculty  */}
-          <Link to='/admindashboard/managestudents'>
+          <Link to='/admindashboard/managefaculties'>
             <div className="group flex items-center w-[261px] h-[60px] ml-[32px] mt-[25px] hover:bg-primary-2 rounded-[50px] transition-all duration-300 cursor-pointer">
               <div className="flex w-[35px] h-[35px] ml-[22px]">
                 <img className="group-hover:hidden" src={facultydark} alt="students-dark"/>

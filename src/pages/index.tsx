@@ -6,7 +6,7 @@ import AddSchedule from './AddSchedule';
 import EditAdmin from './EditAdmin';
 import EditSubject from './subjects/EditSubject';
 import AddSubject from './subjects/AddSubject';
-import EditClass from './EditClass';
+import EditClass from './clss/EditClass';
 import EditStudent from './students/EditStudent';
 import EditFaculty from './faculty/EditFaculty';
 import AddFaculty from './faculty/AddFaculty';
@@ -45,7 +45,7 @@ export default function Pages() {
         <Route element={<EditSchedule />} path='/editschedule' />
         <Route element={<AddSchedule />} path='/addschedule' />
         <Route element={<EditAdmin />} path='/editadmin' />
-        <Route element={<EditClass />} path='editclass' />
+        <Route element={<EditClass />} path='/admindashboard/manageclasses/editclass/:id' />
         <Route element={<AddClass />} path='/addclass' />
       </Routes>
     </BrowserRouter>

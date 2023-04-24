@@ -2,59 +2,99 @@ import Wrapper from "../../components/Wrapper"
 import chevronLeft from '../../assets/left-arrow 1.png'
 import plusWhite from '../../assets/plus white.png'
 import plusPrim from '../../assets/plus prim.png'
+import tri from '../../assets/down 1.png'
 import searchIcon from '../../assets/search 1.png'
 import searchInac from '../../assets/searchInactive.png'
-import editIcon from '../../assets/edit (1) 1.png'
-import deleteIcon from '../../assets/delete 1.png'
-import { Link } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import { gql, useQuery } from "@apollo/client"
 import QueryResult from "../../components/QueryResult"
+import editIcon from '../../assets/edit (1) 1.png'
+import deleteIcon from '../../assets/delete 1.png'
 import { useEffect, useState } from "react"
-import React from "react"
 
-const GET_ALL_CLASS = gql`
-    query Query($filters: classFilters) {
-      getAllClassWithFilters(filters: $filters) {
-        error
-        message
-        data {
-          id
-          strand
-          year
-          section
-          semester
-        }
+const GET_CLASS_DATA = gql`
+  query GetClass($getClassId: ID!) {
+    getClass(id: $getClassId) {
+      error
+      message
+      data {
+        id
+        strand
+        year
+        section
+        semester
+        students
       }
     }
+  }
 `
+
+const ALL_STUDENTS = gql`
+  query GetStudent($filters: studentFilters!) {
+    getAllStudentsWithFilters(filters: $filters) {
+      error
+      message
+      data {
+        id
+        school_id
+        name {
+          first
+          middle
+          last
+          extension
+        }
+        sex
+        email
+      }
+    }
+  }
+`
+
+interface Student {
+  id: string
+  school_id: string
+  name: Name
+  email: string
+  sex: string
+}
+
+interface Name {
+  first: string
+  middle: string
+  last: string
+  extension: string
+}
+
 interface Classs {
   id: string
   strand: string
   year: number
   section: string
-  semester: number
+  students: string[]
 }
 
-export default function ManageClasses() {
+export default function ManageClassStudents() {
+  const { id } = useParams<{ id: string }>();
 
   const [showModal, setShowModal] = useState(false)
-  const [selectedClass, setSelectedClass] = useState('')
-  const [classes, setClasses] = useState<Classs[]>([])
+  const [selectedStudent, setSelectedStudent] = useState('')
+  const [students, setStudents] = useState<Student[]>([])
   const [searchValue, setSearchValue] = useState('')
 
-  const { error, loading, data } = useQuery(GET_ALL_CLASS, { variables: { filters: {} } })
+  const clasdata = useQuery(GET_CLASS_DATA, { variables: { getClassId: id } })
+  const studClass = useQuery(ALL_STUDENTS, { variables: { filters: {} } })
 
   useEffect(() => {
-    setClasses(data?.getAllClassWithFilters?.data)
-  }, [loading])
+    setStudents(studClass.data?.getAllStudentsWithFilters?.data)
+  }, [studClass.loading])
 
   const searchNow = (searchFor: string) => {
-    setClasses(data?.getAllClassWithFilters?.data)
+    setStudents(studClass.data?.getAllStudentsWithFilters?.data)
     if (searchFor !== '' ) {
-      setClasses(classs => classs.filter((cls: Classs) => {
-        let classData = `${cls.strand} ${cls.year} ${cls.section} ${cls.semester}`.toLowerCase()
-        if ( classData.match(searchFor.toLowerCase()) ) {
-          return cls
+      setStudents(studss => studss.filter((student: Student) => {
+        let studentDData = `${student.email} ${student.sex} ${student.school_id} ${student.name.first} ${student.name.middle} ${student.name.last} ${student.name.extension}`.toLowerCase()
+        if ( studentDData.match(searchFor.toLowerCase()) ) {
+          return student
         }
       }))
     }
@@ -69,7 +109,7 @@ export default function ManageClasses() {
             <div className="w-[500px] h-[205px] bg-white rounded-[20px] flex flex-col items-center pt-[55px] relative">
               {/* message  */}
               <div className="w-[388px] overflow-hidden text-clip text-center">
-                Are you sure you want to delete this class <br /> <span className="italic">{ selectedClass }</span> ?
+                Are you sure you want to delete this student <br /> <span className="italic">{ selectedStudent }</span> ?
               </div>
 
               {/* divider  */}
@@ -97,14 +137,14 @@ export default function ManageClasses() {
       <div className="w-full h-[150px] flex items-center">
         {/* back button  */}
         <div className="flex items-center">
-          <Link to='/admindashboard' replace={true}>
+          <Link to='/admindashboard/manageclasses' replace={true}>
             <div className="aspect-square w-[25px] h-auto cursor-pointer">
               <img src={chevronLeft} alt="chevron left" />
             </div>
           </Link>
 
           <div className="ml-[30px] poppins text-[40px] font-bold text-primary-2 select-none">
-            Manage Classes
+            { clasdata.data?.getClass?.data?.strand } { clasdata.data?.getClass?.data?.year }-{ clasdata.data?.getClass?.data?.section }
           </div>
         </div>
 
@@ -128,7 +168,7 @@ export default function ManageClasses() {
         <div className="flex">
 
           {/* add student button  */}
-          <Link to='/admindashboard/manageclasses/addclass' replace={true}>
+          <Link to='/admindashboard/managestudents/addstudent' replace={true}>
             <div className="group w-[220px] h-[55px] flex items-center justify-center bg-primary-2 hover:bg-white transition-all rounded-[50px] cursor-pointer">
               {/* icon  */}
               <div className="aspect-square w-[20px] h-auto ">
@@ -138,11 +178,10 @@ export default function ManageClasses() {
 
               {/* text  */}
               <div className="ml-[10px] poppins font-semibold text-[20px] text-white group-hover:text-primary-2 select-none">
-                Add Class
+                Add Student
               </div>
             </div>
           </Link>
-
         </div>
       </div>
 
@@ -157,87 +196,109 @@ export default function ManageClasses() {
             </div>
           </div>
           
-          {/* strand  */}
+          {/* school id  */}
           <div className=" h-full w-[200px] shrink-0 flex items-center ">
             <div className=" poppins font-bold text-[20px] text-primary-2 ">
-              Strand
-            </div>
-          </div>
-          
-          {/* grade level  */}
-          <div className=" h-full w-[200px] shrink-0 flex items-center ">
-            <div className=" poppins font-bold text-[20px] text-primary-2 ">
-              Grade Level
-            </div>
-          </div>
-          
-          {/* section  */}
-          <div className=" h-full w-[200px] shrink-0 flex items-center ">
-            <div className=" poppins font-bold text-[20px] text-primary-2 ">
-              Section
+              School ID
             </div>
           </div>
 
-          {/* semester */}
+          {/* last name  */}
+          <div className=" h-full w-[200px] shrink-0 flex items-center ">
+            <div className=" poppins font-bold text-[20px] text-primary-2 ">
+              Last Name
+            </div>
+          </div>
+          
+          {/* first name  */}
+          <div className=" h-full w-[200px] shrink-0 flex items-center ">
+            <div className=" poppins font-bold text-[20px] text-primary-2 ">
+              First Name
+            </div>
+          </div>
+          
+          {/* middle name  */}
+          <div className=" h-full w-[200px] shrink-0 flex items-center ">
+            <div className=" poppins font-bold text-[20px] text-primary-2 ">
+              Middle Name
+            </div>
+          </div>
+          
+          {/* year and section */}
+          <div className=" h-full w-[100px] shrink-0 flex items-center ">
+            <div className=" poppins font-bold text-[20px] text-primary-2 ">
+              Sex
+            </div>
+          </div>
+          
+          {/* email */}
           <div className=" h-full grow flex items-center ">
             <div className=" poppins font-bold text-[20px] text-primary-2 ">
-              Semester
+              Email
             </div>
           </div>
-        </div>
 
-        <div className={`w-full ${loading ? 'h-full flex flex-col justify-center items-center' : 'h-fit'}`}>
-          <QueryResult error={error} loading={loading} data={data}>
+
+        </div>
+        <div className={`w-full ${studClass.loading ? 'h-full flex flex-col justify-center items-center' : 'h-fit'}`}>
+          <QueryResult error={clasdata.error || studClass.error} loading={clasdata.loading || studClass.loading} data={clasdata.data || studClass.data}>
             {
-              classes?.map((classs: Classs, i: number) => {
+              students.filter((stud: Student, i: number) => clasdata.data?.getClass?.data?.students?.includes(stud.id) || clasdata.data?.getClass?.data?.students?.includes(` ${stud.id}`)).map((stud: Student, i: number) => {
                 return (
-                  <div key={classs.id} className=" w-full h-fit py-[15px] bg-white hover:bg-gray-200 mb-[2px] flex items-center px-[20px] relative overflow-hidden group transition-all ">
+                  <div key={stud.id} className=" w-full h-fit py-[15px] bg-white hover:bg-gray-200 mb-[2px] flex items-center px-[20px] relative overflow-hidden group transition-all ">
                     {/* No.  */}
                     <div className=" h-full w-[50px] shrink-0 flex items-center ">
                       <div className=" poppins font-medium text-[16px] text-primary-2 ">
-                        { i + 1 }
+                        { i + 1  }
                       </div>
                     </div>
                     
-                    {/* strand  */}
+                    {/* school id  */}
                     <div className=" h-full w-[200px] shrink-0 flex items-center ">
                       <div className=" poppins font-medium text-[16px] text-primary-2 ">
-                        { classs.strand }
+                        { stud.school_id }
                       </div>
                     </div>
-                    
-                    {/* year  */}
+
+                    {/* last name  */}
                     <div className=" h-full w-[200px] shrink-0 flex items-center ">
                       <div className=" poppins font-medium text-[16px] text-primary-2 ">
-                        { classs.year }
+                        { stud.name.last } { stud.name.extension }
                       </div>
                     </div>
                     
-                    {/* section  */}
+                    {/* first name  */}
                     <div className=" h-full w-[200px] shrink-0 flex items-center ">
                       <div className=" poppins font-medium text-[16px] text-primary-2 ">
-                        { classs.section }
+                        { stud.name.first }
                       </div>
                     </div>
                     
-                    {/* semester */}
+                    {/* middle name  */}
+                    <div className=" h-full w-[200px] shrink-0 flex items-center ">
+                      <div className=" poppins font-medium text-[16px] text-primary-2 ">
+                        { stud.name.middle }
+                      </div>
+                    </div>
+                    
+                    {/* sex  */}
+                    <div className=" h-full w-[100px] shrink-0 flex items-center ">
+                      <div className=" poppins font-medium text-[16px] text-primary-2 ">
+                        { stud.sex }
+                      </div>
+                    </div>
+                    
+                    {/* email */}
                     <div className=" h-full grow flex items-center ">
                       <div className=" poppins font-medium text-[16px] text-primary-2 ">
-                        { classs.semester }
+                        { stud.email }
                       </div>
                     </div>
 
                     {/* actions  */}
-                    <div className="absolute z-10 top-0 -right-[350px] group-hover:right-0 transition-all w-fit h-full flex items-center">
-                      {/* manage class's students  */}
-                      <Link className="w-fit h-full" to={`/admindashboard/manageclasses/${classs.id}/manageclassstudents`}>
-                        <div className=" poppins text-[14px] text-primary-1 hover:underline h-full px-2 mr-[20px] flex items-center justify-center select-none cursor-pointer ">
-                          Manage class's students
-                        </div>
-                      </Link>
-
-                      {/* edit subject  */}
-                      <Link className="w-[55px] h-full" to={`/admindashboard/manageclasses/editclass/${classs.id}`}>
+                    <div className="absolute z-10 top-0 -right-[200px] group-hover:right-0 transition-all w-fit h-full flex items-center">
+                      {/* edit student  */}
+                      <Link className="w-[55px] h-full" to={`/admindashboard/managestudents/editstudent/${stud.id}`}>
                         <div className=" w-full h-full bg-primary-1 flex items-center justify-center cursor-pointer ">
                           <div className="aspect-square w-[20px] h-auto">
                             <img src={editIcon} alt="edit icon" />
@@ -247,7 +308,7 @@ export default function ManageClasses() {
 
                       {/* delete student  */}
                       <div onClick={() => {
-                        setSelectedClass(`${classs.strand} ${classs.year}-${classs.section}`)
+                        setSelectedStudent(`(${stud.school_id}) ${stud.name.first} ${stud.name.middle.charAt(0)}${stud.name.middle !== '' ? '.' : ''} ${stud.name.last} ${stud.name.extension}`)
                         setShowModal(true)
                       }} className=" w-[55px] h-full bg-[#D80000] flex items-center justify-center cursor-pointer ">
                         <div className="aspect-square w-[20px] h-auto">

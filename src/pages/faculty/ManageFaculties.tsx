@@ -381,7 +381,7 @@ export default function ManageFaculties() {
 
                       {/* delete student  */}
                       <div onClick={() => {
-                        setSelectedFaculty(`${faculty.name.first} ${faculty.name.middle.charAt(0)}${faculty.name.middle !== '' ? '.' : ''} ${faculty.name.last} ${faculty.name.extension}`)
+                        setSelectedFaculty(`${faculty.name.first} ${faculty.name.middle.charAt(0)}${faculty.name.middle !== '' ? '.' : ''} ${faculty.name.last} ${faculty.name.extension}, ${faculty.credentials}`)
                         setShowModal(true)
                       }} className=" w-[55px] h-full bg-[#D80000] flex items-center justify-center cursor-pointer ">
                         <div className="aspect-square w-[20px] h-auto">

@@ -1,12 +1,17 @@
 import Wrapper from "../components/Wrapper";
 import logo from '../assets/logo.png';
-import faculty from '../assets/faculty-dark.png';
+import facultydark from '../assets/faculty-dark.png';
+import facultywhite from '../assets/faculty-white.png';
 import students from '../assets/students-dark.png';
 import studentsWhite from '../assets/studentsWhite.png';
-import classes from '../assets/classes.png';
-import subjects from '../assets/subjects.png';
-import schedules from '../assets/schedules.png';
+import classdark from '../assets/classes.png';
+import classwhite from '../assets/classwhite.png';
+import subjectsdark from '../assets/subjects.png';
+import subjectswhite from '../assets/subjectswhite.png';
+import schedulesdark from '../assets/schedules.png';
+import scheduleswhite from '../assets/schedulewhite.png';
 import reports from '../assets/report-dark.png';
+import reportswhite from '../assets/reportwhite.png'
 import account1 from '../assets/account 1.png';
 import logoutwhite from '../assets/logoutwhite.png';
 import logout1 from '../assets/logout 1.png';
@@ -74,14 +79,17 @@ export default function AdminDashboard() {
           <div className="ml-[20px] w-[283px] h-0.5 border-t-0 bg-[#072D5F] opacity-25" />
 
           {/* manage faculty  */}
-          <div className="group flex items-center w-[261px] h-[60px] ml-[32px] mt-[25px] hover:bg-primary-2 rounded-[50px] transition-all duration-300 cursor-pointer">
-            <div className="flex w-[35px] h-[35px] ml-[22px]">
-              <img src={faculty} alt="faculty-dark"/> 
+          <Link to='/admindashboard/managestudents'>
+            <div className="group flex items-center w-[261px] h-[60px] ml-[32px] mt-[25px] hover:bg-primary-2 rounded-[50px] transition-all duration-300 cursor-pointer">
+              <div className="flex w-[35px] h-[35px] ml-[22px]">
+                <img className="group-hover:hidden" src={facultydark} alt="students-dark"/>
+                <img className="hidden group-hover:block" src={facultywhite} alt="students-white"/>
+              </div>
+              <div className="flex poppins font-bold text-[16px] ml-[15px] text-primary-2 select-none group-hover:text-white">
+                Manage Faculties
+              </div>
             </div>
-            <div className="flex poppins font-bold text-[16px] ml-[15px] text-primary-2 select-none group-hover:text-white">
-							Manage Faculty
-						</div>
-        	</div>
+          </Link>
 
           {/* manage students  */}
           <Link to='/admindashboard/managestudents'>
@@ -96,45 +104,57 @@ export default function AdminDashboard() {
             </div>
           </Link>
 
-            {/* manage classes  */}
-            <div className=" flex w-[261px] h-[60px] ml-[32px] mt-[25px]">
-              <div className="flex w-[35px] h-[35px] mt-[3px] ml-[22px]">
-                <img src={classes} alt="classes"/> 
+          {/* manage classes  */}
+          <Link to='/admindashboard/manageclasses'>
+            <div className="group flex items-center w-[261px] h-[60px] ml-[32px] mt-[25px] hover:bg-primary-2 rounded-[50px] transition-all duration-300 cursor-pointer">
+              <div className="flex w-[35px] h-[35px] ml-[22px]">
+                <img className="group-hover:hidden" src={classdark} alt="subjects-dark"/>
+                <img className="hidden group-hover:block" src={classwhite} alt="subjects-white"/>
               </div>
-              <div className="flex poppins font-bold text-[16px] mt-[10px] ml-[15px] text-primary-2">
-								Manage Classes
-							</div>
+              <div className="flex poppins font-bold text-[16px] ml-[15px] text-primary-2 select-none group-hover:text-white">
+                Manage Classes
+              </div>
             </div>
+          </Link>
 
-            {/* manage subjects */}
-            <div className=" flex w-[261px] h-[60px] ml-[32px] mt-[25px]">
-              <div className="flex w-[35px] h-[35px] mt-[3px] ml-[22px]">
-                <img src={subjects} alt="subjects"/> 
+          {/* manage subjects */}
+          <Link to='/admindashboard/managesubjects'>
+            <div className="group flex items-center w-[261px] h-[60px] ml-[32px] mt-[25px] hover:bg-primary-2 rounded-[50px] transition-all duration-300 cursor-pointer">
+              <div className="flex w-[35px] h-[35px] ml-[22px]">
+                <img className="group-hover:hidden" src={subjectsdark} alt="subjects-dark"/>
+                <img className="hidden group-hover:block" src={subjectswhite} alt="subjects-white"/>
               </div>
-              <div className="flex poppins font-bold text-[16px] mt-[10px] ml-[15px] text-primary-2">
-								Manage Subjects
-							</div>
+              <div className="flex poppins font-bold text-[16px] ml-[15px] text-primary-2 select-none group-hover:text-white">
+                Manage Subjects
+              </div>
             </div>
+          </Link>
 
-            {/* manage schedules */}
-            <div className=" flex w-[261px] h-[60px] ml-[32px] mt-[25px]">
-              <div className="flex w-[35px] h-[35px] mt-[3px] ml-[22px]">
-                <img src={schedules} alt="schedules"/> 
+          {/* manage schedules */}
+          <Link to='/admindashboard/manageschedules'>
+            <div className="group flex items-center w-[261px] h-[60px] ml-[32px] mt-[25px] hover:bg-primary-2 rounded-[50px] transition-all duration-300 cursor-pointer">
+              <div className="flex w-[35px] h-[35px] ml-[22px]">
+                <img className="group-hover:hidden" src={schedulesdark} alt="subjects-dark"/>
+                <img className="hidden group-hover:block" src={scheduleswhite} alt="subjects-white"/>
               </div>
-              <div className="flex poppins font-bold text-[16px] mt-[10px] ml-[15px] text-primary-2">
-								Manage Schedules
-							</div>
+              <div className="flex poppins font-bold text-[16px] ml-[15px] text-primary-2 select-none group-hover:text-white">
+                Manage Schedules
+              </div>
             </div>
+          </Link>
 
-            {/* reports */}
-            <div className=" flex w-[261px] h-[60px] ml-[32px] mt-[25px]">
-              <div className="flex w-[35px] h-[35px] mt-[3px] ml-[22px]">
-                <img src={reports} alt="report-dark"/> 
+          {/* reports */}
+          <Link to='/admindashboard/manageschedules'>
+            <div className="group flex items-center w-[261px] h-[60px] ml-[32px] mt-[25px] hover:bg-primary-2 rounded-[50px] transition-all duration-300 cursor-pointer">
+              <div className="flex w-[35px] h-[35px] ml-[22px]">
+                <img className="group-hover:hidden" src={reports} alt="subjects-dark"/>
+                <img className="hidden group-hover:block" src={reportswhite} alt="subjects-white"/>
               </div>
-              <div className="flex poppins font-bold text-[16px] mt-[10px] ml-[15px] text-primary-2">
-								Reports
-							</div>
+              <div className="flex poppins font-bold text-[16px] ml-[15px] text-primary-2 select-none group-hover:text-white">
+                Reports
+              </div>
             </div>
+          </Link>
 
             {/* admin account */}
             <div className="flex flex-col">

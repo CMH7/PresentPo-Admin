@@ -1,13 +1,26 @@
 import Wrapper from "../../components/Wrapper";
 import backIcon from '../../assets/left-arrow 1.png'
-import { useNavigate, useParams } from 'react-router-dom';
-import { useState } from "react";
-import { gql, useMutation } from "@apollo/client";
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import { toast } from "react-toastify";
 
 const EDIT_SUBJECT_OPS = gql`
-	mutation EditSubject($subject: newSubject!) {
-  editSubject(subject: $subject) {
+	mutation UpdateSubject($updateSubjectId: ID!, $updatedSubject: updatedSubject!) {
+		updateSubject(id: $updateSubjectId, updatedSubject: $updatedSubject) {
+			data {
+				id
+				code
+				name
+			}
+			error
+			message
+		}
+	}
+`
+const GET_SUBJECT_QUERY = gql`
+	query GetSubject($getSubjectId: ID!) {
+  getSubject(id: $getSubjectId) {
     error
     message
     data {
@@ -22,10 +35,15 @@ const EDIT_SUBJECT_OPS = gql`
 /*stated na page na yung 'Edit Subject'
 after this, go to index.tsx to import the page*/
 export default function EditSubject() {
+	const { id } = useParams<{ id: string }>();
+
+
 	const [subjectCode, setSubjectCode] = useState('')
 	const [subjectName, setSubjectName] = useState('')
-	const [editing, setEditing] = useState(false)
+	const [saving, setSaving] = useState(false)
 	const navigate = useNavigate()
+
+	const { error, loading, data } = useQuery(GET_SUBJECT_QUERY, { variables: { getSubjectId: id }})
 
 	const [editSubject] = useMutation(EDIT_SUBJECT_OPS, {
 		onCompleted: (data) => {
@@ -39,10 +57,28 @@ export default function EditSubject() {
 				progress: undefined,
 				theme: "light",
 			});
-			setEditing(false)
+			setSaving(false)
 			navigate('/admindashboard/managesubjects', {replace: true})
+		},
+		onError: (e) => {
+			toast.error(`${e}`, {
+				position: "top-right",
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
+			setSaving(false)
 		}
 	})
+
+	useEffect(() => {
+		setSubjectCode(data?.getSubject?.data?.code)
+		setSubjectName(data?.getSubject?.data?.name)
+	}, [data])
 
   return(
     <Wrapper>
@@ -51,11 +87,14 @@ export default function EditSubject() {
 
 			{/* back button  */}
 			<div className="flex items-center mt-[50px] ml-[100px]">
-				<img className="w-[25px] h-[25px] mr-[30px]" src={backIcon} alt="back icon"
-				/>
+					<Link to='/admindashboard/managesubjects' replace={true}>
+						<div className="aspect-square w-[25px] h-auto cursor-pointer">
+							<img src={backIcon} alt="chevron left" />
+						</div>
+					</Link>
 
 				{/* edit label  */}
-				<label className="poppins font-bold text-[40px] text-primary-2">
+				<label className=" ml-[30px] poppins font-bold text-[40px] text-primary-2">
 					Edit Subject
 				</label>
 			</div>
@@ -75,10 +114,15 @@ export default function EditSubject() {
 						});
 						return
 					}
-					setEditing(true)
-					editSubject({ variables: {  subject: {code: subjectCode,name: subjectName } } })
+					setSaving(true)
+					editSubject({ variables: { updateSubjectId: id, updatedSubject: {code: subjectCode, name: subjectName } } })
 				}} className="flex justify-center items-center mt-[50px] mr-[100px] bg-[#11CF00] hover:bg-[#1672ec] text-white font-semibold py-2 px-20 rounded-[50px] focus:outline-none focus:shadow-outline w-[218px] h-[55px]" type="submit">
-				Save
+				{
+					saving ?
+					<div>saving...</div>
+					:
+					<div>Save</div>
+				}
 			</button>
       	</div>
 

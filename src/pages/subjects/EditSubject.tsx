@@ -47,7 +47,7 @@ export default function EditSubject() {
 
 	const [editSubject] = useMutation(EDIT_SUBJECT_OPS, {
 		onCompleted: (data) => {
-			toast.success(data?.editSubject?.message, {
+			toast.success(data?.updateSubject?.message, {
 				position: "top-right",
 				autoClose: 5000,
 				hideProgressBar: false,

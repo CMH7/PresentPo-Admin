@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 import { gql, useMutation } from "@apollo/client";
+import { Link } from "react-router-dom";
 
 const ADD_CLASS_OPS = gql`
 	mutation addClass($newClass: newClass!) {
@@ -68,21 +69,19 @@ export default function AddClass() {
 
 				{/* back button  */}
 				<div className="flex items-center mt-[50px] ml-[100px]">
-					<img className="w-[25px] h-[25px] mr-[30px]" src={backIcon} alt="back icon"
-					/>
+					<Link to='/admindashboard/manageclasses' replace={true} aria-disabled={adding}>
+						<div className="aspect-square w-[25px] h-auto cursor-pointer">
+							<img src={backIcon} alt="chevron left" />
+						</div>
+					</Link>
 					{/* add label  */}
-					<div className="poppins font-bold text-[40px] text-primary-2">
+					<div className=" ml-[30px] poppins font-bold text-[40px] text-primary-2">
 						Add Class
 					</div>
 				</div>
 
 				{/* add button */}
 				<button onClick={() => {					
-					console.log(typeof strand);
-					console.log(typeof gradeLevel);
-					console.log(typeof section);
-					console.log(typeof semester);
-					
 					if (strand === '' || gradeLevel <= 10 || gradeLevel > 12 || section === '' || semester <= 0 || semester > 3 ) {
 						toast.error('Invalid inputs', {
 							position: "top-right",

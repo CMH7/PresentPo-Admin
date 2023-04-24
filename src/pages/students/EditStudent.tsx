@@ -21,10 +21,10 @@ export default function EditStudent() {
 						</div>
 					</Link>
 
-					{/* add button  */}
-					<div className=" ml-[30px] poppins font-bold text-[40px] text-primary-2">
+					{/* edit label  */}
+					<label className=" ml-[30px] poppins font-bold text-[40px] text-primary-2">
 						Edit Student
-					</div>
+					</label>
 				</div>
 
 				{/* save button */}

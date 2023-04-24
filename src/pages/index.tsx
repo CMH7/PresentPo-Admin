@@ -4,7 +4,7 @@ import Students from './Students';
 import EditSchedule from './EditSchedule';
 import AddSchedule from './AddSchedule';
 import EditAdmin from './EditAdmin';
-import EditSubject from './EditSubject';
+import EditSubject from './subjects/EditSubject';
 import AddSubject from './subjects/AddSubject';
 import EditClass from './EditClass';
 import EditStudent from './students/EditStudent';

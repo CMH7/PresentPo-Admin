@@ -371,7 +371,7 @@ export default function ManageFaculties() {
                     {/* actions  */}
                     <div className="absolute z-10 top-0 -right-[200px] group-hover:right-0 transition-all w-fit h-full flex items-center">
                       {/* edit student  */}
-                      <Link className="w-[55px] h-full" to={`/admindashboard/managefaculties/editfaculties/${faculty.id}`}>
+                      <Link className="w-[55px] h-full" to={`/admindashboard/managefaculties/editfaculty/${faculty.id}`}>
                         <div className=" w-full h-full bg-primary-1 flex items-center justify-center cursor-pointer ">
                           <div className="aspect-square w-[20px] h-auto">
                             <img src={editIcon} alt="edit icon" />

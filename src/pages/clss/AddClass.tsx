@@ -137,9 +137,14 @@ export default function AddClass() {
 								Section
 							</label>
 							<select onChange={(e) => setSection(e.target.value)} value={section} className="peer h-[48px] w-[558px] rounded-[10px] border border-blue-gray-200 bg-white poppins text-[16px] font-semibold text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
-								<option value="section1">section1</option>
-								<option value="section2">section2</option>
-								<option value="section3">section3</option>
+								<option value="Orion">Orion</option>
+								<option value="Leo">Leo</option>
+								<option value="Beethoven">Beethoven</option>
+								<option value="Mozart">Mozart</option>
+								<option value="Morgan">Morgan</option>
+								<option value="Wedgwood">Wedgwood</option>
+								<option value="Da Vinci">Da Vinci</option>
+								<option value="Rembrandt">Rembrandt</option>
 							</select>
 						</div>
 

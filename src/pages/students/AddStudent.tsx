@@ -29,7 +29,7 @@ const ADD_STUDENT_OPS = gql`
 	}
 `
 
-/*stated na page na yung 'Edit Student'
+/*stated na page na yung 'Add Student'
 after this, go to index.tsx to import the page*/
 export default function AddStudent() {
 	const [adding, setAdding] = useState(false)

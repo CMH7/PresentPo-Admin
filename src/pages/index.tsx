@@ -9,7 +9,7 @@ import AddSubject from './AddSubject';
 import EditClass from './EditClass';
 import EditStudent from './students/EditStudent';
 import EditFaculty from './EditFaculty';
-import AddFaculty from './AddFaculty';
+import AddFaculty from './faculty/AddFaculty';
 import AdminDashboard from './AdminDashboard';
 import AddClass from './AddClass';
 

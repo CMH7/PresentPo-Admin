@@ -4,7 +4,7 @@ import Students from './Students';
 import EditSchedule from './EditSchedule';
 import AddSchedule from './AddSchedule';
 import EditAdmin from './EditAdmin';
-import EditSubject from './EditSubject';
+import EditSubject from './subjects/EditSubject';
 import AddSubject from './subjects/AddSubject';
 import EditClass from './EditClass';
 import EditStudent from './students/EditStudent';
@@ -33,12 +33,12 @@ export default function Pages() {
         {/* subject routes  */}
         <Route element={<ManageSubjects />} path='/admindashboard/managesubjects' />
         <Route element={<AddSubject />} path='/admindashboard/managesubjects/addsubject' />
+        <Route element={<EditSubject />} path='/admindashboard/managesubjects/editsubject/:id' />
 
         <Route element={<Students />} path='/students' />
         <Route element={<EditSchedule />} path='/editschedule' />
         <Route element={<AddSchedule />} path='/addschedule' />
         <Route element={<EditAdmin />} path='/editadmin' />
-        <Route element={<EditSubject />} path='/editsubject' />
         <Route element={<EditClass />} path='editclass' />
         <Route element={<EditFaculty />} path='/editfaculty' />
         <Route element={<AddFaculty />} path='/addfaculty' />

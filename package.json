@@ -13,8 +13,6 @@
     "@apollo/client": "^3.7.12",
     "@apollo/space-kit": "^9.11.0",
     "@coreui/coreui": "^4.2.6",
-    "@material-tailwind/html": "^2.0.0",
-    "@material-tailwind/react": "^1.4.2",
     "@reduxjs/toolkit": "^1.9.5",
     "graphql": "^16.6.0",
     "react": "^18.2.0",

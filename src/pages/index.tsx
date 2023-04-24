@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Signin from './Signin';
-import Students from './Students';
 import EditSchedule from './EditSchedule';
 import AddSchedule from './AddSchedule';
 import EditAdmin from './EditAdmin';
@@ -53,8 +52,6 @@ export default function Pages() {
         <Route element={<AddClass />} path='/admindashboard/manageclasses/addclass' />
         <Route element={<EditClass />} path='/admindashboard/manageclasses/editclass/:id' />
 
-
-        <Route element={<Students />} path='/students' />
         <Route element={<EditSchedule />} path='/editschedule' />
         <Route element={<AddSchedule />} path='/addschedule' />
         <Route element={<EditAdmin />} path='/editadmin' />

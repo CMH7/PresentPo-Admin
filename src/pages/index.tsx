@@ -17,6 +17,7 @@ import AddClass from './clss/AddClass';
 import ManageStudents from './students/ManageStudents';
 import AddStudent from './students/AddStudent';
 import ManageSubjects from './subjects/ManageSubjects';
+import ManageFaculties from './faculty/ManageFaculties';
 
 export default function Pages() {
   return (
@@ -33,6 +34,9 @@ export default function Pages() {
         {/* subject routes  */}
         <Route element={<ManageSubjects />} path='/admindashboard/managesubjects' />
         <Route element={<AddSubject />} path='/admindashboard/managesubjects/addsubject' />
+
+        {/* faculty routes  */}
+        <Route element={<ManageFaculties />} path='/admindashboard/managefaculties' />
 
         <Route element={<Students />} path='/students' />
         <Route element={<EditSchedule />} path='/editschedule' />

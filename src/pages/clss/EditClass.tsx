@@ -1,7 +1,13 @@
-import Wrapper from "../components/Wrapper";
-import backIcon from '../assets/left-arrow 1.png';
+import Wrapper from "../../components/Wrapper";
+import backIcon from '../../assets/left-arrow 1.png';
+import { useParams } from "react-router";
+import { Link } from "react-router-dom";
+import { useState } from "react";
 
 export default function EditClass() {
+	const { id } = useParams<{ id: string }>();
+
+	const [saving, setSaving] = useState(false)
   return(
 		<Wrapper>
 			{/* top */}
@@ -9,10 +15,13 @@ export default function EditClass() {
 
 				{/* back button  */}
 				<div className="flex items-center mt-[50px] ml-[100px]">
-					<img className="w-[25px] h-[25px] mr-[30px]" src={backIcon} alt="back icon"
-					/>
+					<Link to='/admindashboard/manageclasses' replace={true} aria-disabled={saving}>
+						<div className="aspect-square w-[25px] h-auto cursor-pointer">
+							<img src={backIcon} alt="chevron left" />
+						</div>
+					</Link>
 					{/* edit label  */}
-					<label className="poppins font-bold text-[40px] text-primary-2">
+					<label className=" ml-[30px] poppins font-bold text-[40px] text-primary-2">
 						Edit Class
 					</label>
 				</div>

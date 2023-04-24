@@ -65,7 +65,7 @@ export default function EditFaculty() {
 
 	const [editFaculty] = useMutation(EDIT_FACULTY_OPS, {
 		onCompleted: (data) => {
-			toast.success(data?.editFaculty?.message, {
+			toast.success(data?.updateFaculty?.message, {
 				position: "top-right",
 				autoClose: 5000,
 				hideProgressBar: false,
@@ -163,21 +163,21 @@ export default function EditFaculty() {
 					<label className="block text-white poppins font-semibold pb-[10px]">
 						First Name
 					</label>
-					<input onChange={(e) => setFirstName(e.target.value)} value={firstName} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="last-name" type="text" placeholder="Enter first name" />
+					<input onChange={(e) => setFirstName(e.target.value)} value={firstName} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter first name" />
 				</div>
 
 				<div className="pb-[50px]">
 					<label className="block text-white poppins font-semibold pb-[10px]">
 						Middle Name
 					</label>
-					<input onChange={(e) => setMiddleName(e.target.value)} value={middleName} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="first-name" type="text" placeholder="Enter middle name" />
+					<input onChange={(e) => setMiddleName(e.target.value)} value={middleName} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter middle name" />
 				</div>
 
 				<div className="pb-[50px]">
 					<label className="block text-white font-semibold pb-[10px]">
 						Last Name
 					</label>
-					<input onChange={(e) => setLastName(e.target.value)} value={lastName} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="middle-name" type="text" placeholder="Enter last name" />
+					<input onChange={(e) => setLastName(e.target.value)} value={lastName} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter last name" />
 				</div>
 			</div>
 
@@ -211,7 +211,7 @@ export default function EditFaculty() {
 			<label className="block text-white font-semibold pb-[10px] flex-none self-center">
 				Credentials
 			</label>
-			<input onChange={(e) => setCredentials(e.target.value)} value={credentials} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="Enter credentials" />
+			<input onChange={(e) => setCredentials(e.target.value)} value={credentials} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter credentials" />
 		</div>
     </Wrapper>
   );

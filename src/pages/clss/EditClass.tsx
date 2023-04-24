@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, gql } from "@apollo/client";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 const EDIT_CLASS_OPS = gql`
 mutation UpdateClass($updateClassId: ID!, $updatedClass: updatedClass!) {

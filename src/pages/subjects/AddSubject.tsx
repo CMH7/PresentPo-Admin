@@ -30,7 +30,7 @@ export default function AddSubject() {
 
 	const [addSubject] = useMutation(ADD_SUBJECT_OPS, {
 		onCompleted: (data) => {
-			toast.success(data?.addStudent?.message, {
+			toast.success(data?.addSubject?.message, {
 				position: "top-right",
 				autoClose: 5000,
 				hideProgressBar: false,

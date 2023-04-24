@@ -311,7 +311,7 @@ export default function ManageStudents() {
                     {/* last name  */}
                     <div className=" h-full w-[200px] shrink-0 flex items-center ">
                       <div className=" poppins font-medium text-[16px] text-primary-2 ">
-                        { stud.name.last }
+                        { stud.name.last } { stud.name.extension }
                       </div>
                     </div>
                     
@@ -372,7 +372,7 @@ export default function ManageStudents() {
                     {/* subjects taken */}
                     <div className=" h-full w-[200px] shrink-0 flex items-center ">
                       <div className=" poppins font-medium text-[16px] text-primary-2 ">
-                        <ul className="list-disc">
+                        <ul className="list-disc list-inside">
                           {
                             studClass.data?.getAllClassWithFilters?.data?.flatMap((classs: Classs) => {
                               return classs?.students?.flatMap(studentID => {

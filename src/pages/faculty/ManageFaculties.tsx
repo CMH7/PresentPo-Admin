@@ -12,28 +12,27 @@ import editIcon from '../../assets/edit (1) 1.png'
 import deleteIcon from '../../assets/delete 1.png'
 import { useEffect, useState } from "react"
 
-const All_STUDENTS = gql`
-  query getAllStudentsWithFilters($filters: studentFilters!) {
-    getAllStudentsWithFilters(filters: $filters) {
+const ALL_FACULTIES = gql`
+  query getAllFacultyWithFilters($filters: facultyFilters) {
+    getAllFacultyWithFilters(filters: $filters) {
       error
       message
       data {
         id
-        school_id
         name {
           first
           middle
           last
           extension
         }
+        credentials
         email
-        sex
       }
     }
   }
 `
 
-const STUDENTS_CLASS = gql`
+const ALL_CLASSES = gql`
   query GetAllClassWithFilters($filters: classFilters) {
     getAllClassWithFilters(filters: $filters) {
       error
@@ -43,7 +42,6 @@ const STUDENTS_CLASS = gql`
         strand
         year
         section
-        students
       }
     }
   }
@@ -56,6 +54,7 @@ const ALL_SCHEDS = gql`
         id
         subject
         class
+        faculty
       }
     }
   }
@@ -73,12 +72,11 @@ const ALL_SUBJECTS = gql`
   }
 `
 
-interface Student {
+interface Faculty {
   id: string
-  school_id: string
   name: Name
   email: string
-  sex: string
+  credentials: string
 }
 
 interface Name {
@@ -93,13 +91,13 @@ interface Classs {
   strand: string
   year: number
   section: string
-  students: string[]
 }
 
 interface Schedule {
   id: string
   subject: string
   class: string
+  faculty: string
 }
 
 interface Subject {
@@ -111,26 +109,26 @@ interface Subject {
 export default function ManageFaculties() {
 
   const [showModal, setShowModal] = useState(false)
-  const [selectedStudent, setSelectedStudent] = useState('')
-  const [studss, setStudss] = useState<Student[]>([])
+  const [selectedFaculty, setSelectedFaculty] = useState('')
+  const [faculties, setFaculties] = useState<Faculty[]>([])
   const [searchValue, setSearchValue] = useState('')
 
-  const { error, loading, data } = useQuery(All_STUDENTS, { variables: { filters: {} } })
-  const studClass = useQuery(STUDENTS_CLASS, { variables: { filters: {} } })
-  const scheds = useQuery(ALL_SCHEDS, { variables: { filters: {} } })
-  const subs = useQuery(ALL_SUBJECTS, { variables: { filters: {} } })
+  const { error, loading, data } = useQuery(ALL_FACULTIES, { variables: { filters: {} } })
+  const classes = useQuery(ALL_CLASSES, { variables: { filters: {} } })
+  const schedules = useQuery(ALL_SCHEDS, { variables: { filters: {} } })
+  const subjects = useQuery(ALL_SUBJECTS, { variables: { filters: {} } })
 
   useEffect(() => {
-    setStudss(data?.getAllStudentsWithFilters?.data)
-  }, [subs.loading])
+    setFaculties(data?.getAllFacultyWithFilters?.data)       
+  }, [subjects.loading])
 
   const searchNow = (searchFor: string) => {
-    setStudss(data?.getAllStudentsWithFilters?.data)
+    setFaculties(data?.getAllFacultyWithFilters?.data)
     if (searchFor !== '' ) {
-      setStudss(studss => studss.filter((student: Student) => {
-        let studentDData = `${student.email} ${student.sex} ${student.school_id} ${student.name.first} ${student.name.middle} ${student.name.last} ${student.name.extension}`.toLowerCase()
-        if ( studentDData.match(searchFor.toLowerCase()) ) {
-          return student
+      setFaculties(faculties => faculties.filter((faculty: Faculty) => {
+        let facultyData = `${faculty.email} ${faculty.name.first} ${faculty.name.middle} ${faculty.name.last} ${faculty.name.extension}`.toLowerCase()
+        if ( facultyData.match(searchFor.toLowerCase()) ) {
+          return faculty
         }
       }))
     }
@@ -145,7 +143,7 @@ export default function ManageFaculties() {
             <div className="w-[500px] h-[205px] bg-white rounded-[20px] flex flex-col items-center pt-[55px] relative">
               {/* message  */}
               <div className="w-[388px] overflow-hidden text-clip text-center">
-                Are you sure you want to delete this student <br /> <span className="italic">{ selectedStudent }</span> ?
+                Are you sure you want to delete this faculty <br /> <span className="italic">{ selectedFaculty }</span> ?
               </div>
 
               {/* divider  */}
@@ -180,7 +178,7 @@ export default function ManageFaculties() {
           </Link>
 
           <div className="ml-[30px] poppins text-[40px] font-bold text-primary-2 select-none">
-            Manage Students
+            Manage Faculties
           </div>
         </div>
 
@@ -203,7 +201,7 @@ export default function ManageFaculties() {
         {/* action buttons  */}
         <div className="flex">
 
-          {/* add student button  */}
+          {/* add faculty button  */}
           <Link to='/admindashboard/managestudents/addstudent' replace={true}>
             <div className="group w-[220px] h-[55px] flex items-center justify-center bg-primary-2 hover:bg-white transition-all rounded-[50px] cursor-pointer">
               {/* icon  */}
@@ -214,22 +212,11 @@ export default function ManageFaculties() {
 
               {/* text  */}
               <div className="ml-[10px] poppins font-semibold text-[20px] text-white group-hover:text-primary-2 select-none">
-                Add Student
+                Add Faculty
               </div>
             </div>
           </Link>
 
-          {/* filter dropdown  */}
-          {/* <div className=" ml-[20px] w-[160px] h-[55px] border-[1px] border-white flex justify-center items-center rounded-[50px] cursor-pointer ">
-
-            <div className=" poppins font-semibold text-[20px] text-white select-none ">
-              Filter
-            </div>
- 
-            <div className=" ml-[10px] aspect-square w-[20px] h-auto ">
-              <img src={tri} alt="dropdown icon" />
-            </div>
-          </div> */}
         </div>
       </div>
 
@@ -244,8 +231,15 @@ export default function ManageFaculties() {
             </div>
           </div>
           
+          {/* credentials  */}
+          <div className=" h-full w-[150px] shrink-0 flex items-center ">
+            <div className=" poppins font-bold text-[20px] text-primary-2 ">
+              Credentials
+            </div>
+          </div>
+          
           {/* last name  */}
-          <div className=" h-full w-[200px] shrink-0 flex items-center ">
+          <div className=" h-full w-[170px] shrink-0 flex items-center ">
             <div className=" poppins font-bold text-[20px] text-primary-2 ">
               Last Name
             </div>
@@ -259,30 +253,23 @@ export default function ManageFaculties() {
           </div>
           
           {/* middle name  */}
-          <div className=" h-full w-[200px] shrink-0 flex items-center ">
+          <div className=" h-full w-[170px] shrink-0 flex items-center ">
             <div className=" poppins font-bold text-[20px] text-primary-2 ">
               Middle Name
             </div>
           </div>
 
-          {/* strand  */}
-          <div className=" h-full w-[150px] shrink-0 flex items-center ">
+          {/* subject handled  */}
+          <div className=" h-full w-[230px] shrink-0 flex items-center ">
             <div className=" poppins font-bold text-[20px] text-primary-2  ">
-              Strand
+              Subjects Handled
             </div>
           </div>
           
-          {/* year and section */}
-          <div className=" h-full w-[200px] shrink-0 flex items-center ">
+          {/* classes handled */}
+          <div className=" h-full w-[230px] shrink-0 flex items-center ">
             <div className=" poppins font-bold text-[20px] text-primary-2 ">
-              Year & Section
-            </div>
-          </div>
-          
-          {/* year and section */}
-          <div className=" h-full w-[200px] shrink-0 flex items-center ">
-            <div className=" poppins font-bold text-[20px] text-primary-2 ">
-              Subjects Taken
+              Classes Handled
             </div>
           </div>
           
@@ -296,98 +283,78 @@ export default function ManageFaculties() {
 
         </div>
         <div className={`w-full ${loading ? 'h-full flex flex-col justify-center items-center' : 'h-fit'}`}>
-          <QueryResult error={error || studClass.error || scheds.error || subs.error} loading={loading || studClass.loading || scheds.loading || subs.loading} data={data || studClass.data || scheds.data || subs.data}>
+          <QueryResult error={error || classes.error || schedules.error || subjects.error} loading={loading || classes.loading || schedules.loading || subjects.loading} data={data || classes.data || schedules.data || subjects.data}>
             {
-              studss?.map((stud: Student, i: number) => {
+              faculties?.map((faculty: Faculty, fi: number) => {
                 return (
-                  <div key={stud.id} className=" w-full h-fit py-[15px] bg-white hover:bg-gray-200 mb-[2px] flex items-center px-[20px] relative overflow-hidden group transition-all ">
+                  <div key={faculty.id} className=" w-full h-fit py-[15px] bg-white hover:bg-gray-200 mb-[2px] flex items-center px-[20px] relative overflow-hidden group transition-all ">
                     {/* No.  */}
                     <div className=" h-full w-[50px] shrink-0 flex items-center ">
                       <div className=" poppins font-medium text-[16px] text-primary-2 ">
-                        { i + 1 }
+                        { fi + 1 }
+                      </div>
+                    </div>
+                    
+                    {/* credentials  */}
+                    <div className=" h-full w-[150px] shrink-0 flex items-center ">
+                      <div className=" poppins font-medium text-[16px] text-primary-2 ">
+                        { faculty.credentials }
                       </div>
                     </div>
                     
                     {/* last name  */}
-                    <div className=" h-full w-[200px] shrink-0 flex items-center ">
+                    <div className=" h-full w-[170px] shrink-0 flex items-center ">
                       <div className=" poppins font-medium text-[16px] text-primary-2 ">
-                        { stud.name.last }
+                        { faculty.name.last } { faculty.name.extension }
                       </div>
                     </div>
                     
                     {/* first name  */}
                     <div className=" h-full w-[200px] shrink-0 flex items-center ">
                       <div className=" poppins font-medium text-[16px] text-primary-2 ">
-                        { stud.name.first }
+                        { faculty.name.first }
                       </div>
                     </div>
                     
                     {/* middle name  */}
-                    <div className=" h-full w-[200px] shrink-0 flex items-center ">
+                    <div className=" h-full w-[170px] shrink-0 flex items-center ">
                       <div className=" poppins font-medium text-[16px] text-primary-2 ">
-                        { stud.name.middle }
+                        { faculty.name.middle ? faculty.name.middle : '-' }
                       </div>
                     </div>
 
-                    {/* strand  */}
-                    <div className=" h-full w-[150px] shrink-0 flex items-center ">
+                    {/* subjects handled  */}
+                    <div className=" h-full w-[230px] shrink-0 flex items-center ">
                       <div className=" poppins font-medium text-[16px] text-primary-2  ">
-                        {
-                          studClass.data?.getAllClassWithFilters?.data?.filter((classs: Classs) => {
-                            return classs?.students?.map(id => {
-                              if (id.match(stud.id)) {
-                                return classs
-                              }
-                            })[0]
-                          })[0]?.strand
-                        }
-                      </div>
-                    </div>
-                    
-                    {/* year and section */}
-                    <div className=" h-full w-[200px] shrink-0 flex items-center ">
-                      <div className=" poppins font-medium text-[16px] text-primary-2 flex ">
-                        {
-                          studClass.data?.getAllClassWithFilters?.data?.filter((classs: Classs) => {
-                            return classs?.students?.map(id => {
-                              if (id.match(stud.id)) {
-                                return classs
-                              }
-                            })[0]
-                          })[0]?.year
-                        }
-                        -
-                        {
-                          studClass.data?.getAllClassWithFilters?.data?.filter((classs: Classs) => {
-                            return classs?.students?.map(id => {
-                              if (id.match(stud.id)) {
-                                return classs
-                              }
-                            })[0]
-                          })[0]?.section
-                        }
-                      </div>
-                    </div>
-                    
-                    {/* subjects taken */}
-                    <div className=" h-full w-[200px] shrink-0 flex items-center ">
-                      <div className=" poppins font-medium text-[16px] text-primary-2 ">
-                        <ul className="list-disc">
+                        <ul className="list-disc list-inside">
                           {
-                            studClass.data?.getAllClassWithFilters?.data?.flatMap((classs: Classs) => {
-                              return classs?.students?.flatMap(studentID => {
-                                if (studentID.match(stud.id) || stud.id.match(studentID)) {
-                                  return scheds.data?.getAllSchedulesWithFilters?.data?.flatMap((schedule: Schedule) => {
-                                    if (classs.id.match(schedule.class) || schedule.class.match(classs.id)) {
-                                      return subs.data?.getAllSubjectsWithFilters?.data?.flatMap((subject: Subject) => {
-                                        if (schedule.subject.match(subject.id) || subject.id.match(schedule.subject)) {
-                                          return <li key={`${schedule.id}${i}`}> {subject.name} </li>;
-                                        }
-                                      })
-                                    }
-                                  })
-                                }
-                              })
+                            schedules.data?.getAllSchedulesWithFilters?.data?.flatMap((schedule: Schedule) => {
+                              if (faculty.id.match(schedule.faculty) || schedule.faculty.match(faculty.id)) {
+                                return subjects.data?.getAllSubjectsWithFilters?.data?.flatMap((subject: Subject) => {
+                                  if (schedule.subject.match(subject.id) || subject.id.match(schedule.subject)) {
+                                    return <li key={`${faculty.id}${schedule.id}${subject.id}${fi}`} >({subject.code}) { subject.name } </li>
+                                  }
+                                })
+                              }
+                            })
+                          }
+                        </ul>
+                      </div>
+                    </div>
+                    
+                    {/* classes handled */}
+                    <div className=" h-full w-[230px] shrink-0 flex items-center ">
+                      <div className=" poppins font-medium text-[16px] text-primary-2 ">
+                        <ul className="list-disc list-inside">
+                          {
+                            schedules.data?.getAllSchedulesWithFilters?.data?.flatMap((schedule: Schedule) => {
+                              if (faculty.id.match(schedule.faculty) || schedule.faculty.match(faculty.id)) {
+                                return classes.data?.getAllClassWithFilters?.data?.flatMap((classs: Classs) => {
+                                  if (schedule.class.match(classs.id) || classs.id.match(schedule.class)) {
+                                    return <li key={`${faculty.id}${schedule.id}${classs.id}${fi}`} > {classs.strand} {classs.year}-{classs.section} </li>
+                                  }
+                                })
+                              }
                             })
                           }
                         </ul>
@@ -397,14 +364,14 @@ export default function ManageFaculties() {
                     {/* email */}
                     <div className=" h-full grow flex items-center ">
                       <div className=" poppins font-medium text-[16px] text-primary-2 ">
-                        { stud.email }
+                        { faculty.email }
                       </div>
                     </div>
 
                     {/* actions  */}
                     <div className="absolute z-10 top-0 -right-[200px] group-hover:right-0 transition-all w-fit h-full flex items-center">
                       {/* edit student  */}
-                      <Link className="w-[55px] h-full" to={`/admindashboard/managestudents/editstudent/${stud.id}`}>
+                      <Link className="w-[55px] h-full" to={`/admindashboard/managefaculties/editfaculties/${faculty.id}`}>
                         <div className=" w-full h-full bg-primary-1 flex items-center justify-center cursor-pointer ">
                           <div className="aspect-square w-[20px] h-auto">
                             <img src={editIcon} alt="edit icon" />
@@ -414,7 +381,7 @@ export default function ManageFaculties() {
 
                       {/* delete student  */}
                       <div onClick={() => {
-                        setSelectedStudent(`(${stud.school_id}) ${stud.name.first} ${stud.name.middle.charAt(0)}${stud.name.middle !== '' ? '.' : ''} ${stud.name.last} ${stud.name.extension}`)
+                        setSelectedFaculty(`${faculty.name.first} ${faculty.name.middle.charAt(0)}${faculty.name.middle !== '' ? '.' : ''} ${faculty.name.last} ${faculty.name.extension}`)
                         setShowModal(true)
                       }} className=" w-[55px] h-full bg-[#D80000] flex items-center justify-center cursor-pointer ">
                         <div className="aspect-square w-[20px] h-auto">

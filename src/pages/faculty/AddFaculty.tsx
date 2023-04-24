@@ -71,22 +71,26 @@ export default function AddFaculty() {
 	})
 
   return(
-    <Wrapper>
-        {/* top */}
-        <div className="flex justify-between">
-
+		<Wrapper>
+			{/* top */}
+      <div className="flex justify-between">
 		    {/* back button  */}
-			<div className="flex items-center mt-[50px] ml-[100px]">
-				<img className="w-[25px] h-[25px] mr-[30px]" src={backIcon} alt="back icon" />
+				<div className="flex items-center mt-[50px] ml-[100px]">
+					<Link to='/admindashboard/managefaculties' replace={true} aria-disabled={adding}>
+						<div className="aspect-square w-[25px] h-auto cursor-pointer">
+							<img src={backIcon} alt="chevron left" />
+						</div>
+					</Link>
 					
-                {/* add label  */}
-				<label className="poppins font-bold text-[40px] text-primary-2">
-					Add Faculty
-				</label>
+          {/* add label  */}
+					<label className=" ml-[30px] poppins font-bold text-[40px] text-primary-2">
+						Add Faculty
+					</label>
 			</div> 
 
 			{/* add button */}
-			<button onClick={() => {
+			<button
+				onClick={() => {
 					if (firstName === '' || lastName === '' ) {
 						toast.error('Invalid inputs', {
 							position: "top-right",
@@ -102,7 +106,9 @@ export default function AddFaculty() {
 					}
 					setAdding(true)
 					addFaculty({ variables: { newFaculty: { name: { middle: middleName, first: firstName, last: lastName, extension: extension }, credentials: credentials, email: email, password: password } } })
-				}} className="flex justify-center items-center mt-[50px] mr-[100px] bg-[#11CF00] hover:bg-[#1672ec] text-white font-semibold py-2 px-20 rounded-full focus:outline-none focus:shadow-outline w-[218px] h-[55px]" type="submit">
+				}}
+				className="flex justify-center items-center mt-[50px] mr-[100px] bg-[#11CF00] hover:bg-[#1672ec] text-white font-semibold py-2 px-20 rounded-full focus:outline-none focus:shadow-outline w-[218px] h-[55px]" type="submit"
+			>
 					{
 						adding ?
 							<div>
@@ -114,12 +120,11 @@ export default function AddFaculty() {
 							</div>
 					}
 			</button>
-        </div>
+    </div>
 
-        {/* add 2 columns */}
-        <div className=" grid grid-cols-2 gap-x-[160px] poppins px-80 mt-[94px]">
-                
-			{/* column 1 */}
+    {/* add 2 columns */}
+    <div className=" grid grid-cols-2 gap-x-[160px] poppins px-80 mt-[94px]">
+    	{/* column 1 */}
 			<div className="col-span-1">
 				<div className="pb-[50px]">
 					<label className="block text-white poppins font-semibold pb-[10px]">

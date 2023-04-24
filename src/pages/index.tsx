@@ -1,23 +1,30 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Signin from './Signin';
-import Students from './Students';
 import EditSchedule from './EditSchedule';
 import AddSchedule from './AddSchedule';
 import EditAdmin from './EditAdmin';
-import EditSubject from './subjects/EditSubject';
-import AddSubject from './subjects/AddSubject';
-import EditClass from './clss/EditClass';
 import EditStudent from './students/EditStudent';
-import EditFaculty from './faculty/EditFaculty';
-import AddFaculty from './faculty/AddFaculty';
 import AdminDashboard from './AdminDashboard';
-import AddClass from './clss/AddClass';
 
 // students pages 
 import ManageStudents from './students/ManageStudents';
 import AddStudent from './students/AddStudent';
-import ManageSubjects from './subjects/ManageSubjects';
+
+// faculties pages
 import ManageFaculties from './faculty/ManageFaculties';
+import AddFaculty from './faculty/AddFaculty';
+import EditFaculty from './faculty/EditFaculty';
+
+// subjects pages
+import ManageSubjects from './subjects/ManageSubjects';
+import AddSubject from './subjects/AddSubject';
+import EditSubject from './subjects/EditSubject';
+
+// class pages
+import ManageClasses from './clss/ManageClasses';
+import AddClass from './clss/AddClass';
+import EditClass from './clss/EditClass';
+import ManageClassStudents from './clss/ManageCLassStudents';
 
 export default function Pages() {
   return (
@@ -41,12 +48,15 @@ export default function Pages() {
         <Route element={<EditFaculty />} path='/admindashboard/managefaculties/editfaculty/:id' />
         <Route element={<AddFaculty />} path='/addfaculty' />
 
-        <Route element={<Students />} path='/students' />
+        {/* class routes  */}
+        <Route element={<ManageClasses />} path='/admindashboard/manageclasses' />
+        <Route element={<AddClass />} path='/admindashboard/manageclasses/addclass' />
+        <Route element={<EditClass />} path='/admindashboard/manageclasses/editclass/:id' />
+        <Route element={<ManageClassStudents />} path='/admindashboard/manageclasses/:id/manageclassstudents' />
+
         <Route element={<EditSchedule />} path='/editschedule' />
         <Route element={<AddSchedule />} path='/addschedule' />
         <Route element={<EditAdmin />} path='/editadmin' />
-        <Route element={<EditClass />} path='/admindashboard/manageclasses/editclass/:id' />
-        <Route element={<AddClass />} path='/addclass' />
       </Routes>
     </BrowserRouter>
   )

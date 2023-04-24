@@ -8,7 +8,7 @@ import EditSubject from './subjects/EditSubject';
 import AddSubject from './subjects/AddSubject';
 import EditClass from './EditClass';
 import EditStudent from './students/EditStudent';
-import EditFaculty from './EditFaculty';
+import EditFaculty from './faculty/EditFaculty';
 import AddFaculty from './faculty/AddFaculty';
 import AdminDashboard from './AdminDashboard';
 import AddClass from './clss/AddClass';
@@ -38,14 +38,14 @@ export default function Pages() {
 
         {/* faculty routes  */}
         <Route element={<ManageFaculties />} path='/admindashboard/managefaculties' />
+        <Route element={<EditFaculty />} path='/admindashboard/managefaculties/editfaculty/:id' />
+        <Route element={<AddFaculty />} path='/addfaculty' />
 
         <Route element={<Students />} path='/students' />
         <Route element={<EditSchedule />} path='/editschedule' />
         <Route element={<AddSchedule />} path='/addschedule' />
         <Route element={<EditAdmin />} path='/editadmin' />
         <Route element={<EditClass />} path='editclass' />
-        <Route element={<EditFaculty />} path='/editfaculty' />
-        <Route element={<AddFaculty />} path='/addfaculty' />
         <Route element={<AddClass />} path='/addclass' />
       </Routes>
     </BrowserRouter>

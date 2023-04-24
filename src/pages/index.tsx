@@ -16,6 +16,7 @@ import AddClass from './AddClass';
 // students pages 
 import ManageStudents from './students/ManageStudents';
 import AddStudent from './students/AddStudent';
+import ManageSubjects from './subjects/ManageSubjects';
 
 export default function Pages() {
   return (
@@ -30,6 +31,7 @@ export default function Pages() {
         <Route element={<EditStudent />} path='/admindashboard/managestudents/editstudent/:id' />
         
         {/* subject routes  */}
+        <Route element={<ManageSubjects />} path='/admindashboard/managesubjects' />
         <Route element={<AddSubject />} path='/admindashboard/managesubjects/addsubject' />
 
         <Route element={<Students />} path='/students' />

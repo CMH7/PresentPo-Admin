@@ -7,7 +7,6 @@ import EditAdmin from './EditAdmin';
 import EditSubject from './subjects/EditSubject';
 import AddSubject from './subjects/AddSubject';
 import EditClass from './EditClass';
-import EditStudent from './students/EditStudent';
 import EditFaculty from './EditFaculty';
 import AddFaculty from './faculty/AddFaculty';
 import AdminDashboard from './AdminDashboard';
@@ -16,6 +15,7 @@ import AddClass from './clss/AddClass';
 // students pages 
 import ManageStudents from './students/ManageStudents';
 import AddStudent from './students/AddStudent';
+import EditStudent from './students/EditStudent';
 import ManageSubjects from './subjects/ManageSubjects';
 import ManageFaculties from './faculty/ManageFaculties';
 

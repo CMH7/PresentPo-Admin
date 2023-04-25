@@ -4,6 +4,7 @@ import { useState } from "react";
 import { gql,useMutation } from "@apollo/client";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
+import { Link } from "react-router-dom";
 
 const ADD_SUBJECT_OPS = gql`
 	mutation AddSubject($subject: newSubject!) {
@@ -52,8 +53,11 @@ export default function AddSubject() {
 
 			{/* back button  */}
 			<div className="flex items-center mt-[50px] ml-[100px]">
-				<img className="w-[25px] h-[25px] mr-[30px]" src={backIcon} alt="back icon"
-				/>
+				<Link to='/admindashboard/managesubjects' replace={true}>
+					<div className="aspect-square w-[25px] h-auto cursor-pointer">
+						<img src={backIcon} alt="chevron left" />
+					</div>
+				</Link>
 
 				{/* add label  */}
 				<label className="poppins font-bold text-[40px] text-primary-2">

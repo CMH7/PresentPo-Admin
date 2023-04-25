@@ -124,7 +124,7 @@ export default function ManageSubjects() {
         <div className="flex">
 
           {/* add student button  */}
-          <Link to='/admindashboard/managestudents/addstudent' replace={true}>
+          <Link to='/admindashboard/managesubjects/addsubject' replace={true}>
             <div className="group w-[220px] h-[55px] flex items-center justify-center bg-primary-2 hover:bg-white transition-all rounded-[50px] cursor-pointer">
               {/* icon  */}
               <div className="aspect-square w-[20px] h-auto ">
@@ -134,7 +134,7 @@ export default function ManageSubjects() {
 
               {/* text  */}
               <div className="ml-[10px] poppins font-semibold text-[20px] text-white group-hover:text-primary-2 select-none">
-                Add Student
+                Add Subject
               </div>
             </div>
           </Link>

@@ -1,6 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 interface AdminState {
+	id: string
 	name: AdminNameState
 	email: string
 	password: string
@@ -14,6 +15,7 @@ type AdminNameState = {
 }
 
 const initialState = {
+	id: "",
 	email: "",
 	password: "",
 	name: {

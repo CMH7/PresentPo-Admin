@@ -18,11 +18,15 @@ import logout1 from '../assets/logout 1.png';
 import { useNavigate } from "react-router";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectAdmin } from "../selectors";
 
 /*stated na page na yung 'Admin Dashboard'
 after this, go to index.tsx to import the page*/
 export default function AdminDashboard() {
   const [showModal, setShowModal] = useState(false)
+
+  const admin = useSelector(selectAdmin)
 
   const navigate = useNavigate()
 
@@ -158,12 +162,14 @@ export default function AdminDashboard() {
 
             {/* admin account */}
             <div className="flex flex-col">
-              <div className="flex mt-[50px] ml-[128px] mb-[15px] w-[70px] h-[70px]">
-                <img src={account1} alt="account1"/>
-              </div>
-              <div className="flex poppins font-bold text-[16px] justify-center text-primary-2">
-                Username
-              </div> 
+              <Link to='/admindashboard/editadmin'>
+                <div className="flex mt-[50px] ml-[128px] mb-[15px] w-[70px] h-[70px]">
+                  <img src={account1} alt="account1"/>
+                </div>
+                <div className="flex poppins font-bold text-[16px] justify-center text-primary-2">
+                  {admin.name.first} {admin.name.middle.charAt(0)} {admin.name.last} {admin.name.extension}
+                </div> 
+              </Link>
 
               <button onClick={() => setShowModal(true)} className="group flex justify-center items-center ml-[22px] mt-[30px] mr-[100px] bg-transparent hover:bg-primary-2 text-primary-2 hover:text-white font-semibold rounded-full border-[2px] border-[#072D5F] focus:outline-none focus:shadow-outline w-[283px] h-[55px]" type="submit">
                 <div className="flex w-[20px] h-[20px] mr-[10px]">

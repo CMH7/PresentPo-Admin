@@ -60,7 +60,7 @@ export default function AddSubject() {
 				</Link>
 
 				{/* add label  */}
-				<label className="poppins font-bold text-[40px] text-primary-2">
+				<label className=" ml-[30px] poppins font-bold text-[40px] text-primary-2">
 					Add Subject
 				</label>
 			</div>

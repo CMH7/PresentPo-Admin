@@ -100,7 +100,7 @@ export default function ManageSubjects() {
           </Link>
 
           <div className="ml-[30px] poppins text-[40px] font-bold text-primary-2 select-none">
-            Manage Students
+            Manage Subjects
           </div>
         </div>
 

@@ -56,7 +56,7 @@ export default function Pages() {
 
         <Route element={<EditSchedule />} path='/editschedule' />
         <Route element={<AddSchedule />} path='/addschedule' />
-        <Route element={<EditAdmin />} path='/editadmin' />
+        <Route element={<EditAdmin />} path='/admindashboard/editadmin' />
       </Routes>
     </BrowserRouter>
   )

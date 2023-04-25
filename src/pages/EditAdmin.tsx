@@ -1,9 +1,117 @@
 import Wrapper from "../components/Wrapper";
 import backIcon from '../assets/left-arrow 1.png'
+import { useNavigate, useParams } from "react-router";
+import { useEffect, useState } from "react";
+import { gql, useMutation, useQuery } from "@apollo/client";
+import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { selectAdmin } from "../selectors";
+import { Link } from "react-router-dom";
+import chevronLeft from '../assets/left-arrow 1.png'
+import { setAdmin } from "../features/admins/adminsSlice";
+
+const EDIT_ADMIN_OPS = gql`
+mutation UpdateAdmin($updateAdminId: ID!, $updatedAdmin: updatedAdmin!) {
+  updateAdmin(id: $updateAdminId, updatedAdmin: $updatedAdmin) {
+    error
+    message
+    data {
+      id
+      name {
+        first
+        middle
+        last
+        extension
+      }
+      email
+      password
+    }
+  }
+}
+`
+
+const GET_ADMIN_QUERY = gql`
+query GetClass($getAdminId: ID!) {
+  getAdmin(id: $getAdminId) {
+    error
+    message
+    data {
+      id
+      name {
+        first
+        middle
+        last
+        extension
+      }
+      email
+      password
+    }
+  }
+}
+`
 
 /*stated na page na yung 'Edit Admin'
 after this, go to index.tsx to import the page*/
 export default function EditAdmin() {
+	//@ts-ignore
+	const admin = JSON.parse(localStorage.getItem('admin'))
+	const dispatch = useDispatch()
+
+	const [firstname, setFirstName] = useState('')
+	const [middlename, setMiddleName] = useState('')
+	const [lastname, setLastName] = useState('')
+	const [extension, setExtension] = useState('')
+	const [email, setEmail] = useState('')
+	const [password, setPassword] = useState('')
+	const [saving, setSaving] = useState(false)
+	const navigate = useNavigate()
+
+	const { error, loading, data } = useQuery(GET_ADMIN_QUERY, { variables: { getAdminId: admin.id } } )
+
+	const [editAdmin] = useMutation(EDIT_ADMIN_OPS, {
+		onCompleted: (data) => {
+			toast.success(data?.updateAdmin?.message, {
+				position: "top-right",
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
+			dispatch(setAdmin({id: admin.id, name: { first: firstname, middle: middlename, last: lastname, extension: extension }, email, password }))
+			localStorage.clear()
+			localStorage.setItem('admin', JSON.stringify({id: admin.id, name: { first: firstname, middle: middlename, last: lastname, extension: extension }, email, password }))
+			setSaving(false)
+			navigate('/admindashboard', {replace: true})
+		},
+		onError: (e) => {
+			toast.error(`${e}`, {
+				position: "top-right",
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
+			setSaving(false)
+		}
+	})
+
+	useEffect(() => {
+		console.log(data);
+		
+		setFirstName(admin.name.first)
+		setMiddleName(admin.name.middle)
+		setLastName(admin.name.last)
+		setExtension(admin.name.extension)
+		setEmail(admin.email)
+		setPassword(admin.password)
+	}, [])
+
   return(
     <Wrapper>
 		{/* top */}
@@ -11,18 +119,42 @@ export default function EditAdmin() {
 
 			{/* back button  */}
 			<div className="flex items-center mt-[50px] ml-[100px]">
-				<img className="w-[25px] h-[25px] mr-[30px]" src={backIcon} alt="back icon"
-				/>
+			<Link to='/admindashboard' replace={true}>
+				<div className="aspect-square w-[25px] h-auto cursor-pointer">
+				<img src={chevronLeft} alt="chevron left" />
+				</div>
+			</Link>
 
 				{/* edit label  */}
-				<label className="poppins font-bold text-[40px] text-primary-2">
+				<label className=" ml-[30px] poppins font-bold text-[40px] text-primary-2">
 					Edit Admin
 				</label>
 			</div>
 
 			{/* save button */}
-			<button className="flex justify-center items-center mt-[50px] mr-[100px] bg-[#11CF00] hover:bg-[#1672ec] text-white font-semibold py-2 px-20 rounded-full focus:outline-none focus:shadow-outline w-[218px] h-[55px]" type="submit">
-				Save
+			<button onClick={() => {
+					if (firstname === '' || lastname === '' || email === '' || password === '') {
+						toast.error('Invalid inputs', {
+							position: "top-right",
+							autoClose: 5000,
+							hideProgressBar: false,
+							closeOnClick: true,
+							pauseOnHover: true,
+							draggable: true,
+							progress: undefined,
+							theme: "light",
+						});
+						return
+					}
+					setSaving(true)
+					editAdmin({ variables: {updateAdminId: admin.id, updatedAdmin: {email: email, name: {extension: extension,first: firstname,last: lastname ,middle: middlename}, password: password} } })
+				}} className="flex justify-center items-center mt-[50px] mr-[100px] bg-[#11CF00] hover:bg-[#1672ec] text-white font-semibold py-2 px-20 rounded-full focus:outline-none focus:shadow-outline w-[218px] h-[55px]" type="submit">
+					{
+					saving ?
+					<div>saving...</div>
+					:
+					<div>Save</div>
+				}	
 			</button>
       	</div>
 
@@ -35,7 +167,7 @@ export default function EditAdmin() {
 					<label className="block text-white poppins font-semibold pb-[10px]">
 						First Name
 					</label>
-						<input className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="last-name" type="text" placeholder="Enter first name"
+						<input onChange={(e) => setFirstName(e.target.value)} value={firstname} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="last-name" type="text" placeholder="Enter first name"
 						/>
 				</div>
 
@@ -43,7 +175,7 @@ export default function EditAdmin() {
 					<label className="block text-white poppins font-semibold pb-[10px]">
 						Middle Name
 					</label>
-					<input className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="first-name" type="text" placeholder="Enter middle name"
+					<input onChange={(e) => setMiddleName(e.target.value)} value={middlename} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="first-name" type="text" placeholder="Enter middle name"
 					/>
 				</div>
 
@@ -51,7 +183,7 @@ export default function EditAdmin() {
 					<label className="block text-white font-semibold pb-[10px]">
 						Last Name
 					</label>
-					<input className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="middle-name" type="text" placeholder="Enter last name"
+					<input onChange={(e) => setLastName(e.target.value)} value={lastname} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="middle-name" type="text" placeholder="Enter last name"
 					/>
 				</div>
 			</div>
@@ -60,9 +192,9 @@ export default function EditAdmin() {
 			<div className="col-span-1">
 				<div className="pb-[50px]">
 					<label className="block text-white font-semibold pb-[10px]">
-						Username
+						Name Extension
 					</label>
-					<input className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="sections-handled" type="text" placeholder="Enter username"
+					<input onChange={(e) => setExtension(e.target.value)} value={extension} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="middle-name" type="text" placeholder="Enter name extension"
 					/>
 				</div>
 
@@ -70,7 +202,7 @@ export default function EditAdmin() {
 					<label className="block text-white font-semibold pb-[10px]">
 						Email
 					</label>
-					<input className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="Enter email address"
+					<input onChange={(e) => setEmail(e.target.value)} value={email} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="Enter email address"
 					/>
 				</div>
 
@@ -78,7 +210,7 @@ export default function EditAdmin() {
 					<label className="block text-white font-semibold pb-[10px]">
 						Password
 					</label>
-					<input className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="Enter password"
+					<input onChange={(e) => setPassword(e.target.value)} value={password} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="password" type="text" placeholder="Enter password"
 					/>
 				</div>
 			</div>

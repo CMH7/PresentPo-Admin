@@ -202,7 +202,7 @@ export default function ManageFaculties() {
         <div className="flex">
 
           {/* add faculty button  */}
-          <Link to='/admindashboard/managestudents/addstudent' replace={true}>
+          <Link to='/admindashboard/managefaculties/addfaculty' replace={true}>
             <div className="group w-[220px] h-[55px] flex items-center justify-center bg-primary-2 hover:bg-white transition-all rounded-[50px] cursor-pointer">
               {/* icon  */}
               <div className="aspect-square w-[20px] h-auto ">

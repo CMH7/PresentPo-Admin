@@ -163,7 +163,11 @@ export default function EditFaculty() {
 					<label className="block text-white poppins font-semibold pb-[10px]">
 						First Name
 					</label>
-					<input onChange={(e) => setFirstName(e.target.value)} value={firstName} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter first name" />
+						<input onChange={(e) => {
+							setFirstName(e.target.value)
+							setEmail(`${e.target.value.split(' ').join('').toLowerCase()}${lastName.split(' ').join('').toLowerCase()}.faculty@present.po`)
+							setPassword(`${e.target.value.split(' ').join('').toLowerCase()}${lastName.split(' ').join('').toLowerCase()}`)
+						}} value={firstName} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter first name" />
 				</div>
 
 				<div className="pb-[50px]">
@@ -177,7 +181,11 @@ export default function EditFaculty() {
 					<label className="block text-white font-semibold pb-[10px]">
 						Last Name
 					</label>
-					<input onChange={(e) => setLastName(e.target.value)} value={lastName} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter last name" />
+						<input onChange={(e) => {
+							setLastName(e.target.value)
+							setEmail(`${firstName.split(' ').join('').toLowerCase()}${e.target.value.split(' ').join('').toLowerCase()}.faculty@present.po`)
+							setPassword(`${firstName.split(' ').join('').toLowerCase()}${e.target.value.split(' ').join('').toLowerCase()}`)
+						}} value={lastName} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter last name" />
 				</div>
 			</div>
 

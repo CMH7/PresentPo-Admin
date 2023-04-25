@@ -46,7 +46,7 @@ export default function Pages() {
         {/* faculty routes  */}
         <Route element={<ManageFaculties />} path='/admindashboard/managefaculties' />
         <Route element={<EditFaculty />} path='/admindashboard/managefaculties/editfaculty/:id' />
-        <Route element={<AddFaculty />} path='/addfaculty' />
+        <Route element={<AddFaculty />} path='/admindashboard/managefaculties/addfaculty' />
 
         {/* class routes  */}
         <Route element={<ManageClasses />} path='/admindashboard/manageclasses' />

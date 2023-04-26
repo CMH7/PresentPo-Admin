@@ -105,6 +105,12 @@ export default function EditFaculty() {
 		setPassword(data?.getFaculty?.data?.password)
 	}, [data])
 
+	useEffect(() => {
+    if (localStorage.getItem('admin') == null) {
+      navigate('/', {replace: true})
+    }
+  }, [])
+
   return(
     <Wrapper>
 		{/* top */}

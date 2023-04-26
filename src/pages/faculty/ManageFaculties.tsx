@@ -5,7 +5,7 @@ import plusPrim from '../../assets/plus prim.png'
 import tri from '../../assets/down 1.png'
 import searchIcon from '../../assets/search 1.png'
 import searchInac from '../../assets/searchInactive.png'
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { gql, useQuery } from "@apollo/client"
 import QueryResult from "../../components/QueryResult"
 import editIcon from '../../assets/edit (1) 1.png'
@@ -112,6 +112,7 @@ export default function ManageFaculties() {
   const [selectedFaculty, setSelectedFaculty] = useState('')
   const [faculties, setFaculties] = useState<Faculty[]>([])
   const [searchValue, setSearchValue] = useState('')
+  const navigate = useNavigate()
 
   const { error, loading, data } = useQuery(ALL_FACULTIES, { variables: { filters: {} } })
   const classes = useQuery(ALL_CLASSES, { variables: { filters: {} } })
@@ -121,6 +122,12 @@ export default function ManageFaculties() {
   useEffect(() => {
     setFaculties(data?.getAllFacultyWithFilters?.data)       
   }, [subjects.loading])
+
+  useEffect(() => {
+    if (localStorage.getItem('admin') == null) {
+      navigate('/', {replace: true})
+    }
+  }, [])
 
   const searchNow = (searchFor: string) => {
     setFaculties(data?.getAllFacultyWithFilters?.data)

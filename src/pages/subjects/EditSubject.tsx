@@ -43,7 +43,13 @@ export default function EditSubject() {
 	const [saving, setSaving] = useState(false)
 	const navigate = useNavigate()
 
-	const { error, loading, data } = useQuery(GET_SUBJECT_QUERY, { variables: { getSubjectId: id }})
+	const { error, loading, data } = useQuery(GET_SUBJECT_QUERY, { variables: { getSubjectId: id } })
+	
+	useEffect(() => {
+    if (localStorage.getItem('admin') == null) {
+      navigate('/', {replace: true})
+    }
+  }, [])
 
 	const [editSubject] = useMutation(EDIT_SUBJECT_OPS, {
 		onCompleted: (data) => {

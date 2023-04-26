@@ -96,9 +96,10 @@ export default function AdminDashboard() {
   }
 
   useEffect(() => {
-    console.log(students.data);
-    
-  }, [students.data])
+    if (localStorage.getItem('admin') == null) {
+      navigate('/', {replace: true})
+    }
+  }, [])
 
   return(
     <Wrapper>

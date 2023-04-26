@@ -5,7 +5,7 @@ import plusPrim from '../../assets/plus prim.png'
 import tri from '../../assets/down 1.png'
 import searchIcon from '../../assets/search 1.png'
 import searchInac from '../../assets/searchInactive.png'
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { gql, useQuery } from "@apollo/client"
 import QueryResult from "../../components/QueryResult"
 import editIcon from '../../assets/edit (1) 1.png'
@@ -114,6 +114,7 @@ export default function ManageStudents() {
   const [selectedStudent, setSelectedStudent] = useState('')
   const [studss, setStudss] = useState<Student[]>([])
   const [searchValue, setSearchValue] = useState('')
+  const navigate = useNavigate()
 
   const { error, loading, data } = useQuery(All_STUDENTS, { variables: { filters: {} } })
   const studClass = useQuery(STUDENTS_CLASS, { variables: { filters: {} } })
@@ -123,6 +124,12 @@ export default function ManageStudents() {
   useEffect(() => {
     setStudss(data?.getAllStudentsWithFilters?.data)
   }, [subs.loading])
+
+  useEffect(() => {
+    if (localStorage.getItem('admin') == null) {
+      navigate('/', {replace: true})
+    }
+  }, [])
 
   const searchNow = (searchFor: string) => {
     setStudss(data?.getAllStudentsWithFilters?.data)

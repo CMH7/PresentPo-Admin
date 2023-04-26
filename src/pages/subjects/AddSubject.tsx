@@ -1,6 +1,6 @@
 import Wrapper from "../../components/Wrapper";
 import backIcon from '../../assets/left-arrow 1.png'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { gql,useMutation } from "@apollo/client";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
@@ -28,6 +28,12 @@ export default function AddSubject() {
 	const [subjectName, setSubjectName] = useState('')
 	const [adding, setAdding] = useState(false)
 	const navigate = useNavigate()
+
+	useEffect(() => {
+    if (localStorage.getItem('admin') == null) {
+      navigate('/', {replace: true})
+    }
+  }, [])
 
 	const [addSubject] = useMutation(ADD_SUBJECT_OPS, {
 		onCompleted: (data) => {

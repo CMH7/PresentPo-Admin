@@ -91,6 +91,12 @@ export default function EditClass() {
 		setSemester(data?.getClass?.data?.semester)
 	}, [data])
 
+	useEffect(() => {
+    if (localStorage.getItem('admin') == null) {
+      navigate('/', {replace: true})
+    }
+  }, [])
+
   return(
 		<Wrapper>
 			{/* top */}

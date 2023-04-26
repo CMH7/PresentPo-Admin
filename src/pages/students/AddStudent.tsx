@@ -2,7 +2,7 @@ import Wrapper from "../../components/Wrapper";
 import backIcon from '../../assets/left-arrow 1.png';
 import { Link, useNavigate } from "react-router-dom";
 import { gql, useMutation } from "@apollo/client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PropagateLoader } from "react-spinners";
 import { ToastContainer, toast } from "react-toastify";
 
@@ -48,6 +48,12 @@ export default function AddStudent() {
 	})
 
 	const navigate = useNavigate()
+
+	useEffect(() => {
+    if (localStorage.getItem('admin') == null) {
+      navigate('/', {replace: true})
+    }
+  }, [])
 
 	const [addStudent] = useMutation(ADD_STUDENT_OPS, {
 		onCompleted: (data) => {

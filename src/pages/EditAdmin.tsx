@@ -53,10 +53,11 @@ query GetClass($getAdminId: ID!) {
 /*stated na page na yung 'Edit Admin'
 after this, go to index.tsx to import the page*/
 export default function EditAdmin() {
+	
 	//@ts-ignore
 	const admin = JSON.parse(localStorage.getItem('admin'))
 	const dispatch = useDispatch()
-
+	
 	const [firstname, setFirstName] = useState('')
 	const [middlename, setMiddleName] = useState('')
 	const [lastname, setLastName] = useState('')
@@ -65,7 +66,13 @@ export default function EditAdmin() {
 	const [password, setPassword] = useState('')
 	const [saving, setSaving] = useState(false)
 	const navigate = useNavigate()
-
+	
+	useEffect(() => {
+    if (localStorage.getItem('admin') == null) {
+      navigate('/', {replace: true})
+    }
+	}, [])
+	
 	const { error, loading, data } = useQuery(GET_ADMIN_QUERY, { variables: { getAdminId: admin.id } } )
 
 	const [editAdmin] = useMutation(EDIT_ADMIN_OPS, {

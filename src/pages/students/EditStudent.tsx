@@ -68,7 +68,13 @@ export default function EditStudent() {
 	const [saving, setSaving] = useState(false)
 	const navigate = useNavigate()
 
-	const { error, loading, data } = useQuery(GET_STUDENT_QUERY, { variables: { getStudentId: id }})
+	const { error, loading, data } = useQuery(GET_STUDENT_QUERY, { variables: { getStudentId: id } })
+	
+	useEffect(() => {
+    if (localStorage.getItem('admin') == null) {
+      navigate('/', {replace: true})
+    }
+  }, [])
 
 	const [editStudent] = useMutation(EDIT_STUDENT_OPS, {
 		onCompleted: (data) => {

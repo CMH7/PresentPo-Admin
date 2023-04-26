@@ -1,7 +1,17 @@
 import Wrapper from "../components/Wrapper";
 import backIcon from '../assets/left-arrow 1.png';
+import { useNavigate } from "react-router";
+import { useEffect } from "react";
 
 export default function EditSchedule() {
+	const navigate = useNavigate()
+
+	useEffect(() => {
+    if (localStorage.getItem('admin') == null) {
+      navigate('/', {replace: true})
+    }
+	}, [])
+
   return(
 		<Wrapper>
 			{/* top */}

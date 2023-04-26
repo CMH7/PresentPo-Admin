@@ -5,7 +5,7 @@ import plusPrim from '../../assets/plus prim.png'
 import tri from '../../assets/down 1.png'
 import searchIcon from '../../assets/search 1.png'
 import searchInac from '../../assets/searchInactive.png'
-import { Link, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import { gql, useQuery } from "@apollo/client"
 import QueryResult from "../../components/QueryResult"
 import editIcon from '../../assets/edit (1) 1.png'
@@ -80,6 +80,7 @@ export default function ManageClassStudents() {
   const [selectedStudent, setSelectedStudent] = useState('')
   const [students, setStudents] = useState<Student[]>([])
   const [searchValue, setSearchValue] = useState('')
+  const navigate = useNavigate()
 
   const clasdata = useQuery(GET_CLASS_DATA, { variables: { getClassId: id } })
   const studClass = useQuery(ALL_STUDENTS, { variables: { filters: {} } })
@@ -99,6 +100,12 @@ export default function ManageClassStudents() {
       }))
     }
   }
+
+  useEffect(() => {
+    if (localStorage.getItem('admin') == null) {
+      navigate('/', {replace: true})
+    }
+  }, [])
 
   return (
     <Wrapper centerX={true} klass="px-[100px] relative ">

@@ -6,7 +6,7 @@ import searchIcon from '../../assets/search 1.png'
 import searchInac from '../../assets/searchInactive.png'
 import editIcon from '../../assets/edit (1) 1.png'
 import deleteIcon from '../../assets/delete 1.png'
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { gql, useQuery } from "@apollo/client"
 import QueryResult from "../../components/QueryResult"
 import { useEffect, useState } from "react"
@@ -41,6 +41,7 @@ export default function ManageClasses() {
   const [selectedClass, setSelectedClass] = useState('')
   const [classes, setClasses] = useState<Classs[]>([])
   const [searchValue, setSearchValue] = useState('')
+  const navigate = useNavigate()
 
   const { error, loading, data } = useQuery(GET_ALL_CLASS, { variables: { filters: {} } })
 
@@ -59,6 +60,12 @@ export default function ManageClasses() {
       }))
     }
   }
+
+  useEffect(() => {
+    if (localStorage.getItem('admin') == null) {
+      navigate('/', {replace: true})
+    }
+  }, [])
 
   return (
     <Wrapper centerX={true} klass="px-[100px] relative ">

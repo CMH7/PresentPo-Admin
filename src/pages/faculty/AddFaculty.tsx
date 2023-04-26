@@ -1,6 +1,6 @@
 import Wrapper from "../../components/Wrapper";
 import backIcon from '../../assets/left-arrow 1.png';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { gql, useMutation } from "@apollo/client";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -69,6 +69,12 @@ export default function AddFaculty() {
 			setAdding(false)
 		}
 	})
+
+	useEffect(() => {
+    if (localStorage.getItem('admin') == null) {
+      navigate('/', {replace: true})
+    }
+  }, [])
 
   return(
 		<Wrapper>

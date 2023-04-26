@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Signin from './Signin';
 import EditSchedule from './EditSchedule';
-import AddSchedule from './AddSchedule';
+import AddSchedule from './schedules/AddSchedule';
 import EditAdmin from './EditAdmin';
 import EditStudent from './students/EditStudent';
 import AdminDashboard from './AdminDashboard';
@@ -26,6 +26,7 @@ import AddClass from './clss/AddClass';
 import EditClass from './clss/EditClass';
 import ManageClassStudents from './clss/ManageCLassStudents';
 import AddClassStudents from './clss/AddClassStudents';
+import ManageSchedules from './schedules/ManageSchedules';
 
 export default function Pages() {
   return (
@@ -56,8 +57,12 @@ export default function Pages() {
         <Route element={<ManageClassStudents />} path='/admindashboard/manageclasses/:id/manageclassstudents' />
         <Route element={<AddClassStudents />} path='/admindashboard/manageclasses/:id/manageclassstudents/addstudent' />
 
+        {/* schedules routes  */}
+        <Route element={<ManageSchedules />} path='/admindashboard/manageschedules' />
+        <Route element={<AddSchedule />} path='/admindashboard/manageschedules/addschedule' />
+
+
         <Route element={<EditSchedule />} path='/editschedule' />
-        <Route element={<AddSchedule />} path='/addschedule' />
         <Route element={<EditAdmin />} path='/admindashboard/editadmin' />
       </Routes>
     </BrowserRouter>

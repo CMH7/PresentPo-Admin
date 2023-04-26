@@ -1,7 +1,8 @@
-import Wrapper from "../components/Wrapper";
-import backIcon from '../assets/left-arrow 1.png';
+import Wrapper from "../../components/Wrapper";
+import backIcon from '../../assets/left-arrow 1.png';
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
+import { Link } from "react-router-dom";
 
 export default function AddSchedule() {
 	const navigate = useNavigate()
@@ -19,9 +20,14 @@ export default function AddSchedule() {
 
 				{/* back button  */}
 				<div className="flex items-center mt-[50px] ml-[100px]">
-					<img className="w-[25px] h-[25px] mr-[30px]" src={backIcon} alt="back icon" />
+					<Link to='/admindashboard/manageschedules' replace={true}>
+            <div className="aspect-square w-[25px] h-auto cursor-pointer">
+              <img src={backIcon} alt="chevron left" />
+            </div>
+					</Link>
+					
 					{/* add button  */}
-					<div className="poppins font-bold text-[40px] text-primary-2">
+					<div className=" ml-[30px] poppins font-bold text-[40px] text-primary-2">
 						Add Schedule
 					</div>
 				</div>

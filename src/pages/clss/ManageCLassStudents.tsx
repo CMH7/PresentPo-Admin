@@ -175,7 +175,7 @@ export default function ManageClassStudents() {
         <div className="flex">
 
           {/* add student button  */}
-          <Link to='/admindashboard/managestudents/addstudent' replace={true}>
+          <Link to={`/admindashboard/manageclasses/${id}/manageclassstudents/addstudent`} replace={true}>
             <div className="group w-[220px] h-[55px] flex items-center justify-center bg-primary-2 hover:bg-white transition-all rounded-[50px] cursor-pointer">
               {/* icon  */}
               <div className="aspect-square w-[20px] h-auto ">
@@ -250,7 +250,7 @@ export default function ManageClassStudents() {
         <div className={`w-full ${studClass.loading ? 'h-full flex flex-col justify-center items-center' : 'h-fit'}`}>
           <QueryResult error={clasdata.error || studClass.error} loading={clasdata.loading || studClass.loading} data={clasdata.data || studClass.data}>
             {
-              students.filter((stud: Student, i: number) => clasdata.data?.getClass?.data?.students?.includes(stud.id) || clasdata.data?.getClass?.data?.students?.includes(` ${stud.id}`)).map((stud: Student, i: number) => {
+              students?.filter((stud: Student, i: number) => clasdata.data?.getClass?.data?.students?.includes(stud.id) || clasdata.data?.getClass?.data?.students?.includes(` ${stud.id}`)).map((stud: Student, i: number) => {
                 return (
                   <div key={stud.id} className=" w-full h-fit py-[15px] bg-white hover:bg-gray-200 mb-[2px] flex items-center px-[20px] relative overflow-hidden group transition-all ">
                     {/* No.  */}

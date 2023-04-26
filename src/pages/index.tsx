@@ -25,6 +25,7 @@ import ManageClasses from './clss/ManageClasses';
 import AddClass from './clss/AddClass';
 import EditClass from './clss/EditClass';
 import ManageClassStudents from './clss/ManageCLassStudents';
+import AddClassStudents from './clss/AddClassStudents';
 
 export default function Pages() {
   return (
@@ -53,6 +54,7 @@ export default function Pages() {
         <Route element={<AddClass />} path='/admindashboard/manageclasses/addclass' />
         <Route element={<EditClass />} path='/admindashboard/manageclasses/editclass/:id' />
         <Route element={<ManageClassStudents />} path='/admindashboard/manageclasses/:id/manageclassstudents' />
+        <Route element={<AddClassStudents />} path='/admindashboard/manageclasses/:id/manageclassstudents/addstudent' />
 
         <Route element={<EditSchedule />} path='/editschedule' />
         <Route element={<AddSchedule />} path='/addschedule' />

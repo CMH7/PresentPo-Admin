@@ -79,7 +79,8 @@ export default function AdminDashboard() {
   const [showModal, setShowModal] = useState(false)
   const [time, setTime] = useState(new Date())
 
-  const admin = useSelector(selectAdmin)
+  //@ts-ignore
+  const admin = JSON.parse(localStorage.getItem('admin'))
 
   const navigate = useNavigate()
 

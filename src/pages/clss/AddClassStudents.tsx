@@ -5,15 +5,33 @@ import plusPrim from '../../assets/plus prim.png'
 import tri from '../../assets/down 1.png'
 import searchIcon from '../../assets/search 1.png'
 import searchInac from '../../assets/searchInactive.png'
-import { Link, useNavigate } from "react-router-dom"
-import { gql, useQuery } from "@apollo/client"
+import { Link, useNavigate, useParams } from "react-router-dom"
+import { gql, useMutation, useQuery } from "@apollo/client"
 import QueryResult from "../../components/QueryResult"
 import editIcon from '../../assets/edit (1) 1.png'
 import deleteIcon from '../../assets/delete 1.png'
 import { useEffect, useState } from "react"
+import { toast } from "react-toastify"
 
-const All_STUDENTS = gql`
-  query getAllStudentsWithFilters($filters: studentFilters!) {
+const GET_CLASS_DATA = gql`
+  query GetClass($getClassId: ID!) {
+    getClass(id: $getClassId) {
+      error
+      message
+      data {
+        id
+        strand
+        year
+        section
+        semester
+        students
+      }
+    }
+  }
+`
+
+const ALL_STUDENTS = gql`
+  query GetStudent($filters: studentFilters!) {
     getAllStudentsWithFilters(filters: $filters) {
       error
       message
@@ -26,16 +44,16 @@ const All_STUDENTS = gql`
           last
           extension
         }
-        email
         sex
+        email
       }
     }
   }
 `
 
-const STUDENTS_CLASS = gql`
-  query GetAllClassWithFilters($filters: classFilters) {
-    getAllClassWithFilters(filters: $filters) {
+const UPDATE_CLASS = gql`
+  mutation Mutation($updateClassId: ID!, $updatedClass: updatedClass!) {
+    updateClass(id: $updateClassId, updatedClass: $updatedClass) {
       error
       message
       data {
@@ -43,31 +61,8 @@ const STUDENTS_CLASS = gql`
         strand
         year
         section
+        semester
         students
-      }
-    }
-  }
-`
-
-const ALL_SCHEDS = gql`
-  query GetAllSchedulesWithFilters($filters: scheduleFilters!) {
-    getAllSchedulesWithFilters(filters: $filters) {
-      data {
-        id
-        subject
-        class
-      }
-    }
-  }
-`
-
-const ALL_SUBJECTS = gql`
-  query GetAllSubjectsWithFilters($filters: subjectFilters!) {
-    getAllSubjectsWithFilters(filters: $filters) {
-      data {
-        name
-        id
-        code
       }
     }
   }
@@ -96,47 +91,57 @@ interface Classs {
   students: string[]
 }
 
-interface Schedule {
-  id: string
-  subject: string
-  class: string
-}
-
-interface Subject {
-  id: string
-  code: string
-  name: string
-}
-
-export default function ManageStudents() {
+export default function AddClassStudents() {
+  const { id } = useParams<{ id: string }>();
 
   const [showModal, setShowModal] = useState(false)
   const [selectedStudent, setSelectedStudent] = useState('')
-  const [studss, setStudss] = useState<Student[]>([])
-  const [classes, setClasses] = useState<Classs[]>([])
+  const [studID, setStudID] = useState('')
+  const [students, setStudents] = useState<Student[]>([])
   const [searchValue, setSearchValue] = useState('')
+  const [adding, setAdding] = useState(false)
   const navigate = useNavigate()
 
-  const { error, loading, data } = useQuery(All_STUDENTS, { variables: { filters: {} } })
-  const studClass = useQuery(STUDENTS_CLASS, { variables: { filters: {} } })
-  const scheds = useQuery(ALL_SCHEDS, { variables: { filters: {} } })
-  const subs = useQuery(ALL_SUBJECTS, { variables: { filters: {} } })
+  const clasdata = useQuery(GET_CLASS_DATA, { variables: { getClassId: id } })
+  const studClass = useQuery(ALL_STUDENTS, { variables: { filters: {} } })
+  const [updateClassORAddStudent] = useMutation(UPDATE_CLASS, {
+    onCompleted: (data) => {
+			toast.success(`${data?.updateClass?.message}; Student added.`, {
+				position: "top-right",
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
+			setAdding(false)
+			navigate(`/admindashboard/manageclasses/${id}/manageclassstudents`, {replace: true})
+		},
+		onError: (e) => {
+			toast.error(`${e}`, {
+				position: "top-right",
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
+			setAdding(false)
+		}
+  })
 
   useEffect(() => {
-    setStudss(data?.getAllStudentsWithFilters?.data)
-    setClasses(studClass.data?.getAllClassWithFilters?.data)
-  }, [subs.loading])
-
-  useEffect(() => {
-    if (localStorage.getItem('admin') == null) {
-      navigate('/', {replace: true})
-    }
-  }, [])
+    setStudents(studClass.data?.getAllStudentsWithFilters?.data)
+  }, [studClass.loading])
 
   const searchNow = (searchFor: string) => {
-    setStudss(data?.getAllStudentsWithFilters?.data)
+    setStudents(studClass.data?.getAllStudentsWithFilters?.data)
     if (searchFor !== '' ) {
-      setStudss(studss => studss.filter((student: Student) => {
+      setStudents(studss => studss.filter((student: Student) => {
         let studentDData = `${student.email} ${student.sex} ${student.school_id} ${student.name.first} ${student.name.middle} ${student.name.last} ${student.name.extension}`.toLowerCase()
         if ( studentDData.match(searchFor.toLowerCase()) ) {
           return student
@@ -144,6 +149,12 @@ export default function ManageStudents() {
       }))
     }
   }
+
+  useEffect(() => {
+    if (localStorage.getItem('admin') == null) {
+      navigate('/', {replace: true})
+    }
+  }, [])
 
   return (
     <Wrapper centerX={true} klass="px-[100px] relative ">
@@ -154,7 +165,7 @@ export default function ManageStudents() {
             <div className="w-[500px] h-[205px] bg-white rounded-[20px] flex flex-col items-center pt-[55px] relative">
               {/* message  */}
               <div className="w-[388px] overflow-hidden text-clip text-center">
-                Are you sure you want to delete this student <br /> <span className="italic">{ selectedStudent }</span> ?
+                Are you sure you want to add this student <br /> <span className="italic">{ selectedStudent }</span> ?
               </div>
 
               {/* divider  */}
@@ -163,8 +174,11 @@ export default function ManageStudents() {
               {/* buttons  */}
               <div className="w-full flex justify-evenly absolute bottom-[11px]">
                 {/* proceed button  */}
-                <div onClick={() => { }} className="text-[#D80000] h-full w-2/4 cursor-pointer flex justify-center items-center hover:font-bold">
-                  Delete
+                <div onClick={() => { 
+                  setAdding(true)
+                  updateClassORAddStudent({variables: {updateClassId: id, updatedClass: { strand: clasdata.data?.getClass?.data?.strand, year: clasdata.data?.getClass?.data?.year, section: clasdata.data?.getClass?.data?.section, semester: clasdata.data?.getClass?.data?.semester, students: [...clasdata.data?.getClass?.data?.students, studID] }}})
+                }} className="text-emerald-500 h-full w-2/4 cursor-pointer flex justify-center items-center hover:font-bold">
+                  Add
                 </div>
 
                 {/* cancel button  */}
@@ -182,19 +196,19 @@ export default function ManageStudents() {
       <div className="w-full h-[150px] flex items-center">
         {/* back button  */}
         <div className="flex items-center">
-          <Link to='/admindashboard' replace={true}>
+          <Link to={`/admindashboard/manageclasses/${id}/manageclassstudents`} replace={true}>
             <div className="aspect-square w-[25px] h-auto cursor-pointer">
               <img src={chevronLeft} alt="chevron left" />
             </div>
           </Link>
 
           <div className="ml-[30px] poppins text-[40px] font-bold text-primary-2 select-none">
-            Manage Students
+            Add student in { clasdata.data?.getClass?.data?.strand } { clasdata.data?.getClass?.data?.year }-{ clasdata.data?.getClass?.data?.section }
           </div>
         </div>
 
         {/* search bar  */}
-        <div className="grow pl-[165px]">
+        <div className="grow flex justify-end pl-[165px]">
           <div className=" flex flex-row-reverse items-center w-[580px] h-[55px] bg-white rounded-[50px] overflow-hidden ">
             <input onInput={(e: React.KeyboardEvent<HTMLInputElement>) => {
               const target = e.target as HTMLInputElement;
@@ -207,38 +221,6 @@ export default function ManageStudents() {
               <img className="hidden peer-focus-within:block" src={searchIcon} alt="search icon" />
             </div>
           </div>
-        </div>
-
-        {/* action buttons  */}
-        <div className="flex">
-
-          {/* add student button  */}
-          <Link to='/admindashboard/managestudents/addstudent' replace={true}>
-            <div className="group w-[220px] h-[55px] flex items-center justify-center bg-primary-2 hover:bg-white transition-all rounded-[50px] cursor-pointer">
-              {/* icon  */}
-              <div className="aspect-square w-[20px] h-auto ">
-                <img className="group-hover:hidden" src={plusWhite} alt="plus white icon" />
-                <img className="hidden group-hover:block" src={plusPrim} alt="plus primary icon" />
-              </div>
-
-              {/* text  */}
-              <div className="ml-[10px] poppins font-semibold text-[20px] text-white group-hover:text-primary-2 select-none">
-                Add Student
-              </div>
-            </div>
-          </Link>
-
-          {/* filter dropdown  */}
-          {/* <div className=" ml-[20px] w-[160px] h-[55px] border-[1px] border-white flex justify-center items-center rounded-[50px] cursor-pointer ">
-
-            <div className=" poppins font-semibold text-[20px] text-white select-none ">
-              Filter
-            </div>
- 
-            <div className=" ml-[10px] aspect-square w-[20px] h-auto ">
-              <img src={tri} alt="dropdown icon" />
-            </div>
-          </div> */}
         </div>
       </div>
 
@@ -253,6 +235,13 @@ export default function ManageStudents() {
             </div>
           </div>
           
+          {/* school id  */}
+          <div className=" h-full w-[200px] shrink-0 flex items-center ">
+            <div className=" poppins font-bold text-[20px] text-primary-2 ">
+              School ID
+            </div>
+          </div>
+
           {/* last name  */}
           <div className=" h-full w-[200px] shrink-0 flex items-center ">
             <div className=" poppins font-bold text-[20px] text-primary-2 ">
@@ -273,25 +262,11 @@ export default function ManageStudents() {
               Middle Name
             </div>
           </div>
-
-          {/* strand  */}
-          <div className=" h-full w-[150px] shrink-0 flex items-center ">
-            <div className=" poppins font-bold text-[20px] text-primary-2  ">
-              Strand
-            </div>
-          </div>
           
           {/* year and section */}
-          <div className=" h-full w-[200px] shrink-0 flex items-center ">
+          <div className=" h-full w-[100px] shrink-0 flex items-center ">
             <div className=" poppins font-bold text-[20px] text-primary-2 ">
-              Year & Section
-            </div>
-          </div>
-          
-          {/* year and section */}
-          <div className=" h-full w-[200px] shrink-0 flex items-center ">
-            <div className=" poppins font-bold text-[20px] text-primary-2 ">
-              Subjects Taken
+              Sex
             </div>
           </div>
           
@@ -304,19 +279,26 @@ export default function ManageStudents() {
 
 
         </div>
-        <div className={`w-full ${loading ? 'h-full flex flex-col justify-center items-center' : 'h-fit'}`}>
-          <QueryResult error={error || studClass.error || scheds.error || subs.error} loading={loading || studClass.loading || scheds.loading || subs.loading} data={data || studClass.data || scheds.data || subs.data}>
+        <div className={`w-full ${studClass.loading ? 'h-full flex flex-col justify-center items-center' : 'h-fit'}`}>
+          <QueryResult error={clasdata.error || studClass.error} loading={clasdata.loading || studClass.loading} data={clasdata.data || studClass.data}>
             {
-              studss?.map((stud: Student, i: number) => {
+              students.filter((stud: Student, i: number) => !clasdata.data?.getClass?.data?.students?.includes(stud.id) && !clasdata.data?.getClass?.data?.students?.includes(` ${stud.id}`)).map((stud: Student, i: number) => {
                 return (
                   <div key={stud.id} className=" w-full h-fit py-[15px] bg-white hover:bg-gray-200 mb-[2px] flex items-center px-[20px] relative overflow-hidden group transition-all ">
                     {/* No.  */}
                     <div className=" h-full w-[50px] shrink-0 flex items-center ">
                       <div className=" poppins font-medium text-[16px] text-primary-2 ">
-                        { i + 1 }
+                        { i + 1  }
                       </div>
                     </div>
                     
+                    {/* school id  */}
+                    <div className=" h-full w-[200px] shrink-0 flex items-center ">
+                      <div className=" poppins font-medium text-[16px] text-primary-2 ">
+                        { stud.school_id }
+                      </div>
+                    </div>
+
                     {/* last name  */}
                     <div className=" h-full w-[200px] shrink-0 flex items-center ">
                       <div className=" poppins font-medium text-[16px] text-primary-2 ">
@@ -337,57 +319,11 @@ export default function ManageStudents() {
                         { stud.name.middle }
                       </div>
                     </div>
-
-                    {/* strand  */}
-                    <div className=" h-full w-[150px] shrink-0 flex items-center ">
-                      <div className=" poppins font-medium text-[16px] text-primary-2  ">
-                        {
-                          classes?.filter((classs: Classs) => {
-                            return classs?.students?.includes(` ${stud.id}`) || classs?.students?.includes(stud.id)
-                          })[0]?.strand
-                        }
-                      </div>
-                    </div>
                     
-                    {/* year and section */}
-                    <div className=" h-full w-[200px] shrink-0 flex items-center ">
-                      <div className=" poppins font-medium text-[16px] text-primary-2 flex ">
-                        {
-                          classes?.filter((classs: Classs) => {
-                            return classs?.students?.includes(` ${stud.id}`) || classs?.students?.includes(stud.id)
-                          })[0]?.year
-                        }
-                        -
-                        {
-                          classes?.filter((classs: Classs) => {
-                            return classs?.students?.includes(` ${stud.id}`) || classs?.students?.includes(stud.id)
-                          })[0]?.section
-                        }
-                      </div>
-                    </div>
-                    
-                    {/* subjects taken */}
-                    <div className=" h-full w-[200px] shrink-0 flex items-center ">
+                    {/* sex  */}
+                    <div className=" h-full w-[100px] shrink-0 flex items-center ">
                       <div className=" poppins font-medium text-[16px] text-primary-2 ">
-                        <ul className="list-disc list-inside">
-                          {
-                            classes?.flatMap((classs: Classs) => {
-                              return classs?.students?.flatMap(studentID => {
-                                if (studentID.match(stud.id) || stud.id.match(studentID)) {
-                                  return scheds.data?.getAllSchedulesWithFilters?.data?.flatMap((schedule: Schedule) => {
-                                    if (classs.id.match(schedule.class) || schedule.class.match(classs.id)) {
-                                      return subs.data?.getAllSubjectsWithFilters?.data?.flatMap((subject: Subject) => {
-                                        if (schedule.subject.match(subject.id) || subject.id.match(schedule.subject)) {
-                                          return <li key={`${schedule.id}${i}`}> {subject.name} </li>;
-                                        }
-                                      })
-                                    }
-                                  })
-                                }
-                              })
-                            })
-                          }
-                        </ul>
+                        { stud.sex }
                       </div>
                     </div>
                     
@@ -401,24 +337,15 @@ export default function ManageStudents() {
                     {/* actions  */}
                     <div className="absolute z-10 top-0 -right-[200px] group-hover:right-0 transition-all w-fit h-full flex items-center">
                       {/* edit student  */}
-                      <Link className="w-[55px] h-full" to={`/admindashboard/managestudents/editstudent/${stud.id}`}>
-                        <div className=" w-full h-full bg-primary-1 flex items-center justify-center cursor-pointer ">
-                          <div className="aspect-square w-[20px] h-auto">
-                            <img src={editIcon} alt="edit icon" />
-                          </div>
-                        </div>
-                      </Link>
-
-                      {/* delete student  */}
                       <div onClick={() => {
-                        setSelectedStudent(`(${stud.school_id}) ${stud.name.first} ${stud.name.middle.charAt(0)}${stud.name.middle !== '' ? '.' : ''} ${stud.name.last} ${stud.name.extension}`)
+                        setStudID(stud.id)
+                        setSelectedStudent(`${stud.name.first} ${stud.name.middle.charAt(0)}${stud.name.middle.charAt(0) !== '' ? '.' : ''} ${stud.name.last} ${stud.name.extension}`)
                         setShowModal(true)
-                      }} className=" w-[55px] h-full bg-[#D80000] flex items-center justify-center cursor-pointer ">
+                      }} className=" w-[55px] h-full bg-primary-1 flex items-center justify-center cursor-pointer ">
                         <div className="aspect-square w-[20px] h-auto">
-                          <img src={deleteIcon} alt="delete icon" />
+                          <img src={plusWhite} alt="plus icon" />
                         </div>
                       </div>
-
                     </div>
                   </div>
                 )

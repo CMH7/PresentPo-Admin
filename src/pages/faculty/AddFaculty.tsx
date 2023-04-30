@@ -79,42 +79,42 @@ export default function AddFaculty() {
   return(
 		<Wrapper>
 			{/* top */}
-      <div className="flex justify-between">
-		    {/* back button  */}
+      		<div className="flex justify-between">
+				{/* back button  */}
 				<div className="flex items-center mt-[50px] ml-[100px]">
 					<Link to='/admindashboard/managefaculties' replace={true} aria-disabled={adding}>
 						<div className="aspect-square w-[25px] h-auto cursor-pointer">
 							<img src={backIcon} alt="chevron left" />
 						</div>
 					</Link>
-					
-          {/* add label  */}
+						
+					{/* add label  */}
 					<label className=" ml-[30px] poppins font-bold text-[40px] text-primary-2">
 						Add Faculty
 					</label>
-			</div> 
+				</div> 
 
-			{/* add button */}
-			<button
-				onClick={() => {
-					if (firstName === '' || lastName === '' ) {
-						toast.error('Invalid inputs', {
-							position: "top-right",
-							autoClose: 5000,
-							hideProgressBar: false,
-							closeOnClick: true,
-							pauseOnHover: true,
-							draggable: true,
-							progress: undefined,
-							theme: "light",
-						});
-						return
-					}
-					setAdding(true)
-					addFaculty({ variables: { newFaculty: { name: { middle: middleName, first: firstName, last: lastName, extension: extension }, credentials: credentials, email: email, password: password } } })
-				}}
-				className="flex justify-center items-center mt-[50px] mr-[100px] bg-[#11CF00] hover:bg-[#1672ec] text-white font-semibold py-2 px-20 rounded-full focus:outline-none focus:shadow-outline w-[218px] h-[55px]" type="submit"
-			>
+				{/* add button */}
+				<button
+					onClick={() => {
+						if (firstName === '' || lastName === '' ) {
+							toast.error('Invalid inputs', {
+								position: "top-right",
+								autoClose: 5000,
+								hideProgressBar: false,
+								closeOnClick: true,
+								pauseOnHover: true,
+								draggable: true,
+								progress: undefined,
+								theme: "light",
+							});
+							return
+						}
+						setAdding(true)
+							addFaculty({ variables: { newFaculty: { name: { middle: middleName, first: firstName, last: lastName, extension: extension }, credentials: credentials, email: email, password: password } } })
+					}}
+					className="flex justify-center items-center mt-[50px] mr-[100px] bg-[#11CF00] hover:bg-[#1672ec] text-white font-semibold py-2 px-20 rounded-full focus:outline-none focus:shadow-outline w-[218px] h-[55px]" type="submit"
+					>
 					{
 						adding ?
 							<div>
@@ -125,37 +125,38 @@ export default function AddFaculty() {
 								Add
 							</div>
 					}
-			</button>
-    </div>
+				</button>
+    		</div>
 
-    {/* add 2 columns */}
-    <div className=" grid grid-cols-2 gap-x-[160px] poppins px-80 mt-[94px]">
-    	{/* column 1 */}
-			<div className="col-span-1">
-				<div className="pb-[50px]">
-					<label className="block text-white poppins font-semibold pb-[10px]">
-						First Name
-					</label>
-						<input onChange={(e) => {
-							setFirstName(e.target.value)
-							setEmail(`${e.target.value.split(' ').join('').toLowerCase()}${lastName.split(' ').join('').toLowerCase()}.faculty@present.po`)
-							setPassword(`${e.target.value.split(' ').join('').toLowerCase()}${lastName.split(' ').join('').toLowerCase()}`)
-						}} value={firstName} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="last-name" type="text" placeholder="Enter first name"	
-                    />
-				</div>
+			{/* 2 columns - parent */}
+			<div className=" grid grid-cols-2 gap-x-[160px] poppins px-80 mt-[94px]">
 
-                <div className="pb-[50px]">
-					<label className="block text-white poppins font-semibold pb-[10px]">
-						Middle Name
-					</label>
-					<input onChange={(e) => setMiddleName(e.target.value)} value={middleName} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="first-name" type="text" placeholder="Enter middle name"
-					/>
-				</div>
+				{/* column 1 - child */}
+				<div className="col-span-1">
+					<div className="pb-[50px]">
+						<label className="block text-white poppins font-semibold pb-[10px]">
+							First Name
+						</label>
+							<input onChange={(e) => {
+								setFirstName(e.target.value)
+								setEmail(`${e.target.value.split(' ').join('').toLowerCase()}${lastName.split(' ').join('').toLowerCase()}.faculty@present.po`)
+								setPassword(`${e.target.value.split(' ').join('').toLowerCase()}${lastName.split(' ').join('').toLowerCase()}`)
+							}} value={firstName} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="last-name" type="text" placeholder="Enter first name"	
+						/>
+					</div>
 
-				<div className="pb-[50px]">
-					<label className="block text-white font-semibold pb-[10px]">
-						Last Name
-					</label>
+            		<div className="pb-[50px]">
+						<label className="block text-white poppins font-semibold pb-[10px]">
+							Middle Name
+						</label>
+						<input onChange={(e) => setMiddleName(e.target.value)} value={middleName} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="first-name" type="text" placeholder="Enter middle name"
+						/>
+					</div>
+
+					<div className="pb-[50px]">
+						<label className="block text-white font-semibold pb-[10px]">
+							Last Name
+						</label>
 						<input onChange={(e) => {
 							setLastName(e.target.value)
 							setEmail(`${firstName.split(' ').join('').toLowerCase()}${e.target.value.split(' ').join('').toLowerCase()}.faculty@present.po`)
@@ -165,7 +166,7 @@ export default function AddFaculty() {
 				</div>
 			</div>
 
-			{/* column 2 */}
+			{/* column 2 - child */}
 			<div className="col-span-1">
 				<div className="pb-[50px]">
 					<label className="block text-white font-semibold pb-[10px]">

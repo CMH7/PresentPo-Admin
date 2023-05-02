@@ -115,10 +115,10 @@ export default function AddClass() {
 				{/* column 1 - child */}
 				<div className="col-span-1">
 					<div className="pb-[50px]">
-						<label className="block text-white poppins font-semibold pb-[10px]">
+						<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
 							Strand
 						</label>
-						<select onChange={(e) => setStrand(e.target.value)} value={strand} className="flex h-[48px] w-[558px] rounded-[10px] border border-blue-gray-200 bg-white poppins text-[16px] font-semibold text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
+						<select onChange={(e) => setStrand(e.target.value)} value={strand} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline">
 							<option value="ABM">ABM</option>
 							<option value="GAS">GAS</option>
 							<option value="HUMSS">HUMSS</option>
@@ -127,10 +127,10 @@ export default function AddClass() {
 					</div>
 
 					<div className="pb-[50px]">
-						<label className="block text-white poppins font-semibold pb-[10px]">
+						<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
 							Grade Level
 						</label>
-						<select onChange={(e) => setGradeLevel(parseInt(e.target.value))} value={gradeLevel} className="peer h-[48px] w-[558px] rounded-[10px] border border-blue-gray-200 bg-white poppins text-[16px] font-semibold text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
+						<select onChange={(e) => setGradeLevel(parseInt(e.target.value))} value={gradeLevel} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline">
 							<option value={11}>11</option>
 								<option value={12}>12</option>
 							</select>
@@ -140,10 +140,10 @@ export default function AddClass() {
 					{/* column 2 - child */}
 					<div className="col-span-1">
 						<div className="pb-[50px]">
-							<label className="block text-white poppins font-semibold pb-[10px]">
+							<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
 								Section
 							</label>
-							<select onChange={(e) => setSection(e.target.value)} value={section} className="peer h-[48px] w-[558px] rounded-[10px] border border-blue-gray-200 bg-white poppins text-[16px] font-semibold text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
+							<select onChange={(e) => setSection(e.target.value)} value={section} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline">
 								<option value="Orion">Orion</option>
 								<option value="Leo">Leo</option>
 								<option value="Beethoven">Beethoven</option>
@@ -156,10 +156,10 @@ export default function AddClass() {
 						</div>
 
 						<div className="pb-[50px]">
-							<label className="block text-white poppins font-semibold pb-[10px]">
+							<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
 								Semester
 							</label>
-							<select onChange={(e) => setSemester(parseInt(e.target.value))} value={semester} className="peer h-[48px] w-[558px] rounded-[10px] border border-blue-gray-200 bg-white poppins text-[16px] font-semibold text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
+							<select onChange={(e) => setSemester(parseInt(e.target.value))} value={semester} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline">
 								<option value={1}>1</option>
 								<option value={2}>2</option>
 							</select>

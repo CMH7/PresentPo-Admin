@@ -304,15 +304,6 @@ export default function ManageClassStudents() {
 
                     {/* actions  */}
                     <div className="absolute z-10 top-0 -right-[200px] group-hover:right-0 transition-all w-fit h-full flex items-center">
-                      {/* edit student  */}
-                      <Link className="w-[55px] h-full" to={`/admindashboard/managestudents/editstudent/${stud.id}`}>
-                        <div className=" w-full h-full bg-primary-1 flex items-center justify-center cursor-pointer ">
-                          <div className="aspect-square w-[20px] h-auto">
-                            <img src={editIcon} alt="edit icon" />
-                          </div>
-                        </div>
-                      </Link>
-
                       {/* delete student  */}
                       <div onClick={() => {
                         setSelectedStudent(`(${stud.school_id}) ${stud.name.first} ${stud.name.middle.charAt(0)}${stud.name.middle !== '' ? '.' : ''} ${stud.name.last} ${stud.name.extension}`)

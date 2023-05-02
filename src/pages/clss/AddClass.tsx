@@ -80,6 +80,7 @@ export default function AddClass() {
 							<img src={backIcon} alt="chevron left" />
 						</div>
 					</Link>
+
 					{/* add label  */}
 					<div className=" ml-[30px] poppins font-bold text-[40px] text-primary-2">
 						Add Class
@@ -108,10 +109,10 @@ export default function AddClass() {
 				</button>
 			</div>
 
-			{/* add 2 columns */}
+			{/* add 2 columns - parent */}
 			<div className=" grid grid-cols-2 gap-x-[166px] poppins px-80 mt-[238px]">
 
-				{/* column 1 */}
+				{/* column 1 - child */}
 				<div className="col-span-1">
 					<div className="pb-[50px]">
 						<label className="block text-white poppins font-semibold pb-[10px]">
@@ -136,7 +137,7 @@ export default function AddClass() {
 						</div>
 					</div>
 
-					{/* column 2 */}
+					{/* column 2 - child */}
 					<div className="col-span-1">
 						<div className="pb-[50px]">
 							<label className="block text-white poppins font-semibold pb-[10px]">

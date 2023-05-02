@@ -58,6 +58,29 @@ const ALL_STUDENTS = gql`
   }
 `
 
+const ALL_ATTENDANCES = gql`
+  query GetAllAttendancesWithFilters($filters: attendanceFilters!) {
+    getAllAttendancesWithFilters(filters: $filters) {
+      error
+      message
+      data {
+        id
+        date {
+          minute
+          hour
+          day
+          month
+          year
+        }
+        qr
+        schedule
+        special
+        label
+      }
+    }
+  }
+`
+
 interface Logs {
   id: string
   collection: string
@@ -73,6 +96,14 @@ interface logDate {
   year: number
 }
 
+interface Attendance {
+  qr: string
+  schedule: string
+  label: string
+  special: boolean
+  date: logDate
+}
+
 /*stated na page na yung 'Admin Dashboard'
 after this, go to index.tsx to import the page*/
 export default function AdminDashboard() {
@@ -84,8 +115,9 @@ export default function AdminDashboard() {
 
   const navigate = useNavigate()
 
-  const logsData = useQuery(ALL_LOGS, { variables: { filters: {} } })
+  const logsData = useQuery(ALL_LOGS, { variables: { filters: { } } })
   const students = useQuery(ALL_STUDENTS, { variables: { filters: {} } })
+  const attendances = useQuery(ALL_ATTENDANCES, { variables: { filters: { special: false, date: { day: time.getDate(), month: time.getMonth() + 1, year: time.getFullYear() } } } })
   
   setInterval(() => {
     setTime(new Date())
@@ -103,7 +135,7 @@ export default function AdminDashboard() {
   }, [])
 
   return(
-    <Wrapper>
+    <Wrapper centered={true}>
       {/* confirmation modal  */}
       {
         showModal ?
@@ -136,10 +168,10 @@ export default function AdminDashboard() {
       }
 
       {/* columns*/}
-    	<div className="flex justify-evenly gap-x-[10px] poppins">
+    	<div className="w-full h-full flex justify-center items-center p-[15px] gap-x-[10px] poppins ">
 
         {/* left */}
-        <div className="w-[327px] h-[903px] rounded-[20px] mt-[15px] bg-white">
+        <div className="w-[327px] h-full rounded-[20px] bg-white">
 
           {/* logo  */}
           <div className="flex mt-[50px] ml-[75px] w-[157px] h-[45px] mb-[28px]">
@@ -246,104 +278,113 @@ export default function AdminDashboard() {
                   Logout
 							</button>
             </div>
-    		</div>
-
-        {/* middle */}
-        <div className="flex w-[1193px] h-[903px] rounded-[20px] mt-[15px] bg-white relative">
-					<div className=" w-full h-[30px] rounded-[20px] text-[20px] font-bold text-[#072D5F] ml-[30px] mt-[20px] mb-[15px] bg-white">
-						Recent Logs
-          </div>
-					<div className=" w-full flex items-center absolute mt-[90px] px-[30px] h-fit rounded-[20px] text-[14px] font-semibold text-[#072D5F] mb-[15px] bg-white">
-            <div className=" w-[150px] shrink-0 ">Changes in</div>
-						<div className=" grow ">Message</div>
-						<div className=" w-[200px] shrink-0 ">Date</div>	
-          </div>
-					{/* Line Break */}
-          <div className="flex items-center content-center absolute inset-x-[20px] mt-[123px] w-[1155px] h-0.5 border-t-0 bg-[#072D5F] opacity-25 border-2 border-black">
-          </div>
-
-          <div className=" w-full h-[85%] rounded-b-[20px] overflow-auto mt-[130px] absolute px-[15px] ">
-            {
-              logsData.data?.getAllLogsWithFilters?.data?.map((log: Logs) => {
-                return log
-              }).sort((logA: Logs, logB: Logs) => {
-                const dateA = new Date(logA.date.year, logA.date.month - 1, logA.date.day, logA.date.hour, logA.date.minute);
-                const dateB = new Date(logB.date.year, logB.date.month - 1, logB.date.day, logB.date.hour, logB.date.minute);
-                // @ts-ignore
-                return dateB - dateA;
-              }).map((log: Logs) => {
-                return (
-                  <div key={log.id} className="w-full px-[15px] flex items-center hover:bg-gray-300 select-none rounded-[10px] ">
-                    <div className=" w-[150px] shrink-0 py-5 poppins text-[14px] text-primary-2 ">
-                      {log.collection}
-                    </div>
-                    <div className=" grow py-5 poppins text-[14px] text-primary-2 ">
-                      {log.message}
-                    </div>
-                    <div className=" w-[200px] shrink-0 py-5 poppins text-[14px] text-primary-2 ">
-                      {log.date.hour % 12 != 0 && log.date.hour < 10 ? `0${log.date.hour % 12}` : log.date.hour % 12 == 0 ? 12 : log.date.hour % 12 < 10 ? `0${log.date.hour % 12}` : log.date.hour % 12}:{log.date.minute < 10 ? `0${log.date.minute}` : log.date.minute} {log.date.hour > 11 ? 'PM' : 'AM'} {log.date.month < 10 ? `0${log.date.month}` : log.date.month}/{log.date.day < 10 ? `0${log.date.day}` : log.date.day}/{log.date.day}
-                    </div>
-                  </div>
-                )
-              })
-            }
-          </div>
         </div>
-
         
+        <div className=" grow h-full flex flex-col gap-y-[10px] ">
 
-        {/* right with rows */}
-        <div className="grid-rows-4">
-          <div className="w-[350px] h-[183px] rounded-[20px] mt-[13px] bg-white flex flex-col items-center justify-center gap-y-[5px] ">
-            <div className=" poppins text-[16px] font-bold text-primary-2/50 ">
-              {time.toLocaleString('default', { month: 'long' })} {time.getDate() < 10 ? `0${time.getDate()}` : time.getDate()}, {time.getUTCFullYear()}
+          {/* top */}
+          <div className="w-full h-fit flex items-center gap-x-[10px] ">
+            <div className=" w-[1193px] h-[117px] rounded-[20px] bg-white flex items-center justify-center poppins font-extrabold text-[30px] text-primary-2 ">
+              Dashboard
             </div>
-            <div className=" poppins text-[60px] text-primary-2 font-bold ">
-              {time.getHours() % 12 < 10 && time.getHours() % 12 != 0 ? `0${time.getHours() % 12}` : time.getHours() % 12 == 0 ? 12 : time.getHours() % 12}:{time.getMinutes() < 10 ? `0${time.getMinutes()}` : time.getMinutes()} {time.getHours() < 11 ? 'AM' : 'PM'}
+
+            <div className=" w-[350px] h-[117px] bg-white rounded-[20px] flex items-center justify-center flex-col ">
+              <div className=" poppins text-[16px] font-bold text-primary-2/50 ">
+                {time.toLocaleString('default', { month: 'long' })} {time.getDate() < 10 ? `0${time.getDate()}` : time.getDate()}, {time.getUTCFullYear()}
+              </div>
+
+              <div className=" poppins text-[50px] text-primary-2 font-bold ">
+                {time.getHours() % 12 < 10 && time.getHours() % 12 != 0 ? `0${time.getHours() % 12}` : time.getHours() % 12 == 0 ? 12 : time.getHours() % 12}:{time.getMinutes() < 10 ? `0${time.getMinutes()}` : time.getMinutes()} {time.getHours() < 11 ? 'AM' : 'PM'}
+              </div>
             </div>
-					</div>
-          <div className="flex justify-center items-center w-[350px] h-[61px] text-[#072D5F] text-[20px] font-bold poppins rounded-[20px] mt-[10px] bg-white">
-            Today's Attendance
           </div>
 
-          {/* circle  */}
-          <div className="w-[350px] h-[313px] rounded-[20px] mt-[10px] bg-white flex items-center justify-center">
-            <CChart
-              width={270}
-              height={270}
-              type="doughnut"
-              data={{
-                labels: ['Male', 'Female'],
-                datasets: [
-                  {
-                    backgroundColor: ['#072d5f', '#1672ec'],
-                    data: [students.data?.getAllStudentsWithFilters?.data?.filter((sex: {sex: string}) => sex.sex === 'Male').length, students.data?.getAllStudentsWithFilters?.data?.filter((sex: {sex:string}) => sex.sex === 'Female').length],
-                    hoverOffset: 0,
-                  },
-                ],
-              }}
-            />
+          {/* middle */}
+          <div className=" w-full h-fit flex items-center gap-x-[10px] ">
+            <div className=" bg-white rounded-[20px] w-[771px] h-[453px] flex items-center justify-center ">
+              <CChart
+                width={400}
+                height={400}
+                type="bar"
+                data={{
+                  labels: ['Male', 'Female', 'total'],
+                  datasets: [
+                    {
+                      backgroundColor: ['#072d5f', '#1672ec', '#d4e7ff'],
+                      data: [students.data?.getAllStudentsWithFilters?.data?.filter((sex: {sex: string}) => sex.sex === 'Male').length, students.data?.getAllStudentsWithFilters?.data?.filter((sex: {sex:string}) => sex.sex === 'Female').length, students.data?.getAllStudentsWithFilters?.data?.length],
+                      hoverOffset: 0,
+                      label: 'Sex ratio'
+                    },
+                  ],
+                }}
+              />
+            </div>
+            
+            <div className=" bg-white rounded-[20px] w-[771px] h-[453px] flex items-center justify-center ">
+              <CChart
+                width={400}
+                height={400}
+                type="doughnut"
+                data={{
+                  labels: ['Present', 'Late'],
+                  datasets: [
+                    {
+                      backgroundColor: ['#072d5f', '#1672ec'],
+                      data: [attendances.data?.getAllAttendancesWithFilters?.data?.filter((att: Attendance) => att.label === 'Present').length, attendances.data?.getAllAttendancesWithFilters?.data?.filter((att: Attendance) => att.label === 'Late').length],
+                      hoverOffset: 0,
+                      label: 'Present-Late Ratio'
+                    },
+                  ],
+                }}
+              />
+            </div>
           </div>
 
-          {/* second circle  */}
-          <div className="w-[350px] h-[313px] rounded-[20px] mt-[10px] bg-white flex items-center justify-center">
-            <CChart
-              width={270}
-              height={270}
-              type="polarArea"
-              data={{
-                labels: ['Male', 'Female'],
-                datasets: [
-                  {
-                    backgroundColor: ['#072d5f', '#1672ec'],
-                    data: [students.data?.getAllStudentsWithFilters?.data?.filter((sex: {sex: string}) => sex.sex === 'Male').length, students.data?.getAllStudentsWithFilters?.data?.filter((sex: {sex:string}) => sex.sex === 'Female').length],
-                    hoverOffset: 0,
-                  },
-                ],
-              }}
-            />
+          {/* bottom */}
+          <div className="flex flex-col w-full grow px-[15px] py-[20px] rounded-[20px] gap-y-[15px] bg-white overflow-hidden">
+            <div className=" w-full h-fit text-[20px] font-bold text-[#072D5F] ">
+              Recent Logs
+            </div>
+
+            <div className=" w-full flex items-center h-fit rounded-[20px] text-[14px] font-semibold text-[#072D5F] bg-white">
+              <div className=" w-[150px] shrink-0 ">Changes in</div>
+              <div className=" grow ">Message</div>
+              <div className=" w-[200px] shrink-0 ">Date</div>	
+            </div>
+
+            {/* Line Break */}
+            <div className="flex items-center content-center w-[1515px] h-0.5 border-t-0 opacity-25 border-2 border-black">
+            </div>
+
+            <div className=" w-full h-fit rounded-b-[20px] overflow-auto ">
+              {
+                logsData.data?.getAllLogsWithFilters?.data?.map((log: Logs) => {
+                  return log
+                }).sort((logA: Logs, logB: Logs) => {
+                  const dateA = new Date(logA.date.year, logA.date.month - 1, logA.date.day, logA.date.hour, logA.date.minute);
+                  const dateB = new Date(logB.date.year, logB.date.month - 1, logB.date.day, logB.date.hour, logB.date.minute);
+                  // @ts-ignore
+                  return dateB - dateA;
+                }).map((log: Logs) => {
+                  return (
+                    <div key={log.id} className="w-full h-fit px-[10px] flex items-center hover:bg-gray-300 select-none rounded-[10px] ">
+                      <div className=" w-[150px] shrink-0 py-3 poppins text-[14px] text-primary-2 ">
+                        {log.collection}
+                      </div>
+                      <div className=" grow py-3 poppins text-[14px] text-primary-2 ">
+                        {log.message}
+                      </div>
+                      <div className=" w-[200px] shrink-0 py-3 poppins text-[14px] text-primary-2 ">
+                        {log.date.hour % 12 != 0 && log.date.hour < 10 ? `0${log.date.hour % 12}` : log.date.hour % 12 == 0 ? 12 : log.date.hour % 12 < 10 ? `0${log.date.hour % 12}` : log.date.hour % 12}:{log.date.minute < 10 ? `0${log.date.minute}` : log.date.minute} {log.date.hour > 11 ? 'PM' : 'AM'} {log.date.month < 10 ? `0${log.date.month}` : log.date.month}/{log.date.day < 10 ? `0${log.date.day}` : log.date.day}/{log.date.year}
+                      </div>
+                    </div>
+                  )
+                })
+              }
+            </div>
           </div>
         </div>
+
 			</div>
     </Wrapper>
   )

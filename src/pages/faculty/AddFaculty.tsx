@@ -133,75 +133,116 @@ export default function AddFaculty() {
 
 				{/* column 1 - child */}
 				<div className="col-span-1">
+					{/* first name  */}
 					<div className="pb-[50px]">
-						<label className="block text-white poppins font-semibold pb-[10px]">
+						<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
 							First Name
 						</label>
-							<input onChange={(e) => {
+						<input
+							onChange={(e) => {
 								setFirstName(e.target.value)
 								setEmail(`${e.target.value.split(' ').join('').toLowerCase()}${lastName.split(' ').join('').toLowerCase()}.faculty@present.po`)
 								setPassword(`${e.target.value.split(' ').join('').toLowerCase()}${lastName.split(' ').join('').toLowerCase()}`)
-							}} value={firstName} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="last-name" type="text" placeholder="Enter first name"	
+							}}
+							value={firstName}
+							className=" poppins text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline"
+							type="text"
+							placeholder="Enter first name"	
 						/>
 					</div>
 
-            		<div className="pb-[50px]">
-						<label className="block text-white poppins font-semibold pb-[10px]">
+					{/* middle name  */}
+          <div className="pb-[50px]">
+						<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
 							Middle Name
 						</label>
-						<input onChange={(e) => setMiddleName(e.target.value)} value={middleName} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="first-name" type="text" placeholder="Enter middle name"
+						<input
+							onChange={(e) => setMiddleName(e.target.value)}
+							value={middleName}
+							className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline"
+							type="text"
+							placeholder="Enter middle name"
 						/>
 					</div>
 
+					{/* last name  */}
 					<div className="pb-[50px]">
-						<label className="block text-white font-semibold pb-[10px]">
+						<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
 							Last Name
 						</label>
-						<input onChange={(e) => {
-							setLastName(e.target.value)
-							setEmail(`${firstName.split(' ').join('').toLowerCase()}${e.target.value.split(' ').join('').toLowerCase()}.faculty@present.po`)
-							setPassword(`${firstName.split(' ').join('').toLowerCase()}${e.target.value.split(' ').join('').toLowerCase()}`)
-						}} value={lastName} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="middle-name" type="text" placeholder="Enter last name"
-					/>
+						<input
+							onChange={(e) => {
+								setLastName(e.target.value)
+								setEmail(`${firstName.split(' ').join('').toLowerCase()}${e.target.value.split(' ').join('').toLowerCase()}.faculty@present.po`)
+								setPassword(`${firstName.split(' ').join('').toLowerCase()}${e.target.value.split(' ').join('').toLowerCase()}`)
+							}}
+							value={lastName}
+							className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline"
+							type="text"
+							placeholder="Enter last name"
+						/>
+					</div>
+				</div>
+
+				{/* column 2 - child */}
+				<div className="col-span-1">
+					{/* extension name  */}
+					<div className="pb-[50px]">
+						<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
+								Name Extension
+						</label>
+						<input
+							onChange={(e) => setExtension(e.target.value)}
+							value={extension}
+							className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline"
+							type="text"
+							placeholder="e.g. JR."
+						/>
+					</div>
+
+					{/* email  */}
+					<div className="pb-[50px]">
+						<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
+							Email
+						</label>
+						<input
+								readOnly={true}
+								value={email}
+								className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline"
+								type="email"
+								placeholder="Enter email address"
+						/>
+					</div>
+
+					{/* password  */}
+					<div className="pb-[50px]">
+						<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
+							Password
+						</label>
+						<input
+							readOnly={true}
+							value={password}
+							className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline"
+							type="text"
+							placeholder="Enter password"
+						/>
+					</div>
 				</div>
 			</div>
 
-			{/* column 2 - child */}
-			<div className="col-span-1">
-				<div className="pb-[50px]">
-					<label className="block text-white font-semibold pb-[10px]">
-			    		Name Extension
-					</label>
-					<input onChange={(e) => setExtension(e.target.value)} value={extension} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="sections-handled" type="text" placeholder="e.g. JR."
-					/>
-				</div>
-
-				<div className="pb-[50px]">
-					<label className="block text-white font-semibold pb-[10px]">
-						Email
-					</label>
-					<input readOnly={true} value={email} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="Enter email address"
-					/>
-				</div>
-
-				<div className="pb-[50px]">
-	    			<label className="block text-white font-semibold pb-[10px]">
-						Password
-					</label>
-					<input readOnly={true} value={password} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="password" type="text" placeholder="Enter password"
-					/>
-				</div>
+			{/* Credential field - centered */}
+			<div className="pb-[50px] ml-[678px] mr-[678px]">
+				<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
+					Credentials
+				</label>
+				<input
+					onChange={(e) => setCredentials(e.target.value)}
+					value={credentials}
+					className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline"
+					type="text"
+					placeholder="Enter credentials"
+				/>
 			</div>
-		</div>
-
-		{/* Credential field - centered */}
-		<div className="pb-[50px] ml-[678px] mr-[678px]">
-			<label className="block text-white font-semibold pb-[10px] flex-none self-center ">
-				Credentials
-			</label>
-			<input onChange={(e) => setCredentials(e.target.value)} value={credentials} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="password" type="text" placeholder="Enter credentials"
-			/>
-		</div>
     </Wrapper>
   )
 }

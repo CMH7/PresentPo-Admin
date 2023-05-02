@@ -166,66 +166,66 @@ export default function EditFaculty() {
 			{/* column 1 */}
 			<div className="col-span-1">
 				<div className="pb-[50px]">
-					<label className="block text-white poppins font-semibold pb-[10px]">
+					<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
 						First Name
 					</label>
 						<input onChange={(e) => {
 							setFirstName(e.target.value)
 							setEmail(`${e.target.value.split(' ').join('').toLowerCase()}${lastName.split(' ').join('').toLowerCase()}.faculty@present.po`)
 							setPassword(`${e.target.value.split(' ').join('').toLowerCase()}${lastName.split(' ').join('').toLowerCase()}`)
-						}} value={firstName} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter first name" />
+						}} value={firstName} className=" poppins text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter first name" />
 				</div>
 
 				<div className="pb-[50px]">
-					<label className="block text-white poppins font-semibold pb-[10px]">
+					<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
 						Middle Name
 					</label>
-					<input onChange={(e) => setMiddleName(e.target.value)} value={middleName} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter middle name" />
+					<input onChange={(e) => setMiddleName(e.target.value)} value={middleName} className=" poppins text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter middle name" />
 				</div>
 
 				<div className="pb-[50px]">
-					<label className="block text-white font-semibold pb-[10px]">
+					<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
 						Last Name
 					</label>
 						<input onChange={(e) => {
 							setLastName(e.target.value)
 							setEmail(`${firstName.split(' ').join('').toLowerCase()}${e.target.value.split(' ').join('').toLowerCase()}.faculty@present.po`)
 							setPassword(`${firstName.split(' ').join('').toLowerCase()}${e.target.value.split(' ').join('').toLowerCase()}`)
-						}} value={lastName} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter last name" />
+						}} value={lastName} className=" poppins text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter last name" />
 				</div>
 			</div>
 
 			{/* column 2 */}
 			<div className="col-span-1">
 				<div className="pb-[50px]">
-					<label className="block text-white font-semibold pb-[10px]">
+					<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
 						Name Extension
 					</label>
-					<input onChange={(e) => setNameExtension(e.target.value)} value={nameExtension} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter name extension" />
+					<input onChange={(e) => setNameExtension(e.target.value)} value={nameExtension} className=" poppins text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter name extension" />
 				</div>
 
 				<div className="pb-[50px]">
-					<label className="block text-white font-semibold pb-[10px]">
+					<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
 						Email
 					</label>
-					<input onChange={(e) => setEmail(e.target.value)} value={email} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter email address" />
+					<input onChange={(e) => setEmail(e.target.value)} value={email} className=" poppins text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter email address" />
 				</div>
 
 				<div className="pb-[50px]">
-					<label className="block text-white font-semibold pb-[10px]">
+					<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
 						Password
 					</label>
-					<input onChange={(e) => setPassword(e.target.value)} value={password} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter password" />
+					<input onChange={(e) => setPassword(e.target.value)} value={password} className=" poppins text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter password" />
 				</div>
 			</div>
 		</div>
 
 		{/* Credential field - centered */}
 		<div className="pb-[50px] ml-[678px] mr-[678px]">
-			<label className="block text-white font-semibold pb-[10px] flex-none self-center">
+			<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
 				Credentials
 			</label>
-			<input onChange={(e) => setCredentials(e.target.value)} value={credentials} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter credentials" />
+			<input onChange={(e) => setCredentials(e.target.value)} value={credentials} className=" poppins text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter credentials" />
 		</div>
     </Wrapper>
   );

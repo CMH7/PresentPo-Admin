@@ -236,7 +236,9 @@ export default function ViewReport() {
         if (pseudoAttendance.filter((cAtt: customAttendance) => cAtt.day == attendance.date.day).length != 0) {
           pseudoAttendance.map((cA: customAttendance) => {
             if ( cA.day == attendance.date.day ) {
-              if ( attendance.label === 'Present' ) {
+              if (attendance.special) {
+                cA.special = true
+              } else if ( attendance.label === 'Present' ) {
                 cA.presents.push(attendance.qr)
               } else {
                 cA.lates.push(attendance.qr)
@@ -250,6 +252,12 @@ export default function ViewReport() {
         }
       })
 
+      pseudoAttendance.sort((cA: customAttendance, cB: customAttendance) => {
+        if (cA.day < cB.day) return -1
+        if (cA.day > cB.day) return 1
+        return 0
+      })
+
       let csv: any[] = []
       csv.push(['No.', 'Student name', ...pseudoAttendance.map((pA: customAttendance) => {return pA.day}), 'Presents', 'Lates', 'Absents'])
       setCsvHeaders([{ label: 'No.', key: '1' }, { label: 'Student name', key: '2' }, ...pseudoAttendance.map((pA: customAttendance, i: number) => { return { label: `${pA.day}`, key: `${2 + i}` } }), { label: 'Presents', key: `${pseudoAttendance.length + 1}` }, { label: 'Lates', key: `${pseudoAttendance.length + 2}` }, { label: 'Absents', key: `${pseudoAttendance.length + 3}` }])
@@ -259,10 +267,10 @@ export default function ViewReport() {
         csv.push([
           i + 1,
           `${student?.name?.first} ${student?.name?.middle !== '' ? `${student?.name?.middle.charAt(0)}.` : ''} ${student?.name?.last} ${student?.name?.extension}`,
-          ...pseudoAttendance.map((pA: customAttendance) => { return pA.presents.includes(student?.id) || pA.presents.includes(` ${student?.id}`) ? 'P' : pA.lates.includes(student?.id) || pA.lates.includes(` ${student?.id}`) ? 'L' : 'A' }),
-          pseudoAttendance.filter((pA: customAttendance) => pA.presents.includes(student?.id) || pA.presents.includes(` ${student?.id}`)).length,
-          pseudoAttendance.filter((pA: customAttendance) => pA.lates.includes(student?.id) || pA.lates.includes(` ${student?.id}`)).length,
-          (pseudoAttendance.filter((pA: customAttendance) => pA.special == false).length - (pseudoAttendance.filter((pA: customAttendance) => pA.presents.includes(student?.id) || pA.presents.includes(` ${student?.id}`)).length + pseudoAttendance.filter((pA: customAttendance) => pA.lates.includes(student?.id) || pA.lates.includes(` ${student?.id}`)).length))
+          ...pseudoAttendance.map((pA: customAttendance) => { return pA.special ? '' : pA.presents.includes(student?.id) || pA.presents.includes(` ${student?.id}`) ? 'P' : pA.lates.includes(student?.id) || pA.lates.includes(` ${student?.id}`) ? 'L' : 'A' }),
+          pseudoAttendance.filter((pA: customAttendance) => (pA.presents.includes(student?.id) || pA.presents.includes(` ${student?.id}`)) && !pA.special).length,
+          pseudoAttendance.filter((pA: customAttendance) => (pA.lates.includes(student?.id) || pA.lates.includes(` ${student?.id}`)) && !pA.special).length,
+          (pseudoAttendance.filter((pA: customAttendance) => !pA.special).length - (pseudoAttendance.filter((pA: customAttendance) => (pA.presents.includes(student?.id) || pA.presents.includes(` ${student?.id}`)) && !pA.special).length + pseudoAttendance.filter((pA: customAttendance) => (pA.lates.includes(student?.id) || pA.lates.includes(` ${student?.id}`)) && !pA.special).length))
         ])
       })
       
@@ -320,7 +328,7 @@ export default function ViewReport() {
             {/* actions  */}
             <div className=" w-[188px] flex flex-col items-center gap-y-[22px] ">
               {/* export button  */}
-              <CSVLink data={csvData} filename={`${classes.data?.getAllClassWithFilters?.data?.filter((classs: Classs) => schedule.data?.getSchedule?.data?.class?.match(classs.id) || schedule.data?.getSchedule?.data?.class?.match(` ${classs.id}`) )[0]?.strand} ${classes.data?.getAllClassWithFilters?.data?.filter((classs: Classs) => schedule.data?.getSchedule?.data?.class?.match(classs.id) || schedule.data?.getSchedule?.data?.class?.match(` ${classs.id}`) )[0]?.year}-${classes.data?.getAllClassWithFilters?.data?.filter((classs: Classs) => schedule.data?.getSchedule?.data?.class?.match(classs.id) || schedule.data?.getSchedule?.data?.class?.match(` ${classs.id}`) )[0]?.section}-${curMonth}_${curYear}`} className=" w-full h-[55px] rounded-[50px] bg-primary-2 flex items-center justify-center gap-x-[10px] group hover:bg-white cursor-pointer transition-all " >
+              <CSVLink data={csvData} filename={`${classes.data?.getAllClassWithFilters?.data?.filter((classs: Classs) => schedule.data?.getSchedule?.data?.class?.match(classs.id) || schedule.data?.getSchedule?.data?.class?.match(` ${classs.id}`) )[0]?.strand} ${classes.data?.getAllClassWithFilters?.data?.filter((classs: Classs) => schedule.data?.getSchedule?.data?.class?.match(classs.id) || schedule.data?.getSchedule?.data?.class?.match(` ${classs.id}`) )[0]?.year}-${classes.data?.getAllClassWithFilters?.data?.filter((classs: Classs) => schedule.data?.getSchedule?.data?.class?.match(classs.id) || schedule.data?.getSchedule?.data?.class?.match(` ${classs.id}`) )[0]?.section} ${months[curMonth - 1]}-${curYear}`} className=" w-full h-[55px] rounded-[50px] bg-primary-2 flex items-center justify-center gap-x-[10px] group hover:bg-white cursor-pointer transition-all " >
                 <img className="group-hover:hidden" src={dl} alt="dl" />
                 <img className="hidden group-hover:block" src={dldark} alt="dldark" />
 
@@ -479,13 +487,13 @@ export default function ViewReport() {
                           <div className=" h-full w-[141px] flex flex-col items-center ">
                             <div className=" w-full h-[40px] flex items-center justify-center ">
                               <div className=" w-1/3 h-full flex items-center justify-center poppins font-bold text-primary-2 text-[20px] ">
-                                {attendances.filter((cA: customAttendance) => cA.presents.includes(student.id) || cA.presents.includes(` ${student.id}`) ).length}
+                                {attendances.filter((cA: customAttendance) => (cA.presents.includes(student.id) || cA.presents.includes(` ${student.id}`)) && !cA.special ).length}
                               </div>
                               <div className=" w-1/3 h-full border-x border-black flex items-center justify-center poppins font-bold text-primary-2 text-[20px] ">
-                                {attendances.filter((cA: customAttendance) => cA.lates.includes(student.id) || cA.lates.includes(` ${student.id}`) ).length}
+                                {attendances.filter((cA: customAttendance) => (cA.lates.includes(student.id) || cA.lates.includes(` ${student.id}`)) && !cA.special ).length}
                               </div>
                               <div className=" w-1/3 h-full flex items-center justify-center poppins font-bold text-primary-2 text-[20px] ">
-                                { attendances.filter((cA: customAttendance) => cA.special == false).length - ( attendances.filter((cA: customAttendance) => cA.presents.includes(student.id) || cA.presents.includes(` ${student.id}`) ).length + attendances.filter((cA: customAttendance) => cA.lates.includes(student.id) || cA.lates.includes(` ${student.id}`) ).length)}
+                                { attendances.filter((cA: customAttendance) => !cA.special).length - ( attendances.filter((cA: customAttendance) => (cA.presents.includes(student.id) || cA.presents.includes(` ${student.id}`)) && !cA.special ).length + attendances.filter((cA: customAttendance) => (cA.lates.includes(student.id) || cA.lates.includes(` ${student.id}`)) && !cA.special ).length)}
                               </div>
                             </div>
                           </div>

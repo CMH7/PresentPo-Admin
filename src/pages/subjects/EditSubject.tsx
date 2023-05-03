@@ -136,18 +136,18 @@ export default function EditSubject() {
       	<div className=" flex flex-row justify-center items-center poppins px-80 drop-shadow-xl mt-[238px]">
         	<div className=" w-[558px] h-[48px] ">
 				<div className="pb-[50px]">
-					<label className="block text-white poppins font-semibold pb-[10px]">
+					<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
 						Subject Code
 					</label>
-					<input onChange={(e) => setSubjectCode(e.target.value)} value={subjectCode} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="subject-code" type="text" placeholder="Enter subject code"
+					<input onChange={(e) => setSubjectCode(e.target.value)} value={subjectCode} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" id="subject-code" type="text" placeholder="Enter subject code"
 					/>
 				</div>
 
 				<div className="pb-[50px]">
-					<label className="block text-white poppins font-semibold pb-[10px]">
+					<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
 						Subject Name
 					</label>
-					<input onChange={(e) => setSubjectName(e.target.value)} value={subjectName} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="subject-name" type="text" placeholder="Enter subject name"
+					<input onChange={(e) => setSubjectName(e.target.value)} value={subjectName} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" id="subject-name" type="text" placeholder="Enter subject name"
 					/>
 				</div>
 			</div>

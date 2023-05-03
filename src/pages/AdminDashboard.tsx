@@ -247,7 +247,7 @@ export default function AdminDashboard() {
           </Link>
 
           {/* reports */}
-          <Link to='/admindashboard/manageschedules'>
+          <Link to='/admindashboard/reports/facultylist'>
             <div className="group flex items-center w-[261px] h-[60px] ml-[32px] mt-[25px] hover:bg-primary-2 rounded-[50px] transition-all duration-300 cursor-pointer">
               <div className="flex w-[35px] h-[35px] ml-[22px]">
                 <img className="group-hover:hidden" src={reports} alt="subjects-dark"/>

@@ -27,6 +27,9 @@ import EditClass from './clss/EditClass';
 import ManageClassStudents from './clss/ManageCLassStudents';
 import AddClassStudents from './clss/AddClassStudents';
 import ManageSchedules from './schedules/ManageSchedules';
+import FacultyList from './reports/FacultyList';
+import FacultySubjectsHandled from './reports/FacultySubjectsHandled';
+import ViewReport from './reports/ViewReport';
 
 export default function Pages() {
   return (
@@ -60,6 +63,11 @@ export default function Pages() {
         {/* schedules routes  */}
         <Route element={<ManageSchedules />} path='/admindashboard/manageschedules' />
         <Route element={<AddSchedule />} path='/admindashboard/manageschedules/addschedule' />
+
+        {/* reports routes  */}
+        <Route element={<FacultyList />} path='/admindashboard/reports/facultylist' />
+        <Route element={<FacultySubjectsHandled />} path='/admindashboard/reports/facultylist/:id/subjectshandled' />
+        <Route element={<ViewReport />} path='/admindashboard/reports/facultylist/:id/subjectshandled/:schedID/report' />
 
 
         <Route element={<EditSchedule />} path='/editschedule' />

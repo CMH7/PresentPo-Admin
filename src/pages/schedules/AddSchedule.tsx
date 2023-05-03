@@ -1,17 +1,219 @@
 import Wrapper from "../../components/Wrapper";
 import backIcon from '../../assets/left-arrow 1.png';
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
+import { gql, useMutation, useQuery } from "@apollo/client";
+import { toast } from "react-toastify";
+
+const ALL_SUBJECTS = gql`
+	query Query($filters: subjectFilters!) {
+		getAllSubjectsWithFilters(filters: $filters) {
+			error
+			message
+			data {
+				id
+				code
+				name
+			}
+		}
+	}
+`
+
+const ALL_FACULTIES = gql`
+	query Query {
+		getAllFacultyWithFilters {
+			error
+			message
+			data {
+				id
+				name {
+					first
+					middle
+					last
+					extension
+				}
+				credentials
+			}
+		}
+	}
+`
+
+const ALL_SCHEDS = gql`
+	query GetAllSchedulesWithFilters($filters: scheduleFilters!) {
+		getAllSchedulesWithFilters(filters: $filters) {
+			error
+			message
+			data {
+				id
+				subject
+				schedule {
+					day
+					start_time {
+						hour
+						minute
+						shift
+					}
+					end_time {
+						hour
+						minute
+						shift
+					}
+				}
+				faculty
+				class
+			}
+		}
+	}
+`
+
+const ALL_CLASS = gql`
+	query GetAllSchedulesWithFilters {
+		getAllClassWithFilters {
+			error
+			message
+			data {
+				id
+				strand
+				year
+				section
+				semester
+			}
+		}
+	}
+`
+
+const ADD_SCHED = gql`
+	mutation Mutation($schedule: newSchedule!) {
+		addSchedule(schedule: $schedule) {
+			error
+			message
+			data {
+				id
+				subject
+				schedule {
+					day
+					start_time {
+						hour
+						minute
+						shift
+					}
+					end_time {
+						hour
+						minute
+						shift
+					}
+				}
+				faculty
+				class
+			}
+		}
+	}
+`
+
+interface Subject {
+	id: string
+	code: string
+	name: string
+}
+
+interface Faculty {
+	id: string
+	name: facName
+	credentials: string
+}
+
+interface facName {
+	first: string
+	middle: string
+	last: string
+	extension: string
+}
+
+interface Classs {
+	id: string
+	strand: string
+	year: number
+	section: string
+	semester: number
+}
+
+interface Schedule {
+	id: string
+	subject: string
+	class: string
+	schedule: ssched
+}
+
+interface ssched {
+	day: string
+	start_time: sstime
+	end_time: sstime
+}
+
+interface sstime {
+	minute: number
+	hour: number
+	shift: string
+}
 
 export default function AddSchedule() {
+	const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+	const hours: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+	const minutes: number[] = [0, 10, 20, 30, 40, 50]
+	const strands = ['ABM', 'GAS', 'STEM', 'HUMMS']
+
+	const [adding, setAdding] = useState(false)
+
 	const navigate = useNavigate()
+
+	const allSubjects = useQuery(ALL_SUBJECTS, { variables: { filters: {} } })
+	const allFaculties = useQuery(ALL_FACULTIES, { variables: { filters: {} } })
+	const allScheds = useQuery(ALL_SCHEDS, { variables: { filters: {} } })
+	const allClass = useQuery(ALL_CLASS, { variables: { filters: {} } })
+	const [addSchedule] = useMutation(ADD_SCHED, {
+		onCompleted: (data) => {
+			toast.success(data?.addSchedule?.message, {
+				position: "top-right",
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
+			setAdding(false)
+			navigate('/admindashboard/manageschedules', {replace: true})
+		},
+		onError: (e) => {
+			toast.error(`${e}`, {
+				position: "top-right",
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
+			setAdding(false)
+		}
+	})
+	
+	const [subject, setSubject] = useState('')
+	const [day, setDay] = useState(dayNames[0])
+	const [startTime, setStartTime] = useState({minute: 0, hour: 1, shift: 'AM'})
+	const [endTime, setEndTime] = useState({ minute: 0, hour: 1, shift: 'PM' })
+	const [faculty, setFaculty] = useState('')
+	const [sClass, setSClass] = useState('')
 
 	useEffect(() => {
     if (localStorage.getItem('admin') == null) {
       navigate('/', {replace: true})
-    }
-	}, [])
+		}
+		setFaculty(allFaculties.data?.getAllFacultyWithFilters?.data[0]?.id)
+	}, [allFaculties.data])
 	
   return(
 		<Wrapper>
@@ -33,8 +235,30 @@ export default function AddSchedule() {
 				</div>
 
 				{/* save button */}
-				<button className="flex justify-center items-center mt-[50px] mr-[100px] bg-[#11CF00] hover:bg-[#1672ec] text-white font-semibold py-2 px-20 rounded-[50px] focus:outline-none focus:shadow-outline w-[218px] h-[55px]" type="submit">
-					Add
+				<button onClick={() => {
+						addSchedule({
+							variables: {
+								schedule: {
+									class: sClass,
+									faculty: faculty,
+									subject: subject,
+									schedule: {
+										day: day,
+										start_time: startTime,
+										end_time: endTime
+									}
+								}
+							}
+						})
+						setAdding(true)
+					}} className="flex justify-center items-center mt-[50px] mr-[100px] bg-[#11CF00] hover:bg-[#1672ec] text-white font-semibold py-2 px-20 rounded-[50px] focus:outline-none focus:shadow-outline w-[218px] h-[55px]" type="submit">
+					{
+						adding ? <div>
+							adding...
+						</div> : <div>
+								Add
+						</div>
+					}
 				</button>
 			</div>
 
@@ -44,18 +268,21 @@ export default function AddSchedule() {
 				{/* column 1 */}
 				<div className="col-span-1">
 					<div className="pb-[50px]">
-						<label className="block text-white poppins font-semibold pb-[10px]">
-							Subject Name
+						<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
+							Subject
 						</label>
 
-						<select className="flex h-[48px] w-[558px] rounded-[10px] border border-blue-gray-200 bg-white poppins text-[16px] font-semibold text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
-							<option value="subject-name1"></option>
-							<option value="subject-name2"></option>
+						<select onChange={e => setSubject(e.target.value)} value={subject} className="flex h-[48px] w-[558px] rounded-[10px] border border-blue-gray-200 bg-white poppins text-[16px] font-medium text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
+							{
+								allSubjects.data?.getAllSubjectsWithFilters?.data?.map((subject: Subject) => {
+									return <option key={subject.id} value={subject.id}> { `(${subject.code}) ${subject.name}` } </option>
+								})
+							}
 						</select>
 					</div>
 
 					<div className="pb-[20px]">
-						<label className="block text-white poppins font-semibold">
+						<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
 							Schedule
 						</label>
 					</div>
@@ -72,18 +299,15 @@ export default function AddSchedule() {
 							</div>
 
 							<div className="flex w-full gap-x-[10px]">
-								<select className="peer h-[48px] w-[123px] rounded-[10px] border-blue-gray-200 bg-white poppins text-[16px] font-semibold text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
-									<option value="monday">Mon</option>
-									<option value="tuesday">Tue</option>
-									<option value="wednesday">Wed</option>
-									<option value="thursday">Thurs</option>
-									<option value="friday">Fri</option>
-									<option value="saturday">Sat</option>
-									<option value="sunday">Sun</option>
+								<select onChange={e => setDay(e.target.value)} value={day} className="peer h-[48px] w-[123px] rounded-[10px] border-blue-gray-200 bg-white poppins text-[16px] font-medium text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
+									{
+										dayNames.map((name: string) => {
+											return <option key={name} value={name.substring(0, 3)}> { name } </option>
+										})
+									}
 								</select>
 							</div>
 						</div>
-					
 
 						{/* start time  */}
 						<div className="flex w-[250px] flex-wrap border-2 border-primary-2 rounded-[10px] p-2 relative pt-[15px]">
@@ -96,93 +320,37 @@ export default function AddSchedule() {
 							{/* hour and minute  */}
 							<div className="flex w-full gap-x-[5px]">
 								{/* hour  */}
-								<select className="peer h-[48px] w-2/4 rounded-[10px] border border-blue-gray-200 bg-white poppins text-[16px] font-semibold text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
-									<option value="">00</option>
-									<option value="">01</option>
-									<option value="">02</option>
-									<option value="">03</option>
-									<option value="">04</option>
-									<option value="">05</option>
-									<option value="">06</option>
-									<option value="">07</option>
-									<option value="">08</option>
-									<option value="">09</option>
-									<option value="">10</option>
-									<option value="">11</option>
-									<option value="">12</option>
+								<select onChange={e => setStartTime({...startTime, hour: parseInt(e.target.value)})} value={startTime.hour} className="peer h-[48px] w-2/4 rounded-[10px] border border-blue-gray-200 bg-white poppins text-[16px] font-medium text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
+									{
+										hours.map((hour: number, i: number) => {
+											if (startTime.shift === 'AM' && hour > 5 && hour < 12) {
+												if (!(endTime.shift === 'AM' && endTime.hour >= hour)) {
+													return <option key={`${hour}${i}`} value={hour}> { `${hour < 10 ? '0' : ''}${hour}` } </option>
+												}
+											} else if (startTime.shift === 'PM' && hour <= 12 && hour != 11 && hour != 10 && hour != 9 && hour != 8) {
+												if (!(endTime.shift === 'PM' && endTime.hour > hour)) {
+													return <option key={`${hour}${i}`} value={hour}> { `${hour < 10 ? '0' : ''}${hour}` } </option>
+												}
+											}
+										})
+									}
 								</select>
 
 								{/* minute  */}
-								<select className="peer h-[48px] w-2/4 rounded-[10px] border border-blue-gray-200 bg-white poppins text-[16px] font-semibold text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
-									<option value="">00</option>
-									<option value="">01</option>
-									<option value="">02</option>
-									<option value="">03</option>
-									<option value="">04</option>
-									<option value="">05</option>
-									<option value="">06</option>
-									<option value="">07</option>
-									<option value="">08</option>
-									<option value="">09</option>
-									<option value="">10</option>
-									<option value="">11</option>
-									<option value="">12</option>
-									<option value="">13</option>
-									<option value="">14</option>
-									<option value="">15</option>
-									<option value="">16</option>
-									<option value="">17</option>
-									<option value="">18</option>
-									<option value="">19</option>
-									<option value="">20</option>
-									<option value="">21</option>
-									<option value="">22</option>
-									<option value="">23</option>
-									<option value="">24</option>
-									<option value="">25</option>
-									<option value="">26</option>
-									<option value="">27</option>
-									<option value="">28</option>
-									<option value="">29</option>
-									<option value="">30</option>
-									<option value="">31</option>
-									<option value="">32</option>
-									<option value="">33</option>
-									<option value="">34</option>
-									<option value="">35</option>
-									<option value="">36</option>
-									<option value="">37</option>
-									<option value="">38</option>
-									<option value="">39</option>
-									<option value="">40</option>
-									<option value="">41</option>
-									<option value="">42</option>
-									<option value="">43</option>
-									<option value="">44</option>
-									<option value="">45</option>
-									<option value="">46</option>
-									<option value="">47</option>
-									<option value="">48</option>
-									<option value="">49</option>
-									<option value="">50</option>
-									<option value="">51</option>
-									<option value="">52</option>
-									<option value="">53</option>
-									<option value="">54</option>
-									<option value="">55</option>
-									<option value="">56</option>
-									<option value="">57</option>
-									<option value="">58</option>
-									<option value="">59</option>
-									<option value="">60</option>
+								<select onChange={e => setStartTime({...startTime, minute: parseInt(e.target.value)})} value={startTime.minute} className="peer h-[48px] w-2/4 rounded-[10px] border border-blue-gray-200 bg-white poppins text-[16px] font-medium text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
+									{
+										minutes.map((minute: number, i: number) => {
+											return <option key={`${minute}${i}`} value={minute}> { `${minute < 10 ? '0' : ''}${minute}` } </option>			
+										})
+									}
 								</select>
 							</div>
 
 							{/* shift  */}
 							<div className="mt-[7px] w-full">
-								<select className="peer h-[48px] w-[217px] rounded-[10px] border border-blue-gray-200 bg-white poppins text-[16px] font-semibold text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
-									<option value="am">AM</option>
-									<option value="pm">PM</option>
+								<select onChange={e => setStartTime({...startTime, shift: e.target.value})} value={startTime.shift} className="peer h-[48px] w-[217px] rounded-[10px] border border-blue-gray-200 bg-white poppins text-[16px] font-medium text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
+									<option value="AM">AM</option>
+									<option className={`${endTime.shift === 'PM' ? '' : 'hidden'}`} value="PM">PM</option>
 								</select>
 							</div>
 						</div>
@@ -198,93 +366,37 @@ export default function AddSchedule() {
 							{/* hour and minute  */}
 							<div className="flex w-full gap-x-[5px]">
 								{/* hour  */}
-								<select className="peer h-[48px] w-2/4 rounded-[10px] border border-blue-gray-200 bg-white poppins text-[16px] font-semibold text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
-									<option value="">00</option>
-									<option value="">01</option>
-									<option value="">02</option>
-									<option value="">03</option>
-									<option value="">04</option>
-									<option value="">05</option>
-									<option value="">06</option>
-									<option value="">07</option>
-									<option value="">08</option>
-									<option value="">09</option>
-									<option value="">10</option>
-									<option value="">11</option>
-									<option value="">12</option>
+								<select onChange={e => setEndTime({...endTime, hour: parseInt(e.target.value)})} value={endTime.hour} className="peer h-[48px] w-2/4 rounded-[10px] border border-blue-gray-200 bg-white poppins text-[16px] font-medium text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
+									{
+										hours.map((hour: number, i: number) => {
+											if (endTime.shift === 'AM' && hour > 5 && hour < 12) {
+												if (!(startTime.shift === 'AM' && startTime.hour >= hour)) {
+													return <option key={`${hour}${i}`} value={hour}> { `${hour < 10 ? '0' : ''}${hour}` } </option>
+												}
+											} else if (endTime.shift === 'PM' && hour <= 12 && hour != 11 && hour != 10 && hour != 9 && hour != 8) {
+												if (!(startTime.shift === 'PM' && startTime.hour >= hour)) {
+													return <option key={`${hour}${i}`} value={hour}> { `${hour < 10 ? '0' : ''}${hour}` } </option>
+												}
+											}
+										})
+									}
 								</select>
 
 								{/* minute  */}
-								<select className="peer h-[48px] w-2/4 rounded-[10px] border border-blue-gray-200 bg-white poppins text-[16px] font-semibold text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
-									<option value="">00</option>
-									<option value="">01</option>
-									<option value="">02</option>
-									<option value="">03</option>
-									<option value="">04</option>
-									<option value="">05</option>
-									<option value="">06</option>
-									<option value="">07</option>
-									<option value="">08</option>
-									<option value="">09</option>
-									<option value="">10</option>
-									<option value="">11</option>
-									<option value="">12</option>
-									<option value="">13</option>
-									<option value="">14</option>
-									<option value="">15</option>
-									<option value="">16</option>
-									<option value="">17</option>
-									<option value="">18</option>
-									<option value="">19</option>
-									<option value="">20</option>
-									<option value="">21</option>
-									<option value="">22</option>
-									<option value="">23</option>
-									<option value="">24</option>
-									<option value="">25</option>
-									<option value="">26</option>
-									<option value="">27</option>
-									<option value="">28</option>
-									<option value="">29</option>
-									<option value="">30</option>
-									<option value="">31</option>
-									<option value="">32</option>
-									<option value="">33</option>
-									<option value="">34</option>
-									<option value="">35</option>
-									<option value="">36</option>
-									<option value="">37</option>
-									<option value="">38</option>
-									<option value="">39</option>
-									<option value="">40</option>
-									<option value="">41</option>
-									<option value="">42</option>
-									<option value="">43</option>
-									<option value="">44</option>
-									<option value="">45</option>
-									<option value="">46</option>
-									<option value="">47</option>
-									<option value="">48</option>
-									<option value="">49</option>
-									<option value="">50</option>
-									<option value="">51</option>
-									<option value="">52</option>
-									<option value="">53</option>
-									<option value="">54</option>
-									<option value="">55</option>
-									<option value="">56</option>
-									<option value="">57</option>
-									<option value="">58</option>
-									<option value="">59</option>
-									<option value="">60</option>
+								<select onChange={e => setEndTime({...endTime, minute: parseInt(e.target.value)})} value={endTime.minute} className="peer h-[48px] w-2/4 rounded-[10px] border border-blue-gray-200 bg-white poppins text-[16px] font-medium text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
+									{
+										minutes.map((minute: number, i: number) => {
+											return <option key={`end${minute}${i}`} value={minute}> { `${minute < 10 ? '0' : ''}${minute}` } </option>			
+										})
+									}
 								</select>
 							</div>
 
 							{/* shift  */}
 							<div className="mt-[7px] w-full">
-								<select className="peer h-[48px] w-[217px] rounded-[10px] border border-blue-gray-200 bg-white poppins text-[16px] font-semibold text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
-									<option value="am">AM</option>
-									<option value="pm">PM</option>
+								<select onChange={e => setEndTime({...endTime, shift: e.target.value})} value={endTime.shift} className="peer h-[48px] w-[217px] rounded-[10px] border border-blue-gray-200 bg-white poppins text-[16px] font-medium text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
+									<option className={`${startTime.shift === 'AM' ? '' : 'hidden'}`} value="AM">AM</option>
+									<option value="PM">PM</option>
 								</select>
 							</div>
 						</div>
@@ -293,60 +405,65 @@ export default function AddSchedule() {
 
 				{/* column 2 */}
 				<div className="col-span-1">
+					{/* assigned faculty  */}
 					<div className="pb-[50px]">
-						<label className="block text-white poppins font-semibold pb-[10px]">
+						<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
 							Assigned Faculty
 						</label>
-
-							<select className="peer h-[48px] w-[558px] rounded-[10px] border border-blue-gray-200 bg-white poppins text-[16px] font-semibold text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
-								<option value="faculty1"></option>
-								<option value="faculty2"></option>
-								<option value="faculty3"></option>
+						<select onChange={e => setFaculty(e.target.value)} value={faculty} className="peer h-[48px] w-[558px] rounded-[10px] border border-blue-gray-200 bg-white poppins text-[16px] font-medium text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
+							{
+								allFaculties.data?.getAllFacultyWithFilters?.data?.map((faculty: Faculty) => {
+									return <option key={`faculty${faculty.id}`} value={faculty.id}> {`${faculty.name.first} ${faculty.name.middle ? `${faculty.name.middle.charAt(0)}.` : ''} ${faculty.name.last} ${faculty.name.extension}${faculty.credentials !== '' ? `, ${faculty.credentials}` : ''}`} </option>
+								})	
+							}
 							</select>
 					</div>
 
 					{/* dropdown for strand  */}
 					<div className="flex w-[138px] gap-x-[30px] poppins">
-						<div className="flex w-[227px] flex-wrap rounded-[10px] relative pt-[15px]">
+						{/* <div className="flex w-[227px] flex-wrap rounded-[10px] relative pt-[15px]">
 							<label className="flex justify-center items-center absolute left-0 -top-3 poppins text-white font-semibold pb-[10px]">
 								Strand
 							</label>
 
 							<div className="flex w-full gap-x-[10px]">
-								<select className="peer h-[48px] w-[132px] rounded-[10px] border-blue-gray-200 bg-white poppins text-[16px] font-semibold text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
-								<option value="abm">ABM</option>
-										<option value="gas">GAS</option>
-										<option value="humss">HUMSS</option>
-										<option value="stem">STEM</option>
+								<select className="peer h-[48px] w-[132px] rounded-[10px] border-blue-gray-200 bg-white poppins text-[16px] font-medium text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
+									{
+										strands.map((strand: string) => {
+											return <option key={`strand${strand}`} value={strand}> {strand} </option>
+										})	
+									}
 								</select>
 							</div>
-					</div>
+					</div> */}
 
-					{/* dropdown for grade level  */}
+					{/* dropdown for grade level 
 					<div className="flex flex-wrap rounded-[10px] relative pt-[15px]">
 						<label className="flex justify-center items-center absolute left-0 -top-3 poppins text-white font-semibold">
 							Grade Level
 						</label>
 
 						<div className="flex w-full gap-x-[10px]">
-							<select className="peer h-[48px] w-[137px] rounded-[10px] border-blue-gray-200 bg-white poppins text-[16px] font-semibold text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border 	placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
-								<option value="grade11">11</option>
-								<option value="grade12">12</option>
+							<select className="peer h-[48px] w-[137px] rounded-[10px] border-blue-gray-200 bg-white poppins text-[16px] font-medium text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border 	placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
+								<option value={11}>11</option>
+								<option value={12}>12</option>
 							</select>
 						</div>
-					</div>
+					</div> */}
 
 					{/* dropdown for Section */}
-					<div className="flex w-[227px] flex-wrap  rounded-[10px] relative pt-[15px]">
+					<div className="flex w-fit flex-wrap  rounded-[10px] relative pt-[15px]">
 						<label className="flex justify-center items-center absolute left-0 -top-3 poppins text-white font-semibold">
-							Section
+							Class
 						</label>
 
 						<div className="flex w-full gap-x-[10px]">
-							<select className="peer h-[48px] w-[235px] rounded-[10px] border-blue-gray-200 bg-white poppins text-[16px] font-semibold text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
-								<option value="section1"></option>
-								<option value="section2"></option>
-								<option value="section3"></option>
+							<select onChange={e => setSClass(e.target.value)} value={sClass} className="peer h-[48px] w-[558px] rounded-[10px] border-blue-gray-200 bg-white poppins text-[16px] font-medium text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
+									{
+										allClass.data?.getAllClassWithFilters?.data?.flatMap((clss: Classs) => {
+											return <option key={`class${clss.id}`} value={clss.id}>{clss.strand} {clss.year}-{clss.section}</option>
+										})
+									}
 							</select>
 						</div>
 					</div>

@@ -259,15 +259,17 @@ export default function ViewReport() {
       })
 
       let csv: any[] = []
-      csv.push(['No.', 'Student name', ...pseudoAttendance.map((pA: customAttendance) => {return pA.day}), 'Presents', 'Lates', 'Absents'])
-      setCsvHeaders([{ label: 'No.', key: '1' }, { label: 'Student name', key: '2' }, ...pseudoAttendance.map((pA: customAttendance, i: number) => { return { label: `${pA.day}`, key: `${2 + i}` } }), { label: 'Presents', key: `${pseudoAttendance.length + 1}` }, { label: 'Lates', key: `${pseudoAttendance.length + 2}` }, { label: 'Absents', key: `${pseudoAttendance.length + 3}` }])
+      csv.push(['Professor', `${faculty.data?.getFaculty?.data?.name?.first} ${faculty.data?.getFaculty?.data?.name?.middle?.charAt(0) !== '' ? `${faculty.data?.getFaculty?.data?.name?.middle?.charAt(0)}.` : ''} ${faculty.data?.getFaculty?.data?.name?.last}${faculty.data?.getFaculty?.data?.credentials !== '' ? `, ${faculty.data?.getFaculty?.data?.credentials}` : ''}`, '', '', '', '', '', '', '', `${months[curMonth - 1]}-${curYear}`])
+      csv.push(['No.', 'Student name', 'Days', ...pseudoAttendance.map((pA: customAttendance, i: number) => { return '' }),  'Presents', 'Lates', 'Absents'])
+      csv.push(['', '', ...pseudoAttendance.map((pA: customAttendance) => {return pA.day}), '', '', ''])
+      setCsvHeaders([{ label: 'No.', key: '1' }, { label: 'Student name', key: '2' }, {label: 'Day', key: 'Day'}, { label: 'Presents', key: `${pseudoAttendance.length + 1}` }, { label: 'Lates', key: `${pseudoAttendance.length + 2}` }, { label: 'Absents', key: `${pseudoAttendance.length + 3}` }])
       
       classes.data?.getAllClassWithFilters?.data?.filter((classs: Classs) => schedule.data?.getSchedule?.data?.class.match(classs.id) || schedule.data?.getSchedule?.data?.class.match(` ${classs.id}`))[0]?.students?.forEach((studentID: string, i: number) => { 
         const student = students.data?.getAllStudentsWithFilters?.data?.filter((student: Student) => studentID.match(student.id) || studentID.match(` ${student.id}`) || student.id.match(studentID) || student.id.match(` ${studentID}`))[0]
         csv.push([
           i + 1,
           `${student?.name?.first} ${student?.name?.middle !== '' ? `${student?.name?.middle.charAt(0)}.` : ''} ${student?.name?.last} ${student?.name?.extension}`,
-          ...pseudoAttendance.map((pA: customAttendance) => { return pA.special ? '' : pA.presents.includes(student?.id) || pA.presents.includes(` ${student?.id}`) ? 'P' : pA.lates.includes(student?.id) || pA.lates.includes(` ${student?.id}`) ? 'L' : 'A' }),
+          ...pseudoAttendance.map((pA: customAttendance) => { return pA.special ? '' : pA.presents.includes(student?.id) || pA.presents.includes(` ${student?.id}`) ? 'P' : pA.lates.includes(student?.id) || pA.lates.includes(` ${student?.id}`) ? 'L' : 'A' }), '',
           pseudoAttendance.filter((pA: customAttendance) => (pA.presents.includes(student?.id) || pA.presents.includes(` ${student?.id}`)) && !pA.special).length,
           pseudoAttendance.filter((pA: customAttendance) => (pA.lates.includes(student?.id) || pA.lates.includes(` ${student?.id}`)) && !pA.special).length,
           (pseudoAttendance.filter((pA: customAttendance) => !pA.special).length - (pseudoAttendance.filter((pA: customAttendance) => (pA.presents.includes(student?.id) || pA.presents.includes(` ${student?.id}`)) && !pA.special).length + pseudoAttendance.filter((pA: customAttendance) => (pA.lates.includes(student?.id) || pA.lates.includes(` ${student?.id}`)) && !pA.special).length))
@@ -381,24 +383,29 @@ export default function ViewReport() {
               </div>
               
               {/* dates  */}
-              <div className=" h-full grow border-r border-black flex items-center ">
-                {
-                  attendances.map((cAttendance: customAttendance, i: number) => {
-                    return (
-                      <div key={`${cAttendance.day}${i}`} className={` w-[40px] h-full border-l border-black flex flex-col items-center justify-center gap-y-[10px] ${cAttendance.special ? 'bg-[#FFD3BA]' : ''} `}>
-                        <div className=" poppins text-primary-2 text-[20px] font-bold ">
-                          {cAttendance.day}
+              <div className=" h-full grow border-black flex flex-col ">
+                <div className=" border-b border-x border-black w-full h-1/2 flex justify-center items-center poppins text-primary-2 text-[20px] font-bold ">
+                    Day
+                </div>
+                <div className=" h-1/2 w-full border-r border-black flex items-center ">
+                  {
+                    attendances.map((cAttendance: customAttendance, i: number) => {
+                      return (
+                        <div key={`${cAttendance.day}${i}`} className={` w-[40px] h-full border-l border-black flex flex-col items-center justify-center gap-y-[10px] ${cAttendance.special ? 'bg-[#FFD3BA]' : ''} `}>
+                          <div className=" poppins text-primary-2 text-[20px] font-bold ">
+                            {cAttendance.day}
+                          </div>
                         </div>
-                      </div>
-                    )
-                  })
-                }
+                      )
+                    })
+                  }
+                </div>
               </div>
 
               {/* total */}
               <div className=" h-full w-[141px] flex flex-col items-center ">
                 {/* title icon */}
-                <div className=" w-full h-[50px] border-b border-black flex items-center justify-center gap-x-[43px] ">
+                <div className=" w-full h-1/2 border-b border-black flex items-center justify-center gap-x-[43px] ">
                   <div className=" poppins font-bold text-primary-2 text-[20px] ">
                     Total
                   </div>
@@ -408,7 +415,7 @@ export default function ViewReport() {
                   </div>
                 </div>
 
-                <div className=" w-full h-[40px] flex items-center justify-center ">
+                <div className=" w-full h-1/2 flex items-center justify-center ">
                   <div className=" w-1/3 h-full flex items-center justify-center poppins font-bold text-primary-2 text-[20px] ">
                     P
                   </div>

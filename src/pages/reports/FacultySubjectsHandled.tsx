@@ -241,7 +241,7 @@ export default function FacultySubjectsHandled() {
                         </div>
 
                         {/* actions  */}
-                        <div className="absolute z-10 top-0 -right-[200px] group-hover:right-5 transition-all w-fit h-full flex items-center">
+                        <div className="absolute z-10 top-0 right-5 transition-all w-fit h-full flex items-center">
                           {/* edit subject  */}
                           <Link className="w-fit h-full flex items-center " to={`/admindashboard/reports/facultylist/${id}/subjectshandled/${schedule.id}/report`}>
                             <div className=" poppins text-[16px] text-primary-1 font-medium underline ">

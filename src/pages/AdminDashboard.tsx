@@ -147,10 +147,10 @@ export default function AdminDashboard() {
               </div>
 
               {/* divider  */}
-              <div className="absolute bottom-[46px] w-[388px] h-0.5 border-t-0 bg-[#072D5F] opacity-25" />
+              <div className="absolute bottom-[100px] w-[388px] h-0.5 border-t-0 bg-[#072D5F] opacity-25" />
 
               {/* buttons  */}
-              <div className="w-full flex justify-evenly absolute bottom-[11px]">
+              <div className="w-full flex justify-evenly absolute bottom-[50px]">
                 {/* proceed button  */}
                 <div onClick={logout} className="text-[#D80000] h-full w-2/4 cursor-pointer flex justify-center items-center hover:font-bold">
                   Logout

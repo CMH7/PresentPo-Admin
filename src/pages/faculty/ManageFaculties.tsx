@@ -180,11 +180,11 @@ export default function ManageFaculties() {
         <div className="flex items-center">
           <Link to='/admindashboard' replace={true}>
             <div className="aspect-square w-[25px] h-auto cursor-pointer">
-              <img src={chevronLeft} alt="chevron left" />
+              <img className="invert" src={chevronLeft} alt="chevron left" />
             </div>
           </Link>
 
-          <div className="ml-[30px] poppins text-[40px] font-bold text-primary-2 select-none">
+          <div className="ml-[30px] poppins text-[40px] font-bold text-white select-none">
             Manage Faculties
           </div>
         </div>

@@ -110,7 +110,7 @@ export default function ManageClasses() {
             </div>
           </Link>
 
-          <div className="ml-[30px] poppins text-[40px] font-bold text-primary-2 select-none">
+          <div className="ml-[30px] poppins text-[40px] font-bold text-white select-none">
             Manage Classes
           </div>
         </div>

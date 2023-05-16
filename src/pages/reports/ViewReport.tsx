@@ -230,12 +230,41 @@ export default function ViewReport() {
               <div className=" h-full w-[141px] flex flex-col items-center ">
                 {/* title icon */}
                 <div className=" w-full h-1/2 border-b border-black flex items-center justify-center gap-x-[43px] ">
-                  <div className=" poppins font-bold text-primary-2 text-[20px] ">
+                  <div className="  poppins font-bold text-primary-2 text-[20px] ">
                     Total
                   </div>
 
-                  <div className=" aspect-square w-[15px] h-auto ">
+                  <div className=" aspect-square w-[15px] h-auto relative group ">
                     <img className=" w-full h-full " src={infoIcon} alt="information icon" />
+
+                    <div className=" shadow-lg transition-all py-[8px] group-hover:opacity-100 opacity-0 absolute top-0 right-0 w-[205px] h-[78px] flex flex-col bg-white rounded-[10px] ">
+                      <div className=" w-full flex items-center justify-center poppins text-[12px] text-primary-2 font-bold ">
+                        Legend:
+                      </div>
+
+                      <div className=" w-full poppins text-[15px] font-bold flex justify-center items-center gap-x-[10px] ">
+                        <div className=" text-primary-2 ">
+                          P - Present
+                        </div>
+
+                        <div className=" text-[#D80000] ">
+                          A <span className=" text-primary-2 "> - Absent</span>
+                        </div>
+                      </div>
+                      
+                      <div className=" w-full poppins text-[15px] font-bold flex justify-center items-center gap-x-[10px] ">
+                        <div className=" text-[#FFB800] ">
+                          L <span className=" text-primary-2 "> - Late</span>
+                        </div>
+
+                        <div className=" flex items-center gap-x-[5px] ">
+                          <div className=" h-[15px] w-[15px] bg-[#FFD3BA] " />
+                          <div className=" text-primary-2 ">
+                            Special
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 

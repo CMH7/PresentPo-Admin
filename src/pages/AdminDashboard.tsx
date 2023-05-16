@@ -191,7 +191,7 @@ export default function AdminDashboard() {
                 <img className="hidden group-hover:block" src={facultywhite} alt="students-white"/>
               </div>
               <div className="flex poppins font-bold text-[16px] ml-[15px] text-primary-2 select-none group-hover:text-white">
-                Manage Faculties
+                Manage Faculty
               </div>
             </div>
           </Link>

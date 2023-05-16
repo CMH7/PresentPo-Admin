@@ -106,7 +106,7 @@ export default function ManageClasses() {
         <div className="flex items-center">
           <Link to='/admindashboard' replace={true}>
             <div className="aspect-square w-[25px] h-auto cursor-pointer">
-              <img src={chevronLeft} alt="chevron left" />
+              <img className="invert" src={chevronLeft} alt="chevron left" />
             </div>
           </Link>
 
@@ -239,7 +239,7 @@ export default function ManageClasses() {
                       {/* manage class's students  */}
                       <Link className="w-fit h-full" to={`/admindashboard/manageclasses/${classs.id}/manageclassstudents`}>
                         <div className=" poppins text-[14px] text-primary-1 hover:underline h-full px-2 mr-[20px] flex items-center justify-center select-none cursor-pointer ">
-                          Manage class's students
+                          Manage class' students
                         </div>
                       </Link>
 

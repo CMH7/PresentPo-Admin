@@ -106,11 +106,11 @@ export default function EditClass() {
 				<div className="flex items-center mt-[50px] ml-[100px]">
 					<Link to='/admindashboard/manageclasses' replace={true} aria-disabled={saving}>
 						<div className="aspect-square w-[25px] h-auto cursor-pointer">
-							<img src={backIcon} alt="chevron left" />
+							<img className="invert" src={backIcon} alt="chevron left" />
 						</div>
 					</Link>
 					{/* edit label  */}
-					<label className=" ml-[30px] poppins font-bold text-[40px] text-primary-2">
+					<label className="ml-[30px] poppins text-[40px] font-bold text-white select-none">
 						Edit Class
 					</label>
 				</div>

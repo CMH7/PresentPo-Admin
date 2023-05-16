@@ -194,15 +194,15 @@ export default function ManageStudents() {
 
           {/* add student button  */}
           <Link to='/admindashboard/managestudents/addstudent' replace={true}>
-            <div className="group w-[220px] h-[55px] flex items-center justify-center bg-white hover:bg-primary-1 transition-all rounded-[50px] cursor-pointer">
+            <div className="group w-[220px] h-[55px] flex items-center justify-center bg-primary-2 hover:bg-white transition-all rounded-[50px] cursor-pointer">
               {/* icon  */}
               <div className="aspect-square w-[20px] h-auto ">
-                <img className="hidden group-hover:block" src={plusWhite} alt="plus white icon" />
-                <img className="group-hover:hidden" src={plusPrim} alt="plus primary icon" />
+                <img className="group-hover:hidden" src={plusWhite} alt="plus white icon" />
+                <img className="hidden group-hover:block" src={plusPrim} alt="plus primary icon" />
               </div>
 
               {/* text  */}
-              <div className="ml-[10px] poppins font-semibold text-[20px] text-primary-2 group-hover:text-white select-none">
+              <div className="ml-[10px] poppins font-semibold text-[20px] text-white group-hover:text-primary-2 select-none">
                 Add Student
               </div>
             </div>

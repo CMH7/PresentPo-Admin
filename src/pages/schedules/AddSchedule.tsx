@@ -224,12 +224,12 @@ export default function AddSchedule() {
 				<div className="flex items-center mt-[50px] ml-[100px]">
 					<Link to='/admindashboard/manageschedules' replace={true}>
             <div className="aspect-square w-[25px] h-auto cursor-pointer">
-              <img src={backIcon} alt="chevron left" />
+              <img className="invert" src={backIcon} alt="chevron left" />
             </div>
 					</Link>
 					
 					{/* add button  */}
-					<div className=" ml-[30px] poppins font-bold text-[40px] text-primary-2">
+					<div className="ml-[30px] poppins text-[40px] font-bold text-white select-none">
 						Add Schedule
 					</div>
 				</div>
@@ -310,7 +310,7 @@ export default function AddSchedule() {
 						</div>
 
 						{/* start time  */}
-						<div className="flex w-[250px] flex-wrap border-2 border-primary-2 rounded-[10px] p-2 relative pt-[15px]">
+						<div className="flex w-[250px] flex-wrap border-2 border-white rounded-[10px] p-2 relative pt-[15px]">
 							<div className="w-full h-[19px] flex justify-center items-center absolute left-0 -top-3">
 								<label className="w-[81px] h-full bg-primary-2 text-white poppins font-semibold text-[14px] flex justify-center items-center rounded-[3px]">
 									Start time
@@ -356,7 +356,7 @@ export default function AddSchedule() {
 						</div>
 
 						{/* end time  */}
-						<div className="flex w-[250px] flex-wrap border-2 border-primary-2 rounded-[10px] p-2 relative pt-[15px]">
+						<div className="flex w-[250px] flex-wrap border-2 border-white rounded-[10px] p-2 relative pt-[15px]">
 							<div className="w-full h-[19px] flex justify-center items-center absolute left-0 -top-3">
 								<label className="w-[81px] h-full bg-primary-2 text-white poppins font-semibold text-[14px] flex justify-center items-center rounded-[3px]">
 									End time

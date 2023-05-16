@@ -112,12 +112,12 @@ export default function EditAdmin() {
 			<div className="flex items-center mt-[50px] ml-[100px]">
 			<Link to='/admindashboard' replace={true}>
 				<div className="aspect-square w-[25px] h-auto cursor-pointer">
-				<img src={chevronLeft} alt="chevron left" />
+				<img className="invert" src={chevronLeft} alt="chevron left" />
 				</div>
 			</Link>
 
 				{/* edit label  */}
-				<label className=" ml-[30px] poppins font-bold text-[40px] text-primary-2">
+				<label className="ml-[30px] poppins text-[40px] font-bold text-white select-none">
 					Edit Admin
 				</label>
 			</div>

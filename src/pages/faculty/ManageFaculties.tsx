@@ -185,7 +185,7 @@ export default function ManageFaculties() {
           </Link>
 
           <div className="ml-[30px] poppins text-[40px] font-bold text-white select-none">
-            Manage Faculties
+            Manage Faculty
           </div>
         </div>
 

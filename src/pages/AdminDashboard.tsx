@@ -345,7 +345,7 @@ export default function AdminDashboard() {
           {/* bottom */}
           <div className="flex flex-col w-full grow px-[15px] py-[20px] rounded-[20px] gap-y-[15px] bg-white overflow-hidden">
             <div className=" w-full h-fit text-[20px] font-bold text-[#072D5F] ">
-              Recent Logs
+              Recent Activities
             </div>
 
             <div className=" w-full flex items-center h-fit rounded-[20px] text-[14px] font-semibold text-[#072D5F] bg-white">

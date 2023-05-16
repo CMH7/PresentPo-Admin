@@ -32,7 +32,7 @@ export default function ViewReport() {
   const [curYear, setCurYear] = useState(new Date().getUTCFullYear())
   const [attendances, setAttendances] = useState<customAttendance[]>([])
   const [csvData, setCsvData] = useState<any[]>([])
-  const [csvHeaders, setCsvHeaders] = useState<{label: string, key: string}[]>([])
+  const [csvHeaders, setCsvHeaders] = useState<{ label: string, key: string }[]>([])
 
   const faculty = useQuery(GET_FACULTY, { variables: { getFacultyId: id } })
   const classes = useQuery(ALL_CLASS, { variables: { filters: {} } })
@@ -79,21 +79,25 @@ export default function ViewReport() {
       })
 
       let csv: any[] = []
-      csv.push(['Professor', `${faculty.data?.getFaculty?.data?.name?.first} ${faculty.data?.getFaculty?.data?.name?.middle?.charAt(0) !== '' ? `${faculty.data?.getFaculty?.data?.name?.middle?.charAt(0)}.` : ''} ${faculty.data?.getFaculty?.data?.name?.last}${faculty.data?.getFaculty?.data?.credentials !== '' ? `, ${faculty.data?.getFaculty?.data?.credentials}` : ''}`, '', '', '', '', '', '', '', `${months[curMonth - 1]}-${curYear}`])
-      csv.push(['No.', 'Student name', 'Days', ...pseudoAttendance.map((pA: customAttendance, i: number) => { return '' }),  'Presents', 'Lates', 'Absents'])
-      csv.push(['', '', ...pseudoAttendance.map((pA: customAttendance) => {return pA.day}), '', '', ''])
-      setCsvHeaders([{ label: 'No.', key: '1' }, { label: 'Student name', key: '2' }, {label: 'Day', key: 'Day'}, { label: 'Presents', key: `${pseudoAttendance.length + 1}` }, { label: 'Lates', key: `${pseudoAttendance.length + 2}` }, { label: 'Absents', key: `${pseudoAttendance.length + 3}` }])
+      csv.push(['Professor', `${faculty.data?.getFaculty?.data?.name?.first} ${faculty.data?.getFaculty?.data?.name?.middle?.charAt(0) !== '' ? `${faculty.data?.getFaculty?.data?.name?.middle?.charAt(0)}.` : ''} ${faculty.data?.getFaculty?.data?.name?.last}${faculty.data?.getFaculty?.data?.credentials !== '' ? `, ${faculty.data?.getFaculty?.data?.credentials}` : ''}`, '', '', '', '', '', '', '', '', '', '', `${months[curMonth - 1]}-${curYear}`])
+      csv.push(['No.', 'Last name', 'First name', 'Middle name', 'Extension name', 'Days', ...pseudoAttendance.map((pA: customAttendance, i: number) => { return '' }),  'Presents', 'Lates', 'Absents'])
+      csv.push(['', '', '', '', '', ...pseudoAttendance.map((pA: customAttendance) => {return pA.day}), '', '', ''])
       
-      classes.data?.getAllClassWithFilters?.data?.filter((classs: Classs) => schedule.data?.getSchedule?.data?.class.match(classs.id) || schedule.data?.getSchedule?.data?.class.match(` ${classs.id}`))[0]?.students?.forEach((studentID: string, i: number) => { 
-        const student = students.data?.getAllStudentsWithFilters?.data?.filter((student: Student) => studentID.match(student.id) || studentID.match(` ${student.id}`) || student.id.match(studentID) || student.id.match(` ${studentID}`))[0]
-        csv.push([
-          i + 1,
-          `${student?.name?.first} ${student?.name?.middle !== '' ? `${student?.name?.middle.charAt(0)}.` : ''} ${student?.name?.last} ${student?.name?.extension}`,
-          ...pseudoAttendance.map((pA: customAttendance) => { return pA.special ? '' : pA.presents.includes(student?.id) || pA.presents.includes(` ${student?.id}`) ? 'P' : pA.lates.includes(student?.id) || pA.lates.includes(` ${student?.id}`) ? 'L' : 'A' }), '',
-          pseudoAttendance.filter((pA: customAttendance) => (pA.presents.includes(student?.id) || pA.presents.includes(` ${student?.id}`)) && !pA.special).length,
-          pseudoAttendance.filter((pA: customAttendance) => (pA.lates.includes(student?.id) || pA.lates.includes(` ${student?.id}`)) && !pA.special).length,
-          (pseudoAttendance.filter((pA: customAttendance) => !pA.special).length - (pseudoAttendance.filter((pA: customAttendance) => (pA.presents.includes(student?.id) || pA.presents.includes(` ${student?.id}`)) && !pA.special).length + pseudoAttendance.filter((pA: customAttendance) => (pA.lates.includes(student?.id) || pA.lates.includes(` ${student?.id}`)) && !pA.special).length))
-        ])
+      students.data?.getAllStudentsWithFilters?.data?.flatMap((student: Student, i: number) => {
+        if (classes.data?.getAllClassWithFilters?.data?.filter((classs: Classs) => schedule.data?.getSchedule?.data?.class.match(classs.id) || schedule.data?.getSchedule?.data?.class.match(` ${classs.id}`))[0]?.students?.includes(student.id) || classes.data?.getAllClassWithFilters?.data?.filter((classs: Classs) => schedule.data?.getSchedule?.data?.class.match(classs.id) || schedule.data?.getSchedule?.data?.class.match(` ${classs.id}`))[0]?.students?.includes(` ${student.id}`)) {
+          csv.push([
+            i + 1,
+            `${student?.name?.last}`,
+            `${student?.name?.first}`,
+            `${student?.name?.middle}`,
+            `${student?.name?.extension}`,
+            ...pseudoAttendance.map((pA: customAttendance) => { return pA.special ? 'S' : pA.presents.includes(student?.id) || pA.presents.includes(` ${student?.id}`) ? 'P' : pA.lates.includes(student?.id) || pA.lates.includes(` ${student?.id}`) ? 'L' : 'A' }),
+            '',
+            pseudoAttendance.filter((pA: customAttendance) => (pA.presents.includes(student?.id) || pA.presents.includes(` ${student?.id}`)) && !pA.special).length,
+            pseudoAttendance.filter((pA: customAttendance) => (pA.lates.includes(student?.id) || pA.lates.includes(` ${student?.id}`)) && !pA.special).length,
+            (pseudoAttendance.filter((pA: customAttendance) => !pA.special).length - (pseudoAttendance.filter((pA: customAttendance) => (pA.presents.includes(student?.id) || pA.presents.includes(` ${student?.id}`)) && !pA.special).length + pseudoAttendance.filter((pA: customAttendance) => (pA.lates.includes(student?.id) || pA.lates.includes(` ${student?.id}`)) && !pA.special).length))
+          ])
+        }
       })
       
       setCsvData(csv)      
@@ -111,11 +115,11 @@ export default function ViewReport() {
             <div className="flex items-center h-fit">
               <Link to={`/admindashboard/reports/facultylist/${id}/subjectshandled`} replace={true}>
                 <div className="aspect-square w-[25px] h-auto cursor-pointer">
-                  <img src={chevronLeft} alt="chevron left" />
+                  <img className="invert" src={chevronLeft} alt="chevron left" />
                 </div>
               </Link>
 
-              <div className="ml-[30px] poppins text-[40px] font-bold text-primary-2 select-none">
+              <div className="ml-[30px] poppins text-[40px] font-bold text-white select-none">
                 Report
               </div>
             </div>
@@ -252,14 +256,14 @@ export default function ViewReport() {
             {/* table body  */}
             <div className=' w-full h-fit mt-[2px] '>
               {
-                students.data?.getAllStudentsWithFilters?.data?.flatMap((student: Student) => {
+                students.data?.getAllStudentsWithFilters?.data?.map((student: Student, i: number) => {
                   if (classes.data?.getAllClassWithFilters?.data?.filter((classs: Classs) => schedule.data?.getSchedule?.data?.class.match(classs.id) || schedule.data?.getSchedule?.data?.class.match(` ${classs.id}`))[0]?.students?.includes(student.id) || classes.data?.getAllClassWithFilters?.data?.filter((classs: Classs) => schedule.data?.getSchedule?.data?.class.match(classs.id) || schedule.data?.getSchedule?.data?.class.match(` ${classs.id}`))[0]?.students?.includes(` ${student.id}`)) {
                     return (
                       <div key={`${student.id}`} className=" w-full h-[44px] bg-white hover:bg-gray-200 mb-[2px] flex items-center pl-[20px] ">
                         {/* No.  */}
                         <div className=" h-full w-[50px] shrink-0 flex items-center ">
                           <div className=" poppins font-medium text-[16px] text-primary-2 ">
-                            { 0 + 1 }
+                            { i }
                           </div>
                         </div>
                         

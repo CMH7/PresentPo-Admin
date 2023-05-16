@@ -3,9 +3,6 @@ import ReactDOM from 'react-dom/client'
 import './index.css'
 import Pages from './pages'
 import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client';
-// @ts-ignore
-import store from './store'
-import { Provider } from 'react-redux'
 import { ToastContainer } from 'react-toastify';
 
 const client = new ApolloClient({
@@ -16,25 +13,23 @@ const client = new ApolloClient({
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <Provider store={store}>
-      <ApolloProvider client={client}>
-        <div className="absolute">
-          <ToastContainer
-            position="top-right"
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
+    <ApolloProvider client={client}>
+      <div className="absolute">
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
 
-            />
-        </div>
-        <Pages />
-      </ApolloProvider>
-    </Provider>
+          />
+      </div>
+      <Pages />
+    </ApolloProvider>
   </React.StrictMode>,
 )

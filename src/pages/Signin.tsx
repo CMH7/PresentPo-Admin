@@ -3,12 +3,10 @@ import Wrapper from "../components/Wrapper";
 import { useEffect, useState } from 'react'
 import PTextfield from "../components/forms/PTextfield";
 import PPassfield from "../components/forms/PPassfield";
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import PrimaryButton from "../components/buttons/PrimaryButton";
 import { gql, useLazyQuery } from "@apollo/client";
-import { PropagateLoader } from "react-spinners";
-import { useDispatch, useSelector } from 'react-redux'
-import { setAdmin } from '../features/admins/adminsSlice'
+import { PropagateLoader } from "react-spinners"
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -35,11 +33,8 @@ const CHECK_ADMIN_CREDENTIALS = gql`
 export default function Signin() {
   const [email, setEmail] = useState('')
   const [password, setPass] = useState('')
-  const navigate = useNavigate()
 
   const [getAllAdminWithFilters, { loading, data }] = useLazyQuery(CHECK_ADMIN_CREDENTIALS)
-  
-  const dispatch = useDispatch()
 
   const checkCreds = async () => {    
     if (email !== '' && password !== '') {

@@ -4,11 +4,8 @@ import { useNavigate, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { gql, useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { toast } from "react-toastify";
-import { useDispatch, useSelector } from "react-redux";
-import { selectAdmin } from "../selectors";
 import { Link } from "react-router-dom";
 import chevronLeft from '../assets/left-arrow 1.png'
-import { setAdmin } from "../features/admins/adminsSlice";
 import Admin from "../interfaces/Admin";
 
 const EDIT_ADMIN_OPS = gql`

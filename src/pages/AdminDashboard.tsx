@@ -18,8 +18,6 @@ import logout1 from '../assets/logout 1.png';
 import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { selectAdmin } from "../selectors";
 import gql from "graphql-tag";
 import { useQuery } from "@apollo/client";
 import { CChart } from '@coreui/react-chartjs'

@@ -4,6 +4,7 @@ interface Classs {
   year: number
   section: string
   students: string[]
+  sy: string
 }
 
 export default Classs

@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 const ALL_CLASS = gql`
-  query GetAllSubjectsWithFilters {
-    getAllClassWithFilters {
+  query GetAllClassWithFilters($filters: classFilters) {
+    getAllClassWithFilters(filters: $filters) {
       error
       message
       data {
@@ -10,7 +10,9 @@ const ALL_CLASS = gql`
         strand
         year
         section
+        semester
         students
+        sy
       }
     }
   }

@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 const GET_SCHEDULE = gql`
-  query GetAllSchedulesWithFilters($filters: scheduleFilters!) {
-    getAllSchedulesWithFilters(filters: $filters) {
+  query GetSchedule($getScheduleId: ID!) {
+    getSchedule(id: $getScheduleId) {
       error
       message
       data {

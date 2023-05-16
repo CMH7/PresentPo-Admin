@@ -104,7 +104,7 @@ export default function ViewReport() {
   return (
     <Wrapper centered={true}>
       <div className=" w-full h-full px-[100px] flex flex-col items-center ">
-        <QueryResult error={faculty.error || classes.error || subjects.error || schedule.error} loading={faculty.loading || classes.loading || subjects.loading || schedule.loading} data={faculty.data || classes.data || subjects.data || schedule.data} >
+        <QueryResult error={faculty.error || classes.error || subjects.error || schedule.error || students.error} loading={faculty.loading || classes.loading || subjects.loading || schedule.loading || students.loading} data={faculty.data || classes.data || subjects.data || schedule.data || students.data} >
           {/* header  */}
           <div className=" w-full h-fit flex gap-x-[85px] pt-[40px] ">
             {/* back button  */}
@@ -252,85 +252,82 @@ export default function ViewReport() {
             {/* table body  */}
             <div className=' w-full h-fit mt-[2px] '>
               {
-                classes.data?.getAllClassWithFilters?.data?.filter((classs: Classs) => schedule.data?.getSchedule?.data?.class.match(classs.id) || schedule.data?.getSchedule?.data?.class.match(` ${classs.id}`))[0]?.students?.flatMap((studentID: string, i: number) => {
-                  return students.data?.getAllStudentsWithFilters?.data?.flatMap((student: Student) => {
-                    if (student.id.match(studentID) || student.id.match(` ${studentID}`) || studentID.match(student.id) || studentID.match(` ${student.id}`) ) {
-                      return (
-                        <div key={`${studentID}`} className=" w-full h-[44px] bg-white hover:bg-gray-200 mb-[2px] flex items-center pl-[20px] ">
-                          {/* No.  */}
-                          <div className=" h-full w-[50px] shrink-0 flex items-center ">
-                            <div className=" poppins font-medium text-[16px] text-primary-2 ">
-                              { i + 1 }
-                            </div>
+                students.data?.getAllStudentsWithFilters?.data?.flatMap((student: Student) => {
+                  if (classes.data?.getAllClassWithFilters?.data?.filter((classs: Classs) => schedule.data?.getSchedule?.data?.class.match(classs.id) || schedule.data?.getSchedule?.data?.class.match(` ${classs.id}`))[0]?.students?.includes(student.id) || classes.data?.getAllClassWithFilters?.data?.filter((classs: Classs) => schedule.data?.getSchedule?.data?.class.match(classs.id) || schedule.data?.getSchedule?.data?.class.match(` ${classs.id}`))[0]?.students?.includes(` ${student.id}`)) {
+                    return (
+                      <div key={`${student.id}`} className=" w-full h-[44px] bg-white hover:bg-gray-200 mb-[2px] flex items-center pl-[20px] ">
+                        {/* No.  */}
+                        <div className=" h-full w-[50px] shrink-0 flex items-center ">
+                          <div className=" poppins font-medium text-[16px] text-primary-2 ">
+                            { 0 + 1 }
                           </div>
-                          
-                           {/* student name */}
-                          <div className=" h-full w-[300px] shrink-0 flex items-center ">
-                            <div className=" poppins font-medium text-[16px] text-primary-2 ">
-                              { student.name.first } { student.name.middle !== '' ? `${student.name.middle.charAt(0)}.` : '' } { student.name.last } { student.name.extension }
-                            </div>
+                        </div>
+                        
+                          {/* student name */}
+                        <div className=" h-full w-[300px] shrink-0 flex items-center ">
+                          <div className=" poppins font-medium text-[16px] text-primary-2 ">
+                            { student.name.last }, { student.name.first } {student.name.middle} { student.name.extension }
                           </div>
-                          
-                          {/* dates  */}
-                          <div className=" h-full grow border-r border-black flex items-center ">
-                            {                              
-                              attendances.map((cAttendance: customAttendance, i: number) => {
-                                if (cAttendance.special) {
-                                  return <div key={`${cAttendance.day}${i}`} className=" w-[40px] h-full border-l border-black flex flex-col items-center justify-center gap-y-[10px] bg-[#FFD3BA] " />
-                                }
-                                
-                                if (cAttendance.presents.includes(student.id) || cAttendance.presents.includes(` ${student.id}`)) {
-                                  return (
-                                    <div key={`${cAttendance.day}${i}`} className=" w-[40px] h-full border-l border-black flex flex-col items-center justify-center gap-y-[10px] ">
-                                      <div className=" poppins text-primary-2 text-[20px] font-bold ">
-                                        P
-                                      </div>
-                                    </div>
-                                  )
-                                }
-                                
-                                if (cAttendance.lates.includes(student.id) || cAttendance.lates.includes(` ${student.id}`)) {
-                                  return (
-                                    <div key={`${cAttendance.day}${i}`} className=" w-[40px] h-full border-l border-black flex flex-col items-center justify-center gap-y-[10px] ">
-                                      <div className=" poppins text-[#FFB800] text-[20px] font-bold ">
-                                        L
-                                      </div>
-                                    </div>
-                                  )
-                                } 
-
+                        </div>
+                        
+                        {/* dates  */}
+                        <div className=" h-full grow border-r border-black flex items-center ">
+                          {                              
+                            attendances.map((cAttendance: customAttendance, i: number) => {
+                              if (cAttendance.special) {
+                                return <div key={`${cAttendance.day}${i}`} className=" w-[40px] h-full border-l border-black flex flex-col items-center justify-center gap-y-[10px] bg-[#FFD3BA] " />
+                              }
+                              
+                              if (cAttendance.presents.includes(student.id) || cAttendance.presents.includes(` ${student.id}`)) {
                                 return (
                                   <div key={`${cAttendance.day}${i}`} className=" w-[40px] h-full border-l border-black flex flex-col items-center justify-center gap-y-[10px] ">
-                                    <div className=" poppins text-[#D80000] text-[20px] font-bold ">
-                                      A
+                                    <div className=" poppins text-primary-2 text-[20px] font-bold ">
+                                      P
                                     </div>
                                   </div>
                                 )
-                              })
-                            }
-                          </div>
-    
-                          {/* total */}
-                          <div className=" h-full w-[141px] flex flex-col items-center ">
-                            <div className=" w-full h-[40px] flex items-center justify-center ">
-                              <div className=" w-1/3 h-full flex items-center justify-center poppins font-bold text-primary-2 text-[20px] ">
-                                {attendances.filter((cA: customAttendance) => (cA.presents.includes(student.id) || cA.presents.includes(` ${student.id}`)) && !cA.special ).length}
-                              </div>
-                              <div className=" w-1/3 h-full border-x border-black flex items-center justify-center poppins font-bold text-primary-2 text-[20px] ">
-                                {attendances.filter((cA: customAttendance) => (cA.lates.includes(student.id) || cA.lates.includes(` ${student.id}`)) && !cA.special ).length}
-                              </div>
-                              <div className=" w-1/3 h-full flex items-center justify-center poppins font-bold text-primary-2 text-[20px] ">
-                                { attendances.filter((cA: customAttendance) => !cA.special).length - ( attendances.filter((cA: customAttendance) => (cA.presents.includes(student.id) || cA.presents.includes(` ${student.id}`)) && !cA.special ).length + attendances.filter((cA: customAttendance) => (cA.lates.includes(student.id) || cA.lates.includes(` ${student.id}`)) && !cA.special ).length)}
-                              </div>
+                              }
+                              
+                              if (cAttendance.lates.includes(student.id) || cAttendance.lates.includes(` ${student.id}`)) {
+                                return (
+                                  <div key={`${cAttendance.day}${i}`} className=" w-[40px] h-full border-l border-black flex flex-col items-center justify-center gap-y-[10px] ">
+                                    <div className=" poppins text-[#FFB800] text-[20px] font-bold ">
+                                      L
+                                    </div>
+                                  </div>
+                                )
+                              } 
+
+                              return (
+                                <div key={`${cAttendance.day}${i}`} className=" w-[40px] h-full border-l border-black flex flex-col items-center justify-center gap-y-[10px] ">
+                                  <div className=" poppins text-[#D80000] text-[20px] font-bold ">
+                                    A
+                                  </div>
+                                </div>
+                              )
+                            })
+                          }
+                        </div>
+  
+                        {/* total */}
+                        <div className=" h-full w-[141px] flex flex-col items-center ">
+                          <div className=" w-full h-[40px] flex items-center justify-center ">
+                            <div className=" w-1/3 h-full flex items-center justify-center poppins font-bold text-primary-2 text-[20px] ">
+                              {attendances.filter((cA: customAttendance) => (cA.presents.includes(student.id) || cA.presents.includes(` ${student.id}`)) && !cA.special ).length}
+                            </div>
+                            <div className=" w-1/3 h-full border-x border-black flex items-center justify-center poppins font-bold text-primary-2 text-[20px] ">
+                              {attendances.filter((cA: customAttendance) => (cA.lates.includes(student.id) || cA.lates.includes(` ${student.id}`)) && !cA.special ).length}
+                            </div>
+                            <div className=" w-1/3 h-full flex items-center justify-center poppins font-bold text-primary-2 text-[20px] ">
+                              { attendances.filter((cA: customAttendance) => !cA.special).length - ( attendances.filter((cA: customAttendance) => (cA.presents.includes(student.id) || cA.presents.includes(` ${student.id}`)) && !cA.special ).length + attendances.filter((cA: customAttendance) => (cA.lates.includes(student.id) || cA.lates.includes(` ${student.id}`)) && !cA.special ).length)}
                             </div>
                           </div>
                         </div>
-                      )
-                    }
-                  })
+                      </div>
+                    )
+                  }
                 })
               }
-
             </div>
 
           </div>

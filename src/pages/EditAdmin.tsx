@@ -2,13 +2,14 @@ import Wrapper from "../components/Wrapper";
 import backIcon from '../assets/left-arrow 1.png'
 import { useNavigate, useParams } from "react-router";
 import { useEffect, useState } from "react";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAdmin } from "../selectors";
 import { Link } from "react-router-dom";
 import chevronLeft from '../assets/left-arrow 1.png'
 import { setAdmin } from "../features/admins/adminsSlice";
+import Admin from "../interfaces/Admin";
 
 const EDIT_ADMIN_OPS = gql`
 mutation UpdateAdmin($updateAdminId: ID!, $updatedAdmin: updatedAdmin!) {
@@ -30,34 +31,21 @@ mutation UpdateAdmin($updateAdminId: ID!, $updatedAdmin: updatedAdmin!) {
 }
 `
 
-const GET_ADMIN_QUERY = gql`
-query GetClass($getAdminId: ID!) {
-  getAdmin(id: $getAdminId) {
-    error
-    message
-    data {
-      id
-      name {
-        first
-        middle
-        last
-        extension
-      }
-      email
-      password
-    }
-  }
-}
-`
-
 /*stated na page na yung 'Edit Admin'
 after this, go to index.tsx to import the page*/
-export default function EditAdmin() {
-	
-	//@ts-ignore
-	const admin = JSON.parse(localStorage.getItem('admin'))
-	const dispatch = useDispatch()
-	
+export default function EditAdmin() {	
+	const [adminn, setAdminn] = useState<Admin>({
+		id: '',
+		name: {
+			first: '',
+			middle: '',
+			last: '',
+			extension: ''
+		},
+		email: '',
+		password: ''
+	})
+
 	const [firstname, setFirstName] = useState('')
 	const [middlename, setMiddleName] = useState('')
 	const [lastname, setLastName] = useState('')
@@ -69,11 +57,22 @@ export default function EditAdmin() {
 	
 	useEffect(() => {
     if (localStorage.getItem('admin') == null) {
-      navigate('/', {replace: true})
+      navigate('/')
+    } else {
+      //@ts-ignore
+			setAdminn(JSON.parse(localStorage.getItem('admin')))
     }
 	}, [])
 	
-	const { error, loading, data } = useQuery(GET_ADMIN_QUERY, { variables: { getAdminId: admin.id } } )
+	useEffect(() => {
+		setFirstName(adminn.name.first)
+		setMiddleName(adminn.name.middle)
+		setLastName(adminn.name.last)
+		setExtension(adminn.name.extension)
+		setEmail(adminn.email)
+		setPassword(adminn.password)
+	}, [adminn])
+	
 
 	const [editAdmin] = useMutation(EDIT_ADMIN_OPS, {
 		onCompleted: (data) => {
@@ -87,9 +86,8 @@ export default function EditAdmin() {
 				progress: undefined,
 				theme: "light",
 			});
-			dispatch(setAdmin({id: admin.id, name: { first: firstname, middle: middlename, last: lastname, extension: extension }, email, password }))
 			localStorage.clear()
-			localStorage.setItem('admin', JSON.stringify({id: admin.id, name: { first: firstname, middle: middlename, last: lastname, extension: extension }, email, password }))
+			localStorage.setItem('admin', JSON.stringify({id: adminn.id, name: { first: firstname, middle: middlename, last: lastname, extension: extension }, email, password }))
 			setSaving(false)
 			navigate('/admindashboard', {replace: true})
 		},
@@ -107,17 +105,6 @@ export default function EditAdmin() {
 			setSaving(false)
 		}
 	})
-
-	useEffect(() => {
-		console.log(data);
-		
-		setFirstName(admin.name.first)
-		setMiddleName(admin.name.middle)
-		setLastName(admin.name.last)
-		setExtension(admin.name.extension)
-		setEmail(admin.email)
-		setPassword(admin.password)
-	}, [])
 
   return(
     <Wrapper>
@@ -154,7 +141,7 @@ export default function EditAdmin() {
 						return
 					}
 					setSaving(true)
-					editAdmin({ variables: {updateAdminId: admin.id, updatedAdmin: {email: email, name: {extension: extension,first: firstname,last: lastname ,middle: middlename}, password: password} } })
+					editAdmin({ variables: {updateAdminId: adminn.id, updatedAdmin: {email: email, name: {extension: extension,first: firstname,last: lastname ,middle: middlename}, password: password} } })
 				}} className="flex justify-center items-center mt-[50px] mr-[100px] bg-[#11CF00] hover:bg-[#1672ec] text-white font-semibold py-2 px-20 rounded-full focus:outline-none focus:shadow-outline w-[218px] h-[55px]" type="submit">
 					{
 					saving ?
@@ -207,9 +194,9 @@ export default function EditAdmin() {
 
 				<div className="pb-[50px]">
 					<label className="block text-white font-semibold pb-[10px]">
-						Email
+						Username
 					</label>
-					<input onChange={(e) => setEmail(e.target.value)} value={email} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="Enter email address"
+					<input onChange={(e) => setEmail(e.target.value)} value={email} className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="string" placeholder="Enter username"
 					/>
 				</div>
 

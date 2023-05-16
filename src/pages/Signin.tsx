@@ -55,11 +55,7 @@ export default function Signin() {
             progress: undefined,
             theme: "light",
           });
-  
           localStorage.setItem('admin', JSON.stringify(res.data?.getAllAdminWithFilters?.data[0]))
-          
-          dispatch(setAdmin(res.data.getAllAdminWithFilters.data[0]))
-  
         } else {
           // show a modal that email or password is incorrect.
           toast.warn('Incorrect username or password', {

@@ -23,6 +23,7 @@ import { selectAdmin } from "../selectors";
 import gql from "graphql-tag";
 import { useQuery } from "@apollo/client";
 import { CChart } from '@coreui/react-chartjs'
+import Admin from "../interfaces/Admin";
 
 
 const ALL_LOGS = gql`
@@ -109,9 +110,7 @@ after this, go to index.tsx to import the page*/
 export default function AdminDashboard() {
   const [showModal, setShowModal] = useState(false)
   const [time, setTime] = useState(new Date())
-
-  //@ts-ignore
-  const admin = JSON.parse(localStorage.getItem('admin'))
+  const [adminn, setAdminn] = useState<Admin>()
 
   const navigate = useNavigate()
 
@@ -125,12 +124,15 @@ export default function AdminDashboard() {
 
   const logout = async () => {
     localStorage.clear()
-    navigate('/', { replace: true })
+    navigate('/')
   }
 
   useEffect(() => {
     if (localStorage.getItem('admin') == null) {
       navigate('/', {replace: true})
+    } else {
+      //@ts-ignore
+      setAdminn(JSON.parse(localStorage.getItem('admin')))
     }
   }, [])
 
@@ -266,7 +268,7 @@ export default function AdminDashboard() {
                   <img src={account1} alt="account1"/>
                 </div>
                 <div className="flex poppins font-bold text-[16px] justify-center text-primary-2">
-                  {admin.name.first} {admin.name.middle.charAt(0)} {admin.name.last} {admin.name.extension}
+                  {adminn?.name.first} {adminn?.name.middle.charAt(0)} {adminn?.name.last} {adminn?.name.extension}
                 </div> 
               </Link>
 

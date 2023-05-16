@@ -62,7 +62,7 @@ export default function Signin() {
   
         } else {
           // show a modal that email or password is incorrect.
-          toast.warn('Incorrect email or password', {
+          toast.warn('Incorrect username or password', {
             position: "top-right",
             autoClose: 5000,
             hideProgressBar: false,
@@ -76,8 +76,17 @@ export default function Signin() {
           localStorage.clear()
         }
       })
-      
-
+    } else {
+      toast.warn('Username or password is invalid. Please try again.', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   }
 
@@ -99,7 +108,7 @@ export default function Signin() {
 
               <div className="flex flex-col items-center gap-y-4 mt-20 w-3/6">
                 <div className="w-full lg:w-3/5">
-                  <PTextfield disabled={false} placeholder="Email" value={email} valueSetter={setEmail} />
+                  <PTextfield disabled={false} placeholder="Username" value={email} valueSetter={setEmail} />
                 </div>
                 <div className="w-full lg:w-3/5">
                   <PPassfield disabled={false} value={password} valueSetter={setPass} />

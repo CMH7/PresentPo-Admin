@@ -11,6 +11,9 @@ import QueryResult from "../../components/QueryResult"
 import editIcon from '../../assets/edit (1) 1.png'
 import deleteIcon from '../../assets/delete 1.png'
 import { useEffect, useState } from "react"
+import Name from "../../interfaces/Name"
+import Student from "../../interfaces/Student"
+import Classs from "../../interfaces/Classs"
 
 const All_STUDENTS = gql`
   query getAllStudentsWithFilters($filters: studentFilters!) {
@@ -72,29 +75,6 @@ const ALL_SUBJECTS = gql`
     }
   }
 `
-
-interface Student {
-  id: string
-  school_id: string
-  name: Name
-  email: string
-  sex: string
-}
-
-interface Name {
-  first: string
-  middle: string
-  last: string
-  extension: string
-}
-
-interface Classs {
-  id: string
-  strand: string
-  year: number
-  section: string
-  students: string[]
-}
 
 interface Schedule {
   id: string
@@ -184,11 +164,11 @@ export default function ManageStudents() {
         <div className="flex items-center">
           <Link to='/admindashboard' replace={true}>
             <div className="aspect-square w-[25px] h-auto cursor-pointer">
-              <img src={chevronLeft} alt="chevron left" />
+              <img className="invert" src={chevronLeft} alt="chevron left" />
             </div>
           </Link>
 
-          <div className="ml-[30px] poppins text-[40px] font-bold text-primary-2 select-none">
+          <div className="ml-[30px] poppins text-[40px] font-bold text-white select-none">
             Manage Students
           </div>
         </div>
@@ -214,31 +194,19 @@ export default function ManageStudents() {
 
           {/* add student button  */}
           <Link to='/admindashboard/managestudents/addstudent' replace={true}>
-            <div className="group w-[220px] h-[55px] flex items-center justify-center bg-primary-2 hover:bg-white transition-all rounded-[50px] cursor-pointer">
+            <div className="group w-[220px] h-[55px] flex items-center justify-center bg-white hover:bg-primary-1 transition-all rounded-[50px] cursor-pointer">
               {/* icon  */}
               <div className="aspect-square w-[20px] h-auto ">
-                <img className="group-hover:hidden" src={plusWhite} alt="plus white icon" />
-                <img className="hidden group-hover:block" src={plusPrim} alt="plus primary icon" />
+                <img className="hidden group-hover:block" src={plusWhite} alt="plus white icon" />
+                <img className="group-hover:hidden" src={plusPrim} alt="plus primary icon" />
               </div>
 
               {/* text  */}
-              <div className="ml-[10px] poppins font-semibold text-[20px] text-white group-hover:text-primary-2 select-none">
+              <div className="ml-[10px] poppins font-semibold text-[20px] text-primary-2 group-hover:text-white select-none">
                 Add Student
               </div>
             </div>
           </Link>
-
-          {/* filter dropdown  */}
-          {/* <div className=" ml-[20px] w-[160px] h-[55px] border-[1px] border-white flex justify-center items-center rounded-[50px] cursor-pointer ">
-
-            <div className=" poppins font-semibold text-[20px] text-white select-none ">
-              Filter
-            </div>
- 
-            <div className=" ml-[10px] aspect-square w-[20px] h-auto ">
-              <img src={tri} alt="dropdown icon" />
-            </div>
-          </div> */}
         </div>
       </div>
 
@@ -309,7 +277,7 @@ export default function ManageStudents() {
             {
               studss?.map((stud: Student, i: number) => {
                 return (
-                  <div key={stud.id} className=" w-full h-fit py-[15px] bg-white hover:bg-gray-200 mb-[2px] flex items-center px-[20px] relative overflow-hidden group transition-all ">
+                  <div key={stud.id} className=" w-full h-[100px] hover:h-fit py-[15px] bg-white hover:bg-gray-200 mb-[2px] flex items-center px-[20px] relative overflow-hidden group transition-all ">
                     {/* No.  */}
                     <div className=" h-full w-[50px] shrink-0 flex items-center ">
                       <div className=" poppins font-medium text-[16px] text-primary-2 ">
@@ -367,7 +335,7 @@ export default function ManageStudents() {
                     </div>
                     
                     {/* subjects taken */}
-                    <div className=" h-full w-[200px] shrink-0 flex items-center ">
+                    <div className=" h-full w-[200px] shrink-0 flex flex-col overflow-hidden ">
                       <div className=" poppins font-medium text-[16px] text-primary-2 ">
                         <ul className="list-disc list-inside">
                           {

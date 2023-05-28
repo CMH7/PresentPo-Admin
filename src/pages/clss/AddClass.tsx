@@ -77,12 +77,12 @@ export default function AddClass() {
 				<div className="flex items-center mt-[50px] ml-[100px]">
 					<Link to='/admindashboard/manageclasses' replace={true} aria-disabled={adding}>
 						<div className="aspect-square w-[25px] h-auto cursor-pointer">
-							<img src={backIcon} alt="chevron left" />
+							<img className="invert" src={backIcon} alt="chevron left" />
 						</div>
 					</Link>
 
 					{/* add label  */}
-					<div className=" ml-[30px] poppins font-bold text-[40px] text-primary-2">
+					<div className=" ml-[30px] poppins font-bold text-[40px] text-white">
 						Add Class
 					</div>
 				</div>

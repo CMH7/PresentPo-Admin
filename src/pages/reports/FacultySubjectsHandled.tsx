@@ -133,7 +133,7 @@ export default function FacultySubjectsHandled() {
             </Link>
 
             <div className="ml-[30px] poppins text-[40px] font-bold text-white select-none">
-              Subjects handled
+              Subjects Handled
             </div>
           </div>
         </div>

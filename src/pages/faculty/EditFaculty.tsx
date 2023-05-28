@@ -120,12 +120,12 @@ export default function EditFaculty() {
 			<div className="flex items-center mt-[50px] ml-[100px]">
 				<Link to='/admindashboard/managefaculties' replace={true}>
 					<div className="aspect-square w-[25px] h-auto cursor-pointer">
-						<img src={backIcon} alt="chevron left" />
+						<img className="invert" src={backIcon} alt="chevron left" />
 					</div>
 				</Link>
 
 				{/* edit label  */}
-				<div className=" ml-[30px] poppins font-bold text-[40px] text-primary-2">
+				<div className="ml-[30px] poppins text-[40px] font-bold text-white select-none">
 					Edit Faculty
 				</div>
 			</div>

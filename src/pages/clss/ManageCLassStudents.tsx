@@ -146,7 +146,7 @@ export default function ManageClassStudents() {
         <div className="flex items-center">
           <Link to='/admindashboard/manageclasses' replace={true}>
             <div className="aspect-square w-[25px] h-auto cursor-pointer">
-              <img src={chevronLeft} alt="chevron left" />
+              <img className="invert" src={chevronLeft} alt="chevron left" />
             </div>
           </Link>
 

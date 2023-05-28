@@ -3,36 +3,23 @@ import backIcon from '../../assets/left-arrow 1.png';
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { Link } from "react-router-dom";
-
-const ADD_CLASS_OPS = gql`
-	mutation addClass($newClass: newClass!) {
-		addClass(newClass: $newClass) {
-			error
-			message
-			data {
-				id
-				strand
-				year
-				section
-				semester
-				students
-			}
-  }
-}
-`
+import ADD_CLASS from "../../gql/SET/ADD/Classs";
 
 export default function AddClass() {
 	const [strand, setStrand] = useState('ABM')
 	const [gradeLevel, setGradeLevel] = useState(11)
 	const [section, setSection] = useState('section1')
 	const [semester, setSemester] = useState(1)
+	const [sy, setSY] = useState(`${new Date().getFullYear()}-${new Date().getFullYear()+1}`)
 	const [adding, setAdding] = useState(false)
 
 	const navigate = useNavigate()
 
-	const [addClass] = useMutation(ADD_CLASS_OPS, {
+	const sections = ['Orion', 'Leo', 'Beethoven', 'Mozart', 'Morgan', 'Wedgwood', 'Da Vinci', 'Rembrandt']
+
+	const [addClass] = useMutation(ADD_CLASS, {
 		onCompleted: (data) => {
 			toast.success(data?.addClass?.message, {
 				position: "top-right",
@@ -62,8 +49,19 @@ export default function AddClass() {
 		}
 	})
 
-	useEffect(() => {
+	// checks if admin is empty
+  useEffect(() => {
     if (localStorage.getItem('admin') == null) {
+      toast.error('Please Sign in first', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       navigate('/', {replace: true})
     }
   }, [])
@@ -103,7 +101,7 @@ export default function AddClass() {
 						return
 					}
 					setAdding(true)
-					addClass({ variables: { newClass: { strand: strand, year: gradeLevel, section: section, semester: semester } } })
+					addClass({ variables: { newClass: { strand: strand, year: gradeLevel, section: section, semester: semester, sy: sy } } })
 				}} className="flex justify-center items-center mt-[50px] mr-[100px] bg-[#11CF00] hover:bg-[#1672ec] text-white font-semibold py-2 px-20 rounded-[50px] focus:outline-none focus:shadow-outline w-[218px] h-[55px]">
 					Add
 				</button>
@@ -114,6 +112,7 @@ export default function AddClass() {
 
 				{/* column 1 - child */}
 				<div className="col-span-1">
+					{/* strand  */}
 					<div className="pb-[50px]">
 						<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
 							Strand
@@ -126,6 +125,7 @@ export default function AddClass() {
 						</select>
 					</div>
 
+					{/* year  */}
 					<div className="pb-[50px]">
 						<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
 							Grade Level
@@ -134,27 +134,41 @@ export default function AddClass() {
 							<option value={11}>11</option>
 								<option value={12}>12</option>
 							</select>
-						</div>
 					</div>
+					
+					{/* section  */}
+					<div className="pb-[50px]">
+						<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
+							Section
+						</label>
+						<select onChange={(e) => setSection(e.target.value)} value={section} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline">
+							{
+								sections.map((section: string) => {
+									return <option value={section}>{section}</option>
+								})
+							}
+						</select>
+					</div>
+				</div>
 
 					{/* column 2 - child */}
 					<div className="col-span-1">
+						{/* here  */}
 						<div className="pb-[50px]">
 							<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
-								Section
+								School year
 							</label>
-							<select onChange={(e) => setSection(e.target.value)} value={section} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline">
-								<option value="Orion">Orion</option>
-								<option value="Leo">Leo</option>
-								<option value="Beethoven">Beethoven</option>
-								<option value="Mozart">Mozart</option>
-								<option value="Morgan">Morgan</option>
-								<option value="Wedgwood">Wedgwood</option>
-								<option value="Da Vinci">Da Vinci</option>
-								<option value="Rembrandt">Rembrandt</option>
+							<select onChange={(e) => setSY(e.target.value)} value={sy} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline">
+								<option value="2020-2021">2020-2021</option>
+								<option value="2021-2022">2021-2022</option>
+								<option value="2022-2023">2022-2023</option>
+								<option value="2023-2024">2023-2024</option>
+								<option value="2024-2025">2024-2025</option>
+								<option value="2025-2026">2025-2026</option>
 							</select>
 						</div>
-
+							
+						{/* Semester */}
 						<div className="pb-[50px]">
 							<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
 								Semester
@@ -162,6 +176,7 @@ export default function AddClass() {
 							<select onChange={(e) => setSemester(parseInt(e.target.value))} value={semester} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline">
 								<option value={1}>1</option>
 								<option value={2}>2</option>
+								<option value={3}>3</option>
 							</select>
 						</div>
 					</div>

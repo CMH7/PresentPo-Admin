@@ -5,54 +5,23 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery, gql } from "@apollo/client";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
-
-const EDIT_CLASS_OPS = gql`
-mutation UpdateClass($updateClassId: ID!, $updatedClass: updatedClass!) {
-  updateClass(id: $updateClassId, updatedClass: $updatedClass) {
-    error
-    message
-    data {
-      id
-      strand
-      year
-      section
-      semester
-      students
-    }
-  }
-}
-`
-
-const GET_CLASS_QUERY = gql`
-query GetClass($getClassId: ID!) {
-  getClass(id: $getClassId) {
-    error
-    message
-    data {
-      id
-      strand
-      year
-      section
-      semester
-      students
-    }
-  }
-}
-`
+import EDIT_CLASSS from "../../gql/SET/EDIT/Classs";
+import GET_CLASS from "../../gql/GET/Classs";
 
 export default function EditClass() {
 	const { id } = useParams<{ id: string }>();
 
 	const [strand, setStrand] = useState('')
-	const [gradeLevel, setGradeLevel] = useState(0)
+	const [year, setYear] = useState(0)
 	const [section, setSection] = useState('')
 	const [semester, setSemester] = useState(0)
 	const [saving, setSaving] = useState(false)
+	const [sy, setSY] = useState(`${new Date().getFullYear()}-${new Date().getFullYear()+1}`)
 	const navigate = useNavigate()
+	const sections = ['Orion', 'Leo', 'Beethoven', 'Mozart', 'Morgan', 'Wedgwood', 'Da Vinci', 'Rembrandt']
+	const { error, loading, data } = useQuery(GET_CLASS, { variables: { getClassId: id } } )
 
-	const { error, loading, data } = useQuery(GET_CLASS_QUERY, { variables: { getClassId: id } } )
-
-	const [editClass] = useMutation(EDIT_CLASS_OPS, {
+	const [editClass] = useMutation(EDIT_CLASSS, {
 		onCompleted: (data) => {
 			toast.success(data?.updateClass?.message, {
 				position: "top-right",
@@ -82,17 +51,27 @@ export default function EditClass() {
 		}
 	})
 
-	useEffect(() => {
-		console.log(data);
-		
+	useEffect(() => {		
 		setStrand(data?.getClass?.data?.strand)
-		setGradeLevel(data?.getClass?.data?.gradeLevel)
+		setYear(data?.getClass?.data?.year)
 		setSection(data?.getClass?.data?.section)
 		setSemester(data?.getClass?.data?.semester)
+		setSY(data?.getClass?.data?.sy)
 	}, [data])
 
-	useEffect(() => {
+	// checks if admin is empty
+  useEffect(() => {
     if (localStorage.getItem('admin') == null) {
+      toast.error('Please Sign in first', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       navigate('/', {replace: true})
     }
   }, [])
@@ -117,7 +96,7 @@ export default function EditClass() {
 
 				{/* save button */}
 				<button onClick={() => {
-					if (strand === '' || gradeLevel < 11 || gradeLevel > 12 || section === '' || semester < 1 || semester > 3) {
+					if (strand === '' || year < 11 || year > 12 || section === '' || semester < 1 || semester > 3) {
 						toast.error('Invalid inputs', {
 							position: "top-right",
 							autoClose: 5000,
@@ -130,8 +109,8 @@ export default function EditClass() {
 						});
 						return
 					}
+					editClass({ variables: { updateClassId: id, updatedClass: { section: section, semester: semester, strand: strand, year: year, sy: sy } } })
 					setSaving(true)
-					editClass({ variables: { updateClassId: id, updatedClass: { section: section, semester: semester, strand: strand, year: gradeLevel } } })
 				}} className="flex justify-center items-center mt-[50px] mr-[100px] bg-[#11CF00] hover:bg-[#1672ec] text-white font-semibold py-2 px-20 rounded-[50px] focus:outline-none focus:shadow-outline w-[218px] h-[55px]" type="submit">
 				{
 					saving ?
@@ -147,6 +126,7 @@ export default function EditClass() {
 
 				{/* column 1 */}
 				<div className="col-span-1">
+					{/* strand  */}
 					<div className="pb-[50px]">
 						<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
 							Strand
@@ -159,35 +139,51 @@ export default function EditClass() {
 						</select>
 					</div>
 
+					{/* year  */}
 					<div className="pb-[50px]">
 						<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
 							Grade Level
 						</label>
-						<select onChange={(e) => parseInt(e.target.value)} value={gradeLevel} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline">
+						<select onChange={(e) => setYear( parseInt(e.target.value))} value={year} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline">
 							<option value={11}>11</option>
 							<option value={12}>12</option>
+						</select>
+					</div>
+					
+					{/* sections  */}
+					<div className="pb-[50px]">
+						<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
+							Section
+						</label>
+						<select onChange={(e) => setSection(e.target.value)} value={section} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline">
+								{
+									sections.map((section: string) => {
+										return <option value={section}>{section}</option>
+									})
+								}
 						</select>
 					</div>
 				</div>
 
 				{/* column 2 */}
 				<div className="col-span-1">
+
+					{/* school year  */}
 					<div className="pb-[50px]">
 						<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
-							Section
+							School year
 						</label>
-						<select onChange={(e) => setSection(e.target.value)} value={section} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline">
-								<option value="Orion">Orion</option>
-								<option value="Leo">Leo</option>
-								<option value="Beethoven">Beethoven</option>
-								<option value="Mozart">Mozart</option>
-								<option value="Morgan">Morgan</option>
-								<option value="Wedgwood">Wedgwood</option>
-								<option value="Da Vinci">Da Vinci</option>
-								<option value="Rembrandt">Rembrandt</option>
+						<select onChange={(e) => setSY(e.target.value)} value={sy} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline">
+							<option value="2020-2021">2020-2021</option>
+							<option value="2021-2022">2021-2022</option>
+							<option value="2022-2023">2022-2023</option>
+							<option value="2023-2024">2023-2024</option>
+							<option value="2024-2025">2024-2025</option>
+							<option value="2025-2026">2025-2026</option>
 						</select>
 					</div>
-
+					
+					{/* semester  */}
 					<div className="pb-[50px]">
 						<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
 							Semester
@@ -195,6 +191,7 @@ export default function EditClass() {
 						<select onChange={(e) => setSemester(parseInt(e.target.value))} value={semester} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline">
 							<option value={1}>1</option>
 							<option value={2}>2</option>
+							<option value={3}>3</option>
 						</select>
 					</div>
 				</div>

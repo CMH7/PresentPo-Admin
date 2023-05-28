@@ -49,6 +49,7 @@ export default function ManageStudents() {
     setClasses(studClass.data?.getAllClassWithFilters?.data)
   }, [subs.loading])
 
+  // checks if admin is empty
   useEffect(() => {
     if (localStorage.getItem('admin') == null) {
       toast.error('Please Sign in first', {
@@ -269,7 +270,7 @@ export default function ManageStudents() {
                     {/* middle name  */}
                     <div className=" h-full w-[200px] shrink-0 flex items-center ">
                       <div className=" poppins font-medium text-[16px] text-primary-2 ">
-                        { stud.name.middle }
+                        { stud.name.middle !== '' ? stud.name.middle : '-' }
                       </div>
                     </div>
 
@@ -279,7 +280,9 @@ export default function ManageStudents() {
                         {
                           classes?.filter((classs: Classs) => {
                             return classs?.students?.includes(` ${stud.id}`) || classs?.students?.includes(stud.id)
-                          })[0]?.strand
+                          })[0]?.strand ? classes?.filter((classs: Classs) => {
+                            return classs?.students?.includes(` ${stud.id}`) || classs?.students?.includes(stud.id)
+                          })[0]?.strand : '-'
                         }
                       </div>
                     </div>

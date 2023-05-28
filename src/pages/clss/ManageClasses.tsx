@@ -11,29 +11,9 @@ import { gql, useQuery } from "@apollo/client"
 import QueryResult from "../../components/QueryResult"
 import { useEffect, useState } from "react"
 import React from "react"
-
-const GET_ALL_CLASS = gql`
-    query Query($filters: classFilters) {
-      getAllClassWithFilters(filters: $filters) {
-        error
-        message
-        data {
-          id
-          strand
-          year
-          section
-          semester
-        }
-      }
-    }
-`
-interface Classs {
-  id: string
-  strand: string
-  year: number
-  section: string
-  semester: number
-}
+import { toast } from "react-toastify"
+import Classs from "../../interfaces/Classs"
+import ALL_CLASS from "../../gql/GET/ALL/Classs"
 
 export default function ManageClasses() {
 
@@ -43,7 +23,7 @@ export default function ManageClasses() {
   const [searchValue, setSearchValue] = useState('')
   const navigate = useNavigate()
 
-  const { error, loading, data } = useQuery(GET_ALL_CLASS, { variables: { filters: {} } })
+  const { error, loading, data } = useQuery(ALL_CLASS, { variables: { filters: {} } })
 
   useEffect(() => {
     setClasses(data?.getAllClassWithFilters?.data)
@@ -61,8 +41,19 @@ export default function ManageClasses() {
     }
   }
 
+  // checks if admin is empty
   useEffect(() => {
     if (localStorage.getItem('admin') == null) {
+      toast.error('Please Sign in first', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       navigate('/', {replace: true})
     }
   }, [])
@@ -184,11 +175,18 @@ export default function ManageClasses() {
               Section
             </div>
           </div>
-
-          {/* semester */}
-          <div className=" h-full grow flex items-center ">
+          
+          {/* semester  */}
+          <div className=" h-full w-[200px] shrink-0 flex items-center ">
             <div className=" poppins font-bold text-[20px] text-primary-2 ">
               Semester
+            </div>
+          </div>
+
+          {/* school year */}
+          <div className=" h-full grow flex items-center ">
+            <div className=" poppins font-bold text-[20px] text-primary-2 ">
+              School Year
             </div>
           </div>
         </div>
@@ -227,10 +225,17 @@ export default function ManageClasses() {
                       </div>
                     </div>
                     
-                    {/* semester */}
-                    <div className=" h-full grow flex items-center ">
+                    {/* section  */}
+                    <div className=" h-full w-[200px] shrink-0 flex items-center ">
                       <div className=" poppins font-medium text-[16px] text-primary-2 ">
                         { classs.semester }
+                      </div>
+                    </div>
+                    
+                    {/* school year */}
+                    <div className=" h-full grow flex items-center ">
+                      <div className=" poppins font-medium text-[16px] text-primary-2 ">
+                        { classs.sy }
                       </div>
                     </div>
 

@@ -2,88 +2,62 @@ import Wrapper from "../../components/Wrapper"
 import chevronLeft from '../../assets/left-arrow 1.png'
 import plusWhite from '../../assets/plus white.png'
 import plusPrim from '../../assets/plus prim.png'
-import tri from '../../assets/down 1.png'
 import searchIcon from '../../assets/search 1.png'
 import searchInac from '../../assets/searchInactive.png'
 import { Link, useNavigate, useParams } from "react-router-dom"
-import { gql, useQuery } from "@apollo/client"
+import { gql, useMutation, useQuery } from "@apollo/client"
 import QueryResult from "../../components/QueryResult"
-import editIcon from '../../assets/edit (1) 1.png'
 import deleteIcon from '../../assets/delete 1.png'
 import { useEffect, useState } from "react"
-
-const GET_CLASS_DATA = gql`
-  query GetClass($getClassId: ID!) {
-    getClass(id: $getClassId) {
-      error
-      message
-      data {
-        id
-        strand
-        year
-        section
-        semester
-        students
-      }
-    }
-  }
-`
-
-const ALL_STUDENTS = gql`
-  query GetStudent($filters: studentFilters!) {
-    getAllStudentsWithFilters(filters: $filters) {
-      error
-      message
-      data {
-        id
-        school_id
-        name {
-          first
-          middle
-          last
-          extension
-        }
-        sex
-        email
-      }
-    }
-  }
-`
-
-interface Student {
-  id: string
-  school_id: string
-  name: Name
-  email: string
-  sex: string
-}
-
-interface Name {
-  first: string
-  middle: string
-  last: string
-  extension: string
-}
-
-interface Classs {
-  id: string
-  strand: string
-  year: number
-  section: string
-  students: string[]
-}
+import GET_CLASS from "../../gql/GET/Classs"
+import Student from "../../interfaces/Student"
+import ALL_STUDENTS from "../../gql/GET/ALL/Students"
+import { toast } from "react-toastify"
+import EDIT_CLASSS from "../../gql/SET/EDIT/Classs"
 
 export default function ManageClassStudents() {
   const { id } = useParams<{ id: string }>();
 
   const [showModal, setShowModal] = useState(false)
   const [selectedStudent, setSelectedStudent] = useState('')
+  const [selStudID, setSelStudID] = useState('')
   const [students, setStudents] = useState<Student[]>([])
   const [searchValue, setSearchValue] = useState('')
+  const [removing, setRemoving] = useState(false)
   const navigate = useNavigate()
 
-  const clasdata = useQuery(GET_CLASS_DATA, { variables: { getClassId: id } })
+  const clasdata = useQuery(GET_CLASS, { variables: { getClassId: id } })
   const studClass = useQuery(ALL_STUDENTS, { variables: { filters: {} } })
+
+  const [removeStudent] = useMutation(EDIT_CLASSS, {
+    onCompleted: (data) => {
+			toast.success(`${data?.updateClass?.message}. Student removed.`, {
+				position: "top-right",
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
+			setRemoving(false)
+			navigate('/admindashboard/manageclasses', {replace: true})
+		},
+		onError: (e) => {
+			toast.error(`${e}`, {
+				position: "top-right",
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
+			setRemoving(false)
+		}
+  })
 
   useEffect(() => {
     setStudents(studClass.data?.getAllStudentsWithFilters?.data)
@@ -93,7 +67,7 @@ export default function ManageClassStudents() {
     setStudents(studClass.data?.getAllStudentsWithFilters?.data)
     if (searchFor !== '' ) {
       setStudents(studss => studss.filter((student: Student) => {
-        let studentDData = `${student.email} ${student.sex} ${student.school_id} ${student.name.first} ${student.name.middle} ${student.name.last} ${student.name.extension}`.toLowerCase()
+        let studentDData = `${student.username} ${student.sex} ${student.school_id} ${student.name.first} ${student.name.middle} ${student.name.last} ${student.name.extension}`.toLowerCase()
         if ( studentDData.match(searchFor.toLowerCase()) ) {
           return student
         }
@@ -101,8 +75,19 @@ export default function ManageClassStudents() {
     }
   }
 
+  // checks if admin is empty
   useEffect(() => {
     if (localStorage.getItem('admin') == null) {
+      toast.error('Please Sign in first', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       navigate('/', {replace: true})
     }
   }, [])
@@ -116,7 +101,7 @@ export default function ManageClassStudents() {
             <div className="w-[500px] h-[205px] bg-white rounded-[20px] flex flex-col items-center pt-[55px] relative">
               {/* message  */}
               <div className="w-[388px] overflow-hidden text-clip text-center">
-                Are you sure you want to delete this student <br /> <span className="italic">{ selectedStudent }</span> ?
+                Are you sure you want to remove this student <br /> <span className="italic">{ selectedStudent }</span> ?
               </div>
 
               {/* divider  */}
@@ -125,8 +110,27 @@ export default function ManageClassStudents() {
               {/* buttons  */}
               <div className="w-full flex justify-evenly absolute bottom-[11px]">
                 {/* proceed button  */}
-                <div onClick={() => { }} className="text-[#D80000] h-full w-2/4 cursor-pointer flex justify-center items-center hover:font-bold">
-                  Delete
+                <div onClick={() => { 
+                  removeStudent({
+                    variables: {
+                      updateClassId: id,
+                      updatedClass: {
+                        students: clasdata.data?.getClass?.data?.students?.filter((id: string) => !id.replace(' ', '').match(selStudID.replace(' ', '')) )
+                      }
+                    }
+                  })
+                  setRemoving(true)
+                }} className="text-[#D80000] h-full w-2/4 cursor-pointer flex justify-center items-center hover:font-bold">
+                  {
+                    removing ? 
+                      <div>
+                        removing...
+                      </div>
+                      :
+                      <div>
+                        Remove
+                      </div>
+                  }
                 </div>
 
                 {/* cancel button  */}
@@ -150,7 +154,7 @@ export default function ManageClassStudents() {
             </div>
           </Link>
 
-          <div className="ml-[30px] poppins text-[40px] font-bold text-primary-2 select-none">
+          <div className="ml-[30px] poppins text-[40px] font-bold text-white select-none">
             { clasdata.data?.getClass?.data?.strand } { clasdata.data?.getClass?.data?.year }-{ clasdata.data?.getClass?.data?.section }
           </div>
         </div>
@@ -176,7 +180,7 @@ export default function ManageClassStudents() {
 
           {/* add student button  */}
           <Link to={`/admindashboard/manageclasses/${id}/manageclassstudents/addstudent`} replace={true}>
-            <div className="group w-[220px] h-[55px] flex items-center justify-center bg-primary-2 hover:bg-white transition-all rounded-[50px] cursor-pointer">
+            <div className=" border border-white group w-[220px] h-[55px] flex items-center justify-center bg-primary-2 hover:bg-white transition-all rounded-[50px] cursor-pointer">
               {/* icon  */}
               <div className="aspect-square w-[20px] h-auto ">
                 <img className="group-hover:hidden" src={plusWhite} alt="plus white icon" />
@@ -202,13 +206,6 @@ export default function ManageClassStudents() {
               No.
             </div>
           </div>
-          
-          {/* school id  */}
-          <div className=" h-full w-[200px] shrink-0 flex items-center ">
-            <div className=" poppins font-bold text-[20px] text-primary-2 ">
-              School ID
-            </div>
-          </div>
 
           {/* last name  */}
           <div className=" h-full w-[200px] shrink-0 flex items-center ">
@@ -232,7 +229,7 @@ export default function ManageClassStudents() {
           </div>
           
           {/* year and section */}
-          <div className=" h-full w-[100px] shrink-0 flex items-center ">
+          <div className=" h-full w-[200px] shrink-0 flex items-center ">
             <div className=" poppins font-bold text-[20px] text-primary-2 ">
               Sex
             </div>
@@ -241,7 +238,7 @@ export default function ManageClassStudents() {
           {/* email */}
           <div className=" h-full grow flex items-center ">
             <div className=" poppins font-bold text-[20px] text-primary-2 ">
-              Email
+              School ID/ Username
             </div>
           </div>
 
@@ -257,13 +254,6 @@ export default function ManageClassStudents() {
                     <div className=" h-full w-[50px] shrink-0 flex items-center ">
                       <div className=" poppins font-medium text-[16px] text-primary-2 ">
                         { i + 1  }
-                      </div>
-                    </div>
-                    
-                    {/* school id  */}
-                    <div className=" h-full w-[200px] shrink-0 flex items-center ">
-                      <div className=" poppins font-medium text-[16px] text-primary-2 ">
-                        { stud.school_id }
                       </div>
                     </div>
 
@@ -284,21 +274,21 @@ export default function ManageClassStudents() {
                     {/* middle name  */}
                     <div className=" h-full w-[200px] shrink-0 flex items-center ">
                       <div className=" poppins font-medium text-[16px] text-primary-2 ">
-                        { stud.name.middle }
+                        { stud.name.middle !== '' ? stud.name.middle : '-' }
                       </div>
                     </div>
                     
                     {/* sex  */}
-                    <div className=" h-full w-[100px] shrink-0 flex items-center ">
+                    <div className=" h-full w-[200px] shrink-0 flex items-center ">
                       <div className=" poppins font-medium text-[16px] text-primary-2 ">
                         { stud.sex }
                       </div>
                     </div>
                     
-                    {/* email */}
+                    {/* sID */}
                     <div className=" h-full grow flex items-center ">
                       <div className=" poppins font-medium text-[16px] text-primary-2 ">
-                        { stud.email }
+                        { stud.username }
                       </div>
                     </div>
 
@@ -307,6 +297,7 @@ export default function ManageClassStudents() {
                       {/* delete student  */}
                       <div onClick={() => {
                         setSelectedStudent(`(${stud.school_id}) ${stud.name.first} ${stud.name.middle.charAt(0)}${stud.name.middle !== '' ? '.' : ''} ${stud.name.last} ${stud.name.extension}`)
+                        setSelStudID(stud.id)
                         setShowModal(true)
                       }} className=" w-[55px] h-full bg-[#D80000] flex items-center justify-center cursor-pointer ">
                         <div className="aspect-square w-[20px] h-auto">

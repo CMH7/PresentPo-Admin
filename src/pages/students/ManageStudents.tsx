@@ -2,16 +2,14 @@ import Wrapper from "../../components/Wrapper"
 import chevronLeft from '../../assets/left-arrow 1.png'
 import plusWhite from '../../assets/plus white.png'
 import plusPrim from '../../assets/plus prim.png'
-import tri from '../../assets/down 1.png'
 import searchIcon from '../../assets/search 1.png'
 import searchInac from '../../assets/searchInactive.png'
 import { Link, useNavigate } from "react-router-dom"
-import { gql, useQuery } from "@apollo/client"
+import { useQuery } from "@apollo/client"
 import QueryResult from "../../components/QueryResult"
 import editIcon from '../../assets/edit (1) 1.png'
 import deleteIcon from '../../assets/delete 1.png'
 import { useEffect, useState } from "react"
-import Name from "../../interfaces/Name"
 import Student from "../../interfaces/Student"
 import Classs from "../../interfaces/Classs"
 import Schedule from "../../interfaces/Schedule"
@@ -22,6 +20,7 @@ import ALL_CLASS from "../../gql/GET/ALL/Classs"
 import ALL_STUDENTS from "../../gql/GET/ALL/Students"
 import { format } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
+import { toast } from "react-toastify"
 
 export default function ManageStudents() {
 
@@ -52,6 +51,16 @@ export default function ManageStudents() {
 
   useEffect(() => {
     if (localStorage.getItem('admin') == null) {
+      toast.error('Please Sign in first', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       navigate('/', {replace: true})
     }
   }, [])

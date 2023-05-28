@@ -14,7 +14,7 @@ const GET_FACULTY = gql`
           extension
         }
         credentials
-        email
+        username
         password
       }
     }

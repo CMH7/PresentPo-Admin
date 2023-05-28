@@ -20,6 +20,8 @@ import ALL_SUBJECTS from "../../gql/GET/ALL/Subject"
 import ALL_SCHEDULE from "../../gql/GET/ALL/Schedule"
 import ALL_CLASS from "../../gql/GET/ALL/Classs"
 import ALL_STUDENTS from "../../gql/GET/ALL/Students"
+import { format } from 'date-fns';
+import { utcToZonedTime } from 'date-fns-tz';
 
 export default function ManageStudents() {
 
@@ -35,7 +37,13 @@ export default function ManageStudents() {
   const scheds = useQuery(ALL_SCHEDULE, { variables: { filters: {} } })
   const subs = useQuery(ALL_SUBJECTS, { variables: { filters: {} } })
 
-  const datee = new Date()
+  const datee = new Date();
+  const timeZone = 'Asia/Singapore';
+
+  const zonedDate = utcToZonedTime(datee, timeZone);
+  console.log(zonedDate);
+  
+  const formattedDate = format(zonedDate, "EEE, dd MMM yyyy hh:mm aa");
 
   useEffect(() => {
     setStudss(data?.getAllStudentsWithFilters?.data)
@@ -52,7 +60,7 @@ export default function ManageStudents() {
     setStudss(data?.getAllStudentsWithFilters?.data)
     if (searchFor !== '' ) {
       setStudss(studss => studss.filter((student: Student) => {
-        let studentDData = `${student.email} ${student.sex} ${student.school_id} ${student.name.first} ${student.name.middle} ${student.name.last} ${student.name.extension}`.toLowerCase()
+        let studentDData = `${student.username} ${student.sex} ${student.school_id} ${student.name.first} ${student.name.middle} ${student.name.last} ${student.name.extension}`.toLowerCase()
         if ( studentDData.match(searchFor.toLowerCase()) ) {
           return student
         }
@@ -147,7 +155,7 @@ export default function ManageStudents() {
 
       <div className="w-full h-fit flex items-center justify-between text-white text-[13px] px-[20px] ">
         <div>
-          Latest data as of {datee.toDateString()}
+          Latest data as of {formattedDate}
         </div>
 
         <div>
@@ -157,6 +165,7 @@ export default function ManageStudents() {
 
       {/* table  */}
       <div className=" w-full h-3/4 rounded-[20px] relative overflow-auto ">
+
         {/* table headers  */}
         <div className=" sticky top-0 z-20 w-full h-[60px] bg-[#D5E7FF] flex items-center px-[20px] ">
           {/* No.  */}
@@ -208,10 +217,10 @@ export default function ManageStudents() {
             </div>
           </div>
           
-          {/* email */}
+          {/* sID */}
           <div className=" h-full grow flex items-center ">
             <div className=" poppins font-bold text-[20px] text-primary-2 ">
-              Email
+              School ID/ Username
             </div>
           </div>
 
@@ -308,10 +317,10 @@ export default function ManageStudents() {
                       </div>
                     </div>
                     
-                    {/* email */}
+                    {/* username */}
                     <div className=" h-full grow flex items-center ">
                       <div className=" poppins font-medium text-[16px] text-primary-2 ">
-                        { stud.email }
+                        { stud.username }
                       </div>
                     </div>
 

@@ -18,93 +18,17 @@ import logout1 from '../assets/logout 1.png';
 import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import gql from "graphql-tag";
 import { useQuery } from "@apollo/client";
 import { CChart } from '@coreui/react-chartjs'
 import Admin from "../interfaces/Admin";
+import { toast } from "react-toastify";
+import ALL_LOGS from "../gql/GET/ALL/Log";
+import ALL_STUDENTS from "../gql/GET/ALL/Students";
+import ALL_ATTENDANCES from "../gql/GET/ALL/Attendance";
+import Logs from "../interfaces/Logs";
+import Attendance from "../interfaces/Attendance";
 
 
-const ALL_LOGS = gql`
-  query GetAllLogsWithFilters($filters: logFilter) {
-    getAllLogsWithFilters(filters: $filters) {
-      error
-      message
-      data {
-        id
-        collection
-        message
-        date {
-          minute
-          hour
-          day
-          month
-          year
-        }
-      }
-    }
-  }
-`
-
-const ALL_STUDENTS = gql`
-  query GetAllLogsWithFilters($filters: studentFilters!) {
-    getAllStudentsWithFilters(filters: $filters) {
-      error
-      message
-      data {
-        sex
-      }
-    }
-  }
-`
-
-const ALL_ATTENDANCES = gql`
-  query GetAllAttendancesWithFilters($filters: attendanceFilters!) {
-    getAllAttendancesWithFilters(filters: $filters) {
-      error
-      message
-      data {
-        id
-        date {
-          minute
-          hour
-          day
-          month
-          year
-        }
-        qr
-        schedule
-        special
-        label
-      }
-    }
-  }
-`
-
-interface Logs {
-  id: string
-  collection: string
-  message: string
-  date: logDate
-}
-
-interface logDate {
-  minute: number
-  hour: number
-  day: number
-  month: number
-  year: number
-}
-
-interface Attendance {
-  qr: string
-  schedule: string
-  label: string
-  special: boolean
-  date: logDate
-}
-
-/*stated na page na yung 'Admin Dashboard'
-after this, go to index.tsx to import the page*/
 export default function AdminDashboard() {
   const [showModal, setShowModal] = useState(false)
   const [time, setTime] = useState(new Date())
@@ -125,9 +49,20 @@ export default function AdminDashboard() {
     navigate('/')
   }
 
+  // checker of admin creds
   useEffect(() => {
     if (localStorage.getItem('admin') == null) {
-      navigate('/', {replace: true})
+      toast.error('Please Sign in first', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      navigate('/', { replace: true })
     } else {
       //@ts-ignore
       setAdminn(JSON.parse(localStorage.getItem('admin')))

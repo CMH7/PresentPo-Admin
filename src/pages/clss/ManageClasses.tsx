@@ -33,7 +33,7 @@ export default function ManageClasses() {
     setClasses(data?.getAllClassWithFilters?.data)
     if (searchFor !== '' ) {
       setClasses(classs => classs.filter((cls: Classs) => {
-        let classData = `${cls.strand} ${cls.year} ${cls.section} ${cls.semester}`.toLowerCase()
+        let classData = `${cls.strand} ${cls.year} ${cls.section} ${cls.semester} ${cls.sy}`.toLowerCase()
         if ( classData.match(searchFor.toLowerCase()) ) {
           return cls
         }
@@ -127,7 +127,7 @@ export default function ManageClasses() {
 
           {/* add student button  */}
           <Link to='/admindashboard/manageclasses/addclass' replace={true}>
-            <div className="group w-[220px] h-[55px] flex items-center justify-center bg-primary-2 hover:bg-white transition-all rounded-[50px] cursor-pointer">
+            <div className=" border border-white group w-[220px] h-[55px] flex items-center justify-center bg-primary-2 hover:bg-white transition-all rounded-[50px] cursor-pointer">
               {/* icon  */}
               <div className="aspect-square w-[20px] h-auto ">
                 <img className="group-hover:hidden" src={plusWhite} alt="plus white icon" />

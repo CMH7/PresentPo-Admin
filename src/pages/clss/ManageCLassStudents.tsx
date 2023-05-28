@@ -41,8 +41,9 @@ export default function ManageClassStudents() {
 				progress: undefined,
 				theme: "light",
 			});
-			setRemoving(false)
-			navigate('/admindashboard/manageclasses', {replace: true})
+      setRemoving(false)
+      setShowModal(false)
+			navigate(`/admindashboard/manageclasses/${id}/manageclassstudents`, {replace: true})
 		},
 		onError: (e) => {
 			toast.error(`${e}`, {

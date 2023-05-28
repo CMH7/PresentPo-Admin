@@ -2,57 +2,11 @@ import Wrapper from "../../components/Wrapper";
 import backIcon from '../../assets/left-arrow 1.png'
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from "react";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { toast } from "react-toastify";
+import EDIT_STUDENT from "../../gql/SET/EDIT/Student";
+import GET_STUDENT from "../../gql/GET/Student";
 
-const EDIT_STUDENT_OPS = gql`
-	mutation UpdateStudent($updateStudentId: ID!, $updatedStudent: updatedStudent!) {
-		updateStudent(id: $updateStudentId, updatedStudent: $updatedStudent) {
-			error
-			message
-			data {
-				id
-				school_id
-				name {
-					first
-					middle
-					last
-					extension
-				}
-				age
-				sex
-				email
-				password
-			}
-		}
-	}
-`
-
-const GET_STUDENT_QUERY = gql`
-	query GetStudent($getStudentId: ID!) {
-		getStudent(id: $getStudentId) {
-			data {
-				age
-				id
-				school_id
-				name {
-					first
-					middle
-					last
-					extension
-				}
-				sex
-				email
-				password
-			}
-			error
-			message
-		}
-	}
-`
-
-/*stated na page na yung 'Edit Student'
-after this, go to index.tsx to import the page*/
 export default function EditStudent() {
 	const { id } = useParams<{ id: string }>();
 	
@@ -62,21 +16,30 @@ export default function EditStudent() {
 	const [lastName, setLastName] = useState('')
 	const [extension, setExtension] = useState('')
 	const [sex, setSex] = useState('')
-	const [age, setAge] = useState(0)
-	const [email, setEmail] = useState('')
+	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
 	const [saving, setSaving] = useState(false)
 	const navigate = useNavigate()
 
-	const { error, loading, data } = useQuery(GET_STUDENT_QUERY, { variables: { getStudentId: id } })
+	const { error, loading, data } = useQuery(GET_STUDENT, { variables: { getStudentId: id } })
 	
 	useEffect(() => {
-    if (localStorage.getItem('admin') == null) {
-      navigate('/', {replace: true})
-    }
+		if (localStorage.getItem('admin') == null) {
+			toast.error('Please Sign in first', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+			navigate('/', { replace: true })
+		}
   }, [])
 
-	const [editStudent] = useMutation(EDIT_STUDENT_OPS, {
+	const [editStudent] = useMutation(EDIT_STUDENT, {
 		onCompleted: (data) => {
 			toast.success(data?.updateStudent?.message, {
 				position: "top-right",
@@ -113,8 +76,7 @@ export default function EditStudent() {
 		setLastName(data?.getStudent?.data?.name.last)
 		setExtension(data?.getStudent?.data?.name.extension)
 		setSex(data?.getStudent?.data?.sex)
-		setAge(data?.getStudent?.data?.age)
-		setEmail(data?.getStudent?.data?.email)
+		setUsername(data?.getStudent?.data?.username)
 		setPassword(data?.getStudent?.data?.password)
 	}, [data])
 
@@ -139,7 +101,7 @@ export default function EditStudent() {
 
 				{/* save button */}
 				<button onClick={() => {
-					if (lastName === '' || firstName === '' || email === '' || password === '' || schoolID === '') {
+					if (lastName === '' || firstName === '' || username === '' || password === '' || schoolID === '') {
 						toast.error('Invalid inputs', {
 							position: "top-right",
 							autoClose: 5000,
@@ -153,9 +115,18 @@ export default function EditStudent() {
 						return
 					}
 					setSaving(true)
-					editStudent({ variables: { updateStudentId: id, updatedStudent: {age: age, email: email, name: {extension: extension, first: firstName, last: lastName, middle: middleName }, password: password, school_id: schoolID, sex: sex } } })
+					editStudent({ variables: { updateStudentId: id, updatedStudent: {username: username, name: {extension: extension, first: firstName, last: lastName, middle: middleName }, password: password, school_id: schoolID, sex: sex } } })
 				}} className="flex justify-center items-center mt-[50px] mr-[100px] bg-[#11CF00] hover:bg-[#1672ec] text-white font-semibold py-2 px-20 rounded-full focus:outline-none focus:shadow-outline w-[218px] h-[55px]" type="submit">
-					Save
+					{
+						saving ? 
+							<div>
+								saving...
+							</div>
+							:
+							<div>
+								Save
+							</div>
+					}
 				</button>
       </div>
 
@@ -182,7 +153,10 @@ export default function EditStudent() {
 						<label className="text-white font-semibold pb-[10px] text-[20px] ">
 							Last Name
 						</label>
-						<input onChange={(e) => setLastName(e.target.value)} value={lastName} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter last name"/>
+						<input onChange={(e) => {
+							setLastName(e.target.value)
+							setPassword(`${e.target.value}`.toLowerCase())
+						}} value={lastName} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter last name" />
 					</div>
 						
 					<div className="pb-[50px]">
@@ -190,13 +164,6 @@ export default function EditStudent() {
 							Extension Name
 						</label>
 						<input onChange={(e) => setExtension(e.target.value)} value={extension} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter extension name" />
-					</div>
-					
-					<div className="pb-[50px]">
-						<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
-							Age
-						</label>
-							<input onChange={(e) => setAge(parseInt(e.target.value))} value={age} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" type="number" pattern="\d*" placeholder="Enter age" />
 					</div>
 				</div>
 
@@ -216,21 +183,24 @@ export default function EditStudent() {
 						<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
 							School ID
 						</label>
-							<input onChange={(e) => setschoolID(e.target.value)} value={schoolID} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter school id" />
+						<input onChange={(e) => {
+							setschoolID(e.target.value)
+							setUsername(e.target.value)
+						}} value={schoolID} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter school id" />
 					</div>
 
 					<div className="pb-[50px]">
 						<label className="text-white font-semibold pb-[10px] text-[20px] ">
-							Email
+							Username
 						</label>
-						<input onChange={(e) => setEmail(e.target.value)} value={email} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter email address"/>
+						<input readOnly disabled value={username} className="poppins text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter email address"/>
 					</div>
 
 					<div className="pb-[50px]">
 						<label className="text-white font-semibold pb-[10px] text-[20px] ">
 							Password
 						</label>
-						<input onChange={(e) => setPassword(e.target.value)} value={password} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter password"/>
+						<input readOnly disabled value={password} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter password"/>
 					</div>
 				</div>
 			</div>

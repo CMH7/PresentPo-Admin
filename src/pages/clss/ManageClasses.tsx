@@ -7,23 +7,57 @@ import searchInac from '../../assets/searchInactive.png'
 import editIcon from '../../assets/edit (1) 1.png'
 import deleteIcon from '../../assets/delete 1.png'
 import { Link, useNavigate } from "react-router-dom"
-import { gql, useQuery } from "@apollo/client"
+import { useMutation, useQuery } from "@apollo/client"
 import QueryResult from "../../components/QueryResult"
 import { useEffect, useState } from "react"
 import React from "react"
 import { toast } from "react-toastify"
 import Classs from "../../interfaces/Classs"
 import ALL_CLASS from "../../gql/GET/ALL/Classs"
+import DELETE_CLASS from "../../gql/SET/DEL/Classs"
 
 export default function ManageClasses() {
 
   const [showModal, setShowModal] = useState(false)
+  const [classID, setClassID] = useState('')
   const [selectedClass, setSelectedClass] = useState('')
   const [classes, setClasses] = useState<Classs[]>([])
   const [searchValue, setSearchValue] = useState('')
+  const [deleting, setDeleting] = useState(false)
+
   const navigate = useNavigate()
 
   const { error, loading, data } = useQuery(ALL_CLASS, { variables: { filters: {} } })
+  const [deleteClass] = useMutation(DELETE_CLASS, {
+    onCompleted: (data) => {
+			toast.success(data?.deleteClass?.message, {
+				position: "top-right",
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
+      setDeleting(false)
+      setShowModal(false)
+			navigate('/admindashboard/manageclasses', {replace: true})
+		},
+		onError: (e) => {
+			toast.error(`${e}`, {
+				position: "top-right",
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
+			setDeleting(false)
+		}
+  })
 
   useEffect(() => {
     setClasses(data?.getAllClassWithFilters?.data)
@@ -76,7 +110,14 @@ export default function ManageClasses() {
               {/* buttons  */}
               <div className="w-full flex justify-evenly absolute bottom-[11px]">
                 {/* proceed button  */}
-                <div onClick={() => { }} className="text-[#D80000] h-full w-2/4 cursor-pointer flex justify-center items-center hover:font-bold">
+                <div onClick={() => {
+                  deleteClass({
+                    variables: {
+                      deleteClassId: classID
+                    }
+                  })
+                  setDeleting(true)
+                 }} className="text-[#D80000] h-full w-2/4 cursor-pointer flex justify-center items-center hover:font-bold">
                   Delete
                 </div>
 
@@ -259,7 +300,8 @@ export default function ManageClasses() {
 
                       {/* delete student  */}
                       <div onClick={() => {
-                        setSelectedClass(`${classs.strand} ${classs.year}-${classs.section}`)
+                        setSelectedClass(`${classs.strand} ${classs.year}-${classs.section} sy. ${classs.sy}`)
+                        setClassID(classs.id)
                         setShowModal(true)
                       }} className=" w-[55px] h-full bg-[#D80000] flex items-center justify-center cursor-pointer ">
                         <div className="aspect-square w-[20px] h-auto">

@@ -5,7 +5,7 @@ import plusPrim from '../../assets/plus prim.png'
 import searchIcon from '../../assets/search 1.png'
 import searchInac from '../../assets/searchInactive.png'
 import { Link, useNavigate, useParams } from "react-router-dom"
-import { gql, useMutation, useQuery } from "@apollo/client"
+import { useMutation, useQuery } from "@apollo/client"
 import QueryResult from "../../components/QueryResult"
 import deleteIcon from '../../assets/delete 1.png'
 import { useEffect, useState } from "react"

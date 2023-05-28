@@ -15,7 +15,7 @@ const ALL_STUDENTS = gql`
           extension
         }
         sex
-        email
+        username
         password
       }
     }

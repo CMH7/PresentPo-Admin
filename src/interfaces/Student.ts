@@ -5,7 +5,7 @@ interface Student {
   school_id: string
   name: Name
   sex: string
-  email: string
+  username: string
   password: string
 }
 

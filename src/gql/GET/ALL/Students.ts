@@ -14,7 +14,6 @@ const ALL_STUDENTS = gql`
           last
           extension
         }
-        age
         sex
         email
         password

@@ -69,6 +69,19 @@ export default function AddStudent() {
 			});
 			setAdding(false)
 			navigate('/admindashboard/managestudents', {replace: true})
+		},
+		onError: (e) => {
+			toast.error(`${e}`, {
+				position: "top-right",
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
+			setAdding(false)
 		}
 	})
 
@@ -156,13 +169,6 @@ export default function AddStudent() {
 									Extension Name
 								</label>
 								<input onChange={(e) => setNewStudent(prev => ({...prev, name: {...prev.name, extension: e.target.value}}))} value={newStudent.name.extension} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter extension name" />
-							</div>
-								
-							<div className="pb-[50px]">
-								<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
-									Age
-								</label>
-									<input onChange={(e) => setNewStudent(prev => ({ ...prev, age: parseInt(e.target.value === '' ? '0' : e.target.value) }))} value={newStudent.age} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" id="last-name" type="text" pattern="\d*" placeholder="Enter age" />
 							</div>
 						</div>
 

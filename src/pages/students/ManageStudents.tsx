@@ -14,79 +14,12 @@ import { useEffect, useState } from "react"
 import Name from "../../interfaces/Name"
 import Student from "../../interfaces/Student"
 import Classs from "../../interfaces/Classs"
-
-const All_STUDENTS = gql`
-  query getAllStudentsWithFilters($filters: studentFilters!) {
-    getAllStudentsWithFilters(filters: $filters) {
-      error
-      message
-      data {
-        id
-        school_id
-        name {
-          first
-          middle
-          last
-          extension
-        }
-        email
-        sex
-      }
-    }
-  }
-`
-
-const STUDENTS_CLASS = gql`
-  query GetAllClassWithFilters($filters: classFilters) {
-    getAllClassWithFilters(filters: $filters) {
-      error
-      message
-      data {
-        id
-        strand
-        year
-        section
-        students
-      }
-    }
-  }
-`
-
-const ALL_SCHEDS = gql`
-  query GetAllSchedulesWithFilters($filters: scheduleFilters!) {
-    getAllSchedulesWithFilters(filters: $filters) {
-      data {
-        id
-        subject
-        class
-      }
-    }
-  }
-`
-
-const ALL_SUBJECTS = gql`
-  query GetAllSubjectsWithFilters($filters: subjectFilters!) {
-    getAllSubjectsWithFilters(filters: $filters) {
-      data {
-        name
-        id
-        code
-      }
-    }
-  }
-`
-
-interface Schedule {
-  id: string
-  subject: string
-  class: string
-}
-
-interface Subject {
-  id: string
-  code: string
-  name: string
-}
+import Schedule from "../../interfaces/Schedule"
+import Subject from "../../interfaces/Subject"
+import ALL_SUBJECTS from "../../gql/GET/ALL/Subject"
+import ALL_SCHEDULE from "../../gql/GET/ALL/Schedule"
+import ALL_CLASS from "../../gql/GET/ALL/Classs"
+import ALL_STUDENTS from "../../gql/GET/ALL/Students"
 
 export default function ManageStudents() {
 
@@ -97,10 +30,12 @@ export default function ManageStudents() {
   const [searchValue, setSearchValue] = useState('')
   const navigate = useNavigate()
 
-  const { error, loading, data } = useQuery(All_STUDENTS, { variables: { filters: {} } })
-  const studClass = useQuery(STUDENTS_CLASS, { variables: { filters: {} } })
-  const scheds = useQuery(ALL_SCHEDS, { variables: { filters: {} } })
+  const { error, loading, data } = useQuery(ALL_STUDENTS, { variables: { filters: {} } })
+  const studClass = useQuery(ALL_CLASS, { variables: { filters: {} } })
+  const scheds = useQuery(ALL_SCHEDULE, { variables: { filters: {} } })
   const subs = useQuery(ALL_SUBJECTS, { variables: { filters: {} } })
+
+  const datee = new Date()
 
   useEffect(() => {
     setStudss(data?.getAllStudentsWithFilters?.data)
@@ -210,6 +145,16 @@ export default function ManageStudents() {
         </div>
       </div>
 
+      <div className="w-full h-fit flex items-center justify-between text-white text-[13px] px-[20px] ">
+        <div>
+          Latest data as of {datee.toDateString()}
+        </div>
+
+        <div>
+          Hover on students to see more information.
+        </div>
+      </div>
+
       {/* table  */}
       <div className=" w-full h-3/4 rounded-[20px] relative overflow-auto ">
         {/* table headers  */}
@@ -272,12 +217,16 @@ export default function ManageStudents() {
 
 
         </div>
+
+        {/* table body  */}
         <div className={`w-full ${loading ? 'h-full flex flex-col justify-center items-center' : 'h-fit'}`}>
           <QueryResult error={error || studClass.error || scheds.error || subs.error} loading={loading || studClass.loading || scheds.loading || subs.loading} data={data || studClass.data || scheds.data || subs.data}>
+
+            {/* table contents  */}
             {
               studss?.map((stud: Student, i: number) => {
                 return (
-                  <div key={stud.id} className=" w-full h-[100px] hover:h-fit py-[15px] bg-white hover:bg-gray-200 mb-[2px] flex items-center px-[20px] relative overflow-hidden group transition-all ">
+                  <div key={stud.id} className=" w-full h-[50px] hover:h-fit py-[15px] bg-white hover:bg-gray-200 mb-[2px] flex items-center px-[20px] relative overflow-hidden group transition-all ">
                     {/* No.  */}
                     <div className=" h-full w-[50px] shrink-0 flex items-center ">
                       <div className=" poppins font-medium text-[16px] text-primary-2 ">

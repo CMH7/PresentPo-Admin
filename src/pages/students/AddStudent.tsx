@@ -4,30 +4,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { gql, useMutation } from "@apollo/client";
 import { useEffect, useState } from "react";
 import { PropagateLoader } from "react-spinners";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
+import ADD_STUDENT from "../../gql/SET/ADD/Student";
 
-const ADD_STUDENT_OPS = gql`
-	mutation AddStudent($newStudent: newStudent!) {
-		addStudent(newStudent: $newStudent) {
-			error
-			message
-			data {
-				id
-				school_id
-				name {
-					first
-					middle
-					last
-					extension
-				}
-				age
-				sex
-				email
-				password
-			}
-		}
-	}
-`
+
 
 /*stated na page na yung 'Add Student'
 after this, go to index.tsx to import the page*/
@@ -41,9 +21,8 @@ export default function AddStudent() {
 			last: '',
 			extension: ''
 		},
-		age: 0,
 		sex: 'Male',
-		email: '.student@present.po',
+		username: '',
 		password: ''
 	})
 
@@ -55,7 +34,7 @@ export default function AddStudent() {
     }
   }, [])
 
-	const [addStudent] = useMutation(ADD_STUDENT_OPS, {
+	const [addStudent] = useMutation(ADD_STUDENT, {
 		onCompleted: (data) => {
 			toast.success(data?.addStudent?.message, {
 				position: "top-right",
@@ -106,7 +85,7 @@ export default function AddStudent() {
 				{/* add button */}
 				<div aria-disabled={adding}
 					onClick={() => {
-						if (newStudent.school_id === '' || newStudent.name.first === '' || newStudent.name.last === '' || newStudent.sex === '' || newStudent.age <= 13) {
+						if (newStudent.school_id === '' || newStudent.name.first === '' || newStudent.name.last === '' || newStudent.sex === '') {
 							toast.error('Invalid inputs', {
 								position: "top-right",
 								autoClose: 5000,
@@ -120,7 +99,7 @@ export default function AddStudent() {
 							return
 						}
 						setAdding(true)
-							addStudent({ variables: { newStudent: newStudent } })
+						addStudent({ variables: { newStudent: newStudent } })
 					}} className="flex justify-center items-center mt-[50px] mr-[100px] bg-[#11CF00] hover:bg-[#218a18] text-white font-semibold py-2 px-20 rounded-[50px] focus:outline-none focus:shadow-outline w-[218px] h-[55px] cursor-pointer select-none ">
 					{
 						!adding ? 
@@ -147,7 +126,7 @@ export default function AddStudent() {
 								<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
 									First Name
 								</label>
-								<input onChange={(e) => setNewStudent(prev => ({...prev, email: `${e.target.value.split(' ').join('')}${prev.name.last.split(' ').join('')}.student@present.po`.toLowerCase(), password: `${e.target.value.split(' ').join('')}${prev.name.last.split(' ').join('')}`.toLowerCase(), name: {...prev.name, first: e.target.value}}))} value={newStudent.name.first} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter first name" />
+								<input onChange={(e) => setNewStudent(prev => ({...prev, name: {...prev.name, first: e.target.value}}))} value={newStudent.name.first} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter first name" />
 							</div>
 								
 							<div className="pb-[50px]">
@@ -161,7 +140,7 @@ export default function AddStudent() {
 								<label className="text-white font-semibold pb-[10px] text-[20px] ">
 									Last Name
 								</label>
-								<input onChange={(e) => setNewStudent(prev => ({...prev, email: `${prev.name.first.split(' ').join('')}${e.target.value.split(' ').join('')}.student@present.po`.toLowerCase(), password: `${prev.name.first.split(' ').join('')}${e.target.value.split(' ').join('')}`.toLowerCase(), name: {...prev.name, last: e.target.value}}))} value={newStudent.name.last} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter last name"/>
+								<input onChange={(e) => setNewStudent(prev => ({...prev, password: `${e.target.value.split(' ').join('')}`.toLowerCase(), name: {...prev.name, last: e.target.value}}))} value={newStudent.name.last} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter last name"/>
 							</div>
 									
 							<div className="pb-[50px]">
@@ -190,15 +169,15 @@ export default function AddStudent() {
 								</label>
 									<input onChange={(e) => {
 										if (e.target.value.match(/[^0-9\-]/g)) return
-										setNewStudent(prev => ({ ...prev, school_id: e.target.value }))
+										setNewStudent(prev => ({ ...prev, school_id: e.target.value, username: e.target.value }))
 									}} value={newStudent.school_id} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" id="last-name" type="text" placeholder="Enter school id" />
 							</div>
 
 							<div className="pb-[50px]">
 								<label className="text-white font-semibold pb-[10px] text-[20px] ">
-									Email
+									Username
 								</label>
-								<input readOnly={true} value={newStudent.email} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter email address"/>
+								<input readOnly={true} value={newStudent.username} className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter email address"/>
 							</div>
 
 							<div className="pb-[50px]">

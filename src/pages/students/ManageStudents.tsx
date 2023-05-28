@@ -18,8 +18,6 @@ import ALL_SUBJECTS from "../../gql/GET/ALL/Subject"
 import ALL_SCHEDULE from "../../gql/GET/ALL/Schedule"
 import ALL_CLASS from "../../gql/GET/ALL/Classs"
 import ALL_STUDENTS from "../../gql/GET/ALL/Students"
-import { format } from 'date-fns';
-import { utcToZonedTime } from 'date-fns-tz';
 import { toast } from "react-toastify"
 import DELETE_STUDENT from "../../gql/SET/DEL/Student"
 
@@ -70,14 +68,6 @@ export default function ManageStudents() {
       setSelStudID('')
 		}
   })
-
-  const datee = new Date();
-  const timeZone = 'Asia/Singapore';
-
-  const zonedDate = utcToZonedTime(datee, timeZone);
-  console.log(zonedDate);
-  
-  const formattedDate = format(zonedDate, "EEE, dd MMM yyyy hh:mm aa");
 
   useEffect(() => {
     setStudss(data?.getAllStudentsWithFilters?.data)
@@ -211,11 +201,7 @@ export default function ManageStudents() {
       </div>
 
       {/* as of  */}
-      <div className="w-full h-fit flex items-center justify-between text-white text-[13px] px-[20px] ">
-        <div>
-          Latest data as of {formattedDate}
-        </div>
-
+      <div className="w-full h-fit flex items-center justify-end text-white text-[13px] px-[20px] ">
         <div>
           Hover on students to see more information.
         </div>

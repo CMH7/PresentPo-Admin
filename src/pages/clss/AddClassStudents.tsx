@@ -1,95 +1,20 @@
 import Wrapper from "../../components/Wrapper"
 import chevronLeft from '../../assets/left-arrow 1.png'
 import plusWhite from '../../assets/plus white.png'
-import plusPrim from '../../assets/plus prim.png'
-import tri from '../../assets/down 1.png'
 import searchIcon from '../../assets/search 1.png'
 import searchInac from '../../assets/searchInactive.png'
 import { Link, useNavigate, useParams } from "react-router-dom"
-import { gql, useMutation, useQuery } from "@apollo/client"
+import { useMutation, useQuery } from "@apollo/client"
 import QueryResult from "../../components/QueryResult"
-import editIcon from '../../assets/edit (1) 1.png'
-import deleteIcon from '../../assets/delete 1.png'
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
+import GET_CLASS from "../../gql/GET/Classs"
+import Student from "../../interfaces/Student"
+import ALL_STUDENTS from "../../gql/GET/ALL/Students"
+import EDIT_CLASSS from "../../gql/SET/EDIT/Classs"
+import ALL_CLASS from "../../gql/GET/ALL/Classs"
+import Classs from "../../interfaces/Classs"
 
-const GET_CLASS_DATA = gql`
-  query GetClass($getClassId: ID!) {
-    getClass(id: $getClassId) {
-      error
-      message
-      data {
-        id
-        strand
-        year
-        section
-        semester
-        students
-      }
-    }
-  }
-`
-
-const ALL_STUDENTS = gql`
-  query GetStudent($filters: studentFilters!) {
-    getAllStudentsWithFilters(filters: $filters) {
-      error
-      message
-      data {
-        id
-        school_id
-        name {
-          first
-          middle
-          last
-          extension
-        }
-        sex
-        email
-      }
-    }
-  }
-`
-
-const UPDATE_CLASS = gql`
-  mutation Mutation($updateClassId: ID!, $updatedClass: updatedClass!) {
-    updateClass(id: $updateClassId, updatedClass: $updatedClass) {
-      error
-      message
-      data {
-        id
-        strand
-        year
-        section
-        semester
-        students
-      }
-    }
-  }
-`
-
-interface Student {
-  id: string
-  school_id: string
-  name: Name
-  email: string
-  sex: string
-}
-
-interface Name {
-  first: string
-  middle: string
-  last: string
-  extension: string
-}
-
-interface Classs {
-  id: string
-  strand: string
-  year: number
-  section: string
-  students: string[]
-}
 
 export default function AddClassStudents() {
   const { id } = useParams<{ id: string }>();
@@ -102,11 +27,12 @@ export default function AddClassStudents() {
   const [adding, setAdding] = useState(false)
   const navigate = useNavigate()
 
-  const clasdata = useQuery(GET_CLASS_DATA, { variables: { getClassId: id } })
+  const clasdata = useQuery(GET_CLASS, { variables: { getClassId: id } })
+  const classes = useQuery(ALL_CLASS, { variables: { filters: {} }})
   const studClass = useQuery(ALL_STUDENTS, { variables: { filters: {} } })
-  const [updateClassORAddStudent] = useMutation(UPDATE_CLASS, {
+  const [addStudent] = useMutation(EDIT_CLASSS, {
     onCompleted: (data) => {
-			toast.success(`${data?.updateClass?.message}; Student added.`, {
+			toast.success(`${data?.updateClass?.message}. Student added.`, {
 				position: "top-right",
 				autoClose: 5000,
 				hideProgressBar: false,
@@ -142,7 +68,7 @@ export default function AddClassStudents() {
     setStudents(studClass.data?.getAllStudentsWithFilters?.data)
     if (searchFor !== '' ) {
       setStudents(studss => studss.filter((student: Student) => {
-        let studentDData = `${student.email} ${student.sex} ${student.school_id} ${student.name.first} ${student.name.middle} ${student.name.last} ${student.name.extension}`.toLowerCase()
+        let studentDData = `${student.username} ${student.sex} ${student.school_id} ${student.name.first} ${student.name.middle} ${student.name.last} ${student.name.extension}`.toLowerCase()
         if ( studentDData.match(searchFor.toLowerCase()) ) {
           return student
         }
@@ -150,8 +76,19 @@ export default function AddClassStudents() {
     }
   }
 
+  // checks if admin is empty
   useEffect(() => {
     if (localStorage.getItem('admin') == null) {
+      toast.error('Please Sign in first', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       navigate('/', {replace: true})
     }
   }, [])
@@ -175,10 +112,19 @@ export default function AddClassStudents() {
               <div className="w-full flex justify-evenly absolute bottom-[11px]">
                 {/* proceed button  */}
                 <div onClick={() => { 
+                  addStudent({variables: {updateClassId: id, updatedClass: { students: [...clasdata.data?.getClass?.data?.students, studID] }}})
                   setAdding(true)
-                  updateClassORAddStudent({variables: {updateClassId: id, updatedClass: { strand: clasdata.data?.getClass?.data?.strand, year: clasdata.data?.getClass?.data?.year, section: clasdata.data?.getClass?.data?.section, semester: clasdata.data?.getClass?.data?.semester, students: [...clasdata.data?.getClass?.data?.students, studID] }}})
                 }} className="text-emerald-500 h-full w-2/4 cursor-pointer flex justify-center items-center hover:font-bold">
-                  Add
+                  {
+                    adding ? 
+                      <div>
+                        adding...
+                      </div>
+                      :
+                      <div>
+                        Add
+                      </div>
+                  }
                 </div>
 
                 {/* cancel button  */}
@@ -198,11 +144,11 @@ export default function AddClassStudents() {
         <div className="flex items-center">
           <Link to={`/admindashboard/manageclasses/${id}/manageclassstudents`} replace={true}>
             <div className="aspect-square w-[25px] h-auto cursor-pointer">
-              <img src={chevronLeft} alt="chevron left" />
+              <img className="invert" src={chevronLeft} alt="chevron left" />
             </div>
           </Link>
 
-          <div className="ml-[30px] poppins text-[40px] font-bold text-primary-2 select-none">
+          <div className="ml-[30px] poppins text-[40px] font-bold text-white select-none">
             Add student in { clasdata.data?.getClass?.data?.strand } { clasdata.data?.getClass?.data?.year }-{ clasdata.data?.getClass?.data?.section }
           </div>
         </div>
@@ -234,13 +180,6 @@ export default function AddClassStudents() {
               No.
             </div>
           </div>
-          
-          {/* school id  */}
-          <div className=" h-full w-[200px] shrink-0 flex items-center ">
-            <div className=" poppins font-bold text-[20px] text-primary-2 ">
-              School ID
-            </div>
-          </div>
 
           {/* last name  */}
           <div className=" h-full w-[200px] shrink-0 flex items-center ">
@@ -264,16 +203,16 @@ export default function AddClassStudents() {
           </div>
           
           {/* year and section */}
-          <div className=" h-full w-[100px] shrink-0 flex items-center ">
+          <div className=" h-full w-[200px] shrink-0 flex items-center ">
             <div className=" poppins font-bold text-[20px] text-primary-2 ">
               Sex
             </div>
           </div>
           
-          {/* email */}
+          {/* sID */}
           <div className=" h-full grow flex items-center ">
             <div className=" poppins font-bold text-[20px] text-primary-2 ">
-              Email
+              School ID/ Username
             </div>
           </div>
 
@@ -282,20 +221,13 @@ export default function AddClassStudents() {
         <div className={`w-full ${studClass.loading ? 'h-full flex flex-col justify-center items-center' : 'h-fit'}`}>
           <QueryResult error={clasdata.error || studClass.error} loading={clasdata.loading || studClass.loading} data={clasdata.data || studClass.data}>
             {
-              students.filter((stud: Student, i: number) => !clasdata.data?.getClass?.data?.students?.includes(stud.id) && !clasdata.data?.getClass?.data?.students?.includes(` ${stud.id}`)).map((stud: Student, i: number) => {
+              students?.filter((student: Student) => classes.data?.getAllClassWithFilters?.data?.filter((cls: Classs) => cls.students.includes(student.id.replace(' ', ''))).length == 0).map((stud: Student, i: number) => {
                 return (
                   <div key={stud.id} className=" w-full h-fit py-[15px] bg-white hover:bg-gray-200 mb-[2px] flex items-center px-[20px] relative overflow-hidden group transition-all ">
                     {/* No.  */}
                     <div className=" h-full w-[50px] shrink-0 flex items-center ">
                       <div className=" poppins font-medium text-[16px] text-primary-2 ">
                         { i + 1  }
-                      </div>
-                    </div>
-                    
-                    {/* school id  */}
-                    <div className=" h-full w-[200px] shrink-0 flex items-center ">
-                      <div className=" poppins font-medium text-[16px] text-primary-2 ">
-                        { stud.school_id }
                       </div>
                     </div>
 
@@ -321,16 +253,16 @@ export default function AddClassStudents() {
                     </div>
                     
                     {/* sex  */}
-                    <div className=" h-full w-[100px] shrink-0 flex items-center ">
+                    <div className=" h-full w-[200px] shrink-0 flex items-center ">
                       <div className=" poppins font-medium text-[16px] text-primary-2 ">
                         { stud.sex }
                       </div>
                     </div>
                     
-                    {/* email */}
+                    {/* username */}
                     <div className=" h-full grow flex items-center ">
                       <div className=" poppins font-medium text-[16px] text-primary-2 ">
-                        { stud.email }
+                        { stud.username }
                       </div>
                     </div>
 

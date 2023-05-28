@@ -5,7 +5,7 @@ import plusPrim from '../../assets/plus prim.png'
 import searchIcon from '../../assets/search 1.png'
 import searchInac from '../../assets/searchInactive.png'
 import { Link, useNavigate } from "react-router-dom"
-import { useQuery } from "@apollo/client"
+import { useMutation, useQuery } from "@apollo/client"
 import QueryResult from "../../components/QueryResult"
 import editIcon from '../../assets/edit (1) 1.png'
 import deleteIcon from '../../assets/delete 1.png'
@@ -21,20 +21,55 @@ import ALL_STUDENTS from "../../gql/GET/ALL/Students"
 import { format } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
 import { toast } from "react-toastify"
+import DELETE_STUDENT from "../../gql/SET/DEL/Student"
 
 export default function ManageStudents() {
 
   const [showModal, setShowModal] = useState(false)
   const [selectedStudent, setSelectedStudent] = useState('')
+  const [selStudID, setSelStudID] = useState('')
   const [studss, setStudss] = useState<Student[]>([])
   const [classes, setClasses] = useState<Classs[]>([])
   const [searchValue, setSearchValue] = useState('')
+  const [deleting, setDeleting] = useState(false)
   const navigate = useNavigate()
 
   const { error, loading, data } = useQuery(ALL_STUDENTS, { variables: { filters: {} } })
   const studClass = useQuery(ALL_CLASS, { variables: { filters: {} } })
   const scheds = useQuery(ALL_SCHEDULE, { variables: { filters: {} } })
   const subs = useQuery(ALL_SUBJECTS, { variables: { filters: {} } })
+  const [deleteStudent] = useMutation(DELETE_STUDENT, {
+    onCompleted: (data) => {
+      setDeleting(false)
+      setSelStudID('')
+      setShowModal(false)
+      // location.reload()
+      toast.success(data?.deleteStudent?.message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    },
+    onError: (e) => {
+			toast.error(`${e}`, {
+				position: "top-right",
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
+      setDeleting(false)
+      setSelStudID('')
+		}
+  })
 
   const datee = new Date();
   const timeZone = 'Asia/Singapore';
@@ -96,8 +131,20 @@ export default function ManageStudents() {
               {/* buttons  */}
               <div className="w-full flex justify-evenly absolute bottom-[11px]">
                 {/* proceed button  */}
-                <div onClick={() => { }} className="text-[#D80000] h-full w-2/4 cursor-pointer flex justify-center items-center hover:font-bold">
-                  Delete
+                <div onClick={() => { 
+                  deleteStudent({ variables: { deleteStudentId: selStudID } })
+                  setDeleting(true)
+                }} className="text-[#D80000] h-full w-2/4 cursor-pointer flex justify-center items-center hover:font-bold">
+                  {
+                    deleting ?
+                      <div>
+                        deleting...
+                      </div>
+                      :
+                      <div>
+                        Delete
+                      </div>
+                  }
                 </div>
 
                 {/* cancel button  */}
@@ -163,6 +210,7 @@ export default function ManageStudents() {
         </div>
       </div>
 
+      {/* as of  */}
       <div className="w-full h-fit flex items-center justify-between text-white text-[13px] px-[20px] ">
         <div>
           Latest data as of {formattedDate}
@@ -350,6 +398,7 @@ export default function ManageStudents() {
                       {/* delete student  */}
                       <div onClick={() => {
                         setSelectedStudent(`(${stud.school_id}) ${stud.name.first} ${stud.name.middle.charAt(0)}${stud.name.middle !== '' ? '.' : ''} ${stud.name.last} ${stud.name.extension}`)
+                        setSelStudID(stud.id)
                         setShowModal(true)
                       }} className=" w-[55px] h-full bg-[#D80000] flex items-center justify-center cursor-pointer ">
                         <div className="aspect-square w-[20px] h-auto">

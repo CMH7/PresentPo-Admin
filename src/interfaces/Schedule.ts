@@ -2,6 +2,7 @@ interface Schedule {
   id: string
   subject: string
   class: string
+  faculty: string
   schedule: Sched
 }
 

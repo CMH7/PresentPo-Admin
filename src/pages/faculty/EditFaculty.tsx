@@ -94,8 +94,6 @@ export default function EditFaculty() {
 	})
 
 	useEffect(() => {
-		console.log(data);
-		
 		setFirstName(data?.getFaculty?.data?.name?.first)
 		setMiddleName(data?.getFaculty?.data?.name?.middle)
 		setLastName(data?.getFaculty?.data?.name?.last)
@@ -105,8 +103,19 @@ export default function EditFaculty() {
 		setPassword(data?.getFaculty?.data?.password)
 	}, [data])
 
-	useEffect(() => {
+	// checks if admin is empty
+  useEffect(() => {
     if (localStorage.getItem('admin') == null) {
+      toast.error('Please Sign in first', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       navigate('/', {replace: true})
     }
   }, [])

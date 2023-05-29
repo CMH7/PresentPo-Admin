@@ -3,7 +3,7 @@ import Name from "./Name"
 interface Faculty {
   id: string
   name: Name
-  email: string
+  username: string
   password: string
   credentials: string
 }

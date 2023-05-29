@@ -2,109 +2,23 @@ import Wrapper from "../../components/Wrapper"
 import chevronLeft from '../../assets/left-arrow 1.png'
 import plusWhite from '../../assets/plus white.png'
 import plusPrim from '../../assets/plus prim.png'
-import tri from '../../assets/down 1.png'
 import searchIcon from '../../assets/search 1.png'
 import searchInac from '../../assets/searchInactive.png'
 import { Link, useNavigate } from "react-router-dom"
-import { gql, useQuery } from "@apollo/client"
+import {  useQuery } from "@apollo/client"
 import QueryResult from "../../components/QueryResult"
 import editIcon from '../../assets/edit (1) 1.png'
 import deleteIcon from '../../assets/delete 1.png'
 import { useEffect, useState } from "react"
-
-const ALL_FACULTIES = gql`
-  query getAllFacultyWithFilters($filters: facultyFilters) {
-    getAllFacultyWithFilters(filters: $filters) {
-      error
-      message
-      data {
-        id
-        name {
-          first
-          middle
-          last
-          extension
-        }
-        credentials
-        email
-      }
-    }
-  }
-`
-
-const ALL_CLASSES = gql`
-  query GetAllClassWithFilters($filters: classFilters) {
-    getAllClassWithFilters(filters: $filters) {
-      error
-      message
-      data {
-        id
-        strand
-        year
-        section
-      }
-    }
-  }
-`
-
-const ALL_SCHEDS = gql`
-  query GetAllSchedulesWithFilters($filters: scheduleFilters!) {
-    getAllSchedulesWithFilters(filters: $filters) {
-      data {
-        id
-        subject
-        class
-        faculty
-      }
-    }
-  }
-`
-
-const ALL_SUBJECTS = gql`
-  query GetAllSubjectsWithFilters($filters: subjectFilters!) {
-    getAllSubjectsWithFilters(filters: $filters) {
-      data {
-        name
-        id
-        code
-      }
-    }
-  }
-`
-
-interface Faculty {
-  id: string
-  name: Name
-  email: string
-  credentials: string
-}
-
-interface Name {
-  first: string
-  middle: string
-  last: string
-  extension: string
-}
-
-interface Classs {
-  id: string
-  strand: string
-  year: number
-  section: string
-}
-
-interface Schedule {
-  id: string
-  subject: string
-  class: string
-  faculty: string
-}
-
-interface Subject {
-  id: string
-  code: string
-  name: string
-}
+import Subject from "../../interfaces/Subject"
+import Faculty from "../../interfaces/Faculty"
+import Schedule from "../../interfaces/Schedule"
+import Classs from "../../interfaces/Classs"
+import ALL_SUBJECTS from "../../gql/GET/ALL/Subject"
+import ALL_SCHEDULE from "../../gql/GET/ALL/Schedule"
+import ALL_CLASS from "../../gql/GET/ALL/Classs"
+import ALL_FACULTY from "../../gql/GET/ALL/Faculty"
+import { toast } from "react-toastify"
 
 export default function ManageFaculties() {
 
@@ -114,17 +28,28 @@ export default function ManageFaculties() {
   const [searchValue, setSearchValue] = useState('')
   const navigate = useNavigate()
 
-  const { error, loading, data } = useQuery(ALL_FACULTIES, { variables: { filters: {} } })
-  const classes = useQuery(ALL_CLASSES, { variables: { filters: {} } })
-  const schedules = useQuery(ALL_SCHEDS, { variables: { filters: {} } })
+  const { error, loading, data } = useQuery(ALL_FACULTY, { variables: { filters: {} } })
+  const classes = useQuery(ALL_CLASS, { variables: { filters: {} } })
+  const schedules = useQuery(ALL_SCHEDULE, { variables: { filters: {} } })
   const subjects = useQuery(ALL_SUBJECTS, { variables: { filters: {} } })
 
   useEffect(() => {
     setFaculties(data?.getAllFacultyWithFilters?.data)       
   }, [subjects.loading])
 
+  // checks if admin is empty
   useEffect(() => {
     if (localStorage.getItem('admin') == null) {
+      toast.error('Please Sign in first', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       navigate('/', {replace: true})
     }
   }, [])
@@ -133,7 +58,7 @@ export default function ManageFaculties() {
     setFaculties(data?.getAllFacultyWithFilters?.data)
     if (searchFor !== '' ) {
       setFaculties(faculties => faculties.filter((faculty: Faculty) => {
-        let facultyData = `${faculty.email} ${faculty.name.first} ${faculty.name.middle} ${faculty.name.last} ${faculty.name.extension}`.toLowerCase()
+        let facultyData = `${faculty.username} ${faculty.name.first} ${faculty.name.middle} ${faculty.name.last} ${faculty.name.extension}`.toLowerCase()
         if ( facultyData.match(searchFor.toLowerCase()) ) {
           return faculty
         }
@@ -210,7 +135,7 @@ export default function ManageFaculties() {
 
           {/* add faculty button  */}
           <Link to='/admindashboard/managefaculties/addfaculty' replace={true}>
-            <div className="group w-[220px] h-[55px] flex items-center justify-center bg-primary-2 hover:bg-white transition-all rounded-[50px] cursor-pointer">
+            <div className=" border border-white group w-[220px] h-[55px] flex items-center justify-center bg-primary-2 hover:bg-white transition-all rounded-[50px] cursor-pointer">
               {/* icon  */}
               <div className="aspect-square w-[20px] h-auto ">
                 <img className="group-hover:hidden" src={plusWhite} alt="plus white icon" />
@@ -283,7 +208,7 @@ export default function ManageFaculties() {
           {/* email */}
           <div className=" h-full grow flex items-center ">
             <div className=" poppins font-bold text-[20px] text-primary-2 ">
-              Email
+              Employee ID/ Username
             </div>
           </div>
 
@@ -305,7 +230,7 @@ export default function ManageFaculties() {
                     {/* credentials  */}
                     <div className=" h-full w-[150px] shrink-0 flex items-center ">
                       <div className=" poppins font-medium text-[16px] text-primary-2 ">
-                        { faculty.credentials }
+                        { faculty.credentials !== '' ? faculty.credentials : '-' }
                       </div>
                     </div>
                     
@@ -368,10 +293,10 @@ export default function ManageFaculties() {
                       </div>
                     </div>
                     
-                    {/* email */}
+                    {/* username */}
                     <div className=" h-full grow flex items-center ">
                       <div className=" poppins font-medium text-[16px] text-primary-2 ">
-                        { faculty.email }
+                        { faculty.username }
                       </div>
                     </div>
 

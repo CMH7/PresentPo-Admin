@@ -27,19 +27,47 @@ import ALL_STUDENTS from "../gql/GET/ALL/Students";
 import ALL_ATTENDANCES from "../gql/GET/ALL/Attendance";
 import Logs from "../interfaces/Logs";
 import Attendance from "../interfaces/Attendance";
+import dl from '../assets/dl.png'
+import dldark from '../assets/dldark.png'
+import { CSVLink } from "react-csv";
+import { utcToZonedTime } from "date-fns-tz";
+import { format } from "date-fns";
 
 
 export default function AdminDashboard() {
   const [showModal, setShowModal] = useState(false)
   const [time, setTime] = useState(new Date())
   const [adminn, setAdminn] = useState<Admin>()
+  const [csvData, setCsvData] = useState<any[]>([])
+  const [formattedDate2, setFormattedDate2] = useState('')
 
   const navigate = useNavigate()
 
   const logsData = useQuery(ALL_LOGS, { variables: { filters: { } } })
   const students = useQuery(ALL_STUDENTS, { variables: { filters: {} } })
   const attendances = useQuery(ALL_ATTENDANCES, { variables: { filters: { special: false, date: { day: time.getDate(), month: time.getMonth() + 1, year: time.getFullYear() } } } })
+
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
   
+  useEffect(() => {
+    let datee = new Date();
+    let timeZone = 'Asia/Singapore';
+    let zonedDate = utcToZonedTime(datee, timeZone);
+    let formattedDate = format(zonedDate, "EEE, dd MMM yyyy hh:mm aa");
+
+    setFormattedDate2(formattedDate)
+
+    let csv: any[] = []
+
+    csv.push(['Changes in', 'Message', 'Hour', 'Minute', 'Shift', 'Month', 'Day', 'Year'])
+
+    logsData.data?.getAllLogsWithFilters?.data?.forEach((log: Logs) => {
+      csv.push([log.collection, log.message, log.date.hour % 12, log.date.minute, `${log.date.hour >= 12 ? 'PM' : 'AM'}`, months[log.date.month-1], log.date.day, log.date.year])
+    })
+
+    setCsvData(csv)
+  }, [logsData.data])
+
   setInterval(() => {
     setTime(new Date())
   }, 60000)
@@ -277,8 +305,21 @@ export default function AdminDashboard() {
 
           {/* bottom */}
           <div className="flex flex-col w-full grow px-[15px] py-[20px] rounded-[20px] gap-y-[15px] bg-white overflow-hidden">
-            <div className=" w-full h-fit text-[20px] font-bold text-[#072D5F] ">
-              Recent Activities
+            <div className=" w-full h-fit text-[20px] font-bold text-[#072D5F] flex items-center justify-between ">
+              <div>
+                Recent Activities
+              </div>
+
+              <CSVLink data={csvData} filename={`PresentPo Recent Activities-${formattedDate2}`} >
+                <button className=" group text-[14px] border border-primary-2 py-2 px-4 rounded-full hover:bg-primary-2 transition-all flex items-center justify-center ">
+                  <img className=" aspect-square w-[15px] h-auto group-hover:hidden" src={dldark} alt="dldark" />
+                  <img className=" aspect-square w-[15px] h-auto hidden group-hover:block" src={dl} alt="dl" />
+
+                  <div className=" ml-2 group-hover:text-white transition-all ">
+                    Download recent activities
+                  </div>
+                </button>
+              </CSVLink>
             </div>
 
             <div className=" w-full flex items-center h-fit rounded-[20px] text-[14px] font-semibold text-[#072D5F] bg-white">

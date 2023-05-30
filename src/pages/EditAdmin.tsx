@@ -7,29 +7,8 @@ import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import chevronLeft from '../assets/left-arrow 1.png'
 import Admin from "../interfaces/Admin";
+import EDIT_ADMIN from "../gql/SET/EDIT/Admin";
 
-const EDIT_ADMIN_OPS = gql`
-mutation UpdateAdmin($updateAdminId: ID!, $updatedAdmin: updatedAdmin!) {
-  updateAdmin(id: $updateAdminId, updatedAdmin: $updatedAdmin) {
-    error
-    message
-    data {
-      id
-      name {
-        first
-        middle
-        last
-        extension
-      }
-      email
-      password
-    }
-  }
-}
-`
-
-/*stated na page na yung 'Edit Admin'
-after this, go to index.tsx to import the page*/
 export default function EditAdmin() {	
 	const [adminn, setAdminn] = useState<Admin>({
 		id: '',
@@ -71,7 +50,7 @@ export default function EditAdmin() {
 	}, [adminn])
 	
 
-	const [editAdmin] = useMutation(EDIT_ADMIN_OPS, {
+	const [editAdmin] = useMutation(EDIT_ADMIN, {
 		onCompleted: (data) => {
 			toast.success(data?.updateAdmin?.message, {
 				position: "top-right",

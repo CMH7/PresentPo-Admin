@@ -14,7 +14,7 @@ const EDIT_FACULTY = gql`
 					extension
 				}
 				credentials
-				email
+				username
 				password
 			}
 		}

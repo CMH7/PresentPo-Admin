@@ -3,110 +3,17 @@ import Wrapper from "../../components/Wrapper";
 import chevronLeft from '../../assets/left-arrow 1.png'
 import searchIcon from '../../assets/search 1.png'
 import searchInac from '../../assets/searchInactive.png'
-import editIcon from '../../assets/edit (1) 1.png'
-import deleteIcon from '../../assets/delete 1.png'
 import { useState } from 'react'
 import QueryResult from "../../components/QueryResult";
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
+import GET_FACULTY from "../../gql/GET/Faculty";
+import Schedule from "../../interfaces/Schedule";
+import Subject from "../../interfaces/Subject";
+import Classs from "../../interfaces/Classs";
+import ALL_SUBJECTS from "../../gql/GET/ALL/Subject";
+import ALL_CLASS from "../../gql/GET/ALL/Classs";
+import ALL_SCHEDULE from "../../gql/GET/ALL/Schedule";
 
-const GET_FACULTY = gql`
-  query GetFaculty($getFacultyId: ID!) {
-    getFaculty(id: $getFacultyId) {
-      error
-      message
-      data {
-        id
-        name {
-          first
-          middle
-          last
-          extension
-        }
-        credentials
-        email
-        password
-      }
-    }
-  }
-`
-
-const ALL_SCHEDULES_BY_FACULTY = gql`
-  query GetFaculty($filters: scheduleFilters!) {
-    getAllSchedulesWithFilters(filters: $filters) {
-      error
-      message
-      data {
-        id
-        subject
-        class
-      }
-    }
-  }
-`
-
-const ALL_SUBJECTS = gql`
-  query GetAllSubjectsWithFilters($filters: subjectFilters!) {
-    getAllSubjectsWithFilters(filters: $filters) {
-      error
-      message
-      data {
-        id
-        code
-        name
-      }
-    }
-  }
-`
-
-const ALL_CLASS = gql`
-  query GetAllSubjectsWithFilters {
-    getAllClassWithFilters {
-      error
-      message
-      data {
-        id
-        strand
-        year
-        section
-      }
-    }
-  }
-`
-
-interface Faculty {
-  id: string
-  name: facName
-  email: string
-  password: string
-  credentials: string
-}
-
-interface facName {
-  first: string
-  middle: string
-  last: string
-  extension: string
-}
-
-interface Schedule {
-  id: string
-  subject: string
-  class: string
-}
-
-interface Subject {
-  id: string
-  code: string
-  name: string
-}
-
-interface Classs {
-  id: string
-  strand: string
-  year: number
-  section: string
-  semester: number
-}
 
 export default function FacultySubjectsHandled() {
   const { id } = useParams<{ id: string }>();
@@ -114,7 +21,7 @@ export default function FacultySubjectsHandled() {
   const [searchValue, setSearchValue] = useState('')
 
   const faculty = useQuery(GET_FACULTY, { variables: { getFacultyId: id } })
-  const schedules = useQuery(ALL_SCHEDULES_BY_FACULTY, { variables: { filters: { faculty: id } } })
+  const schedules = useQuery(ALL_SCHEDULE, { variables: { filters: { faculty: id } } })
   const subjects = useQuery(ALL_SUBJECTS, { variables: { filters: {} } })
   const classes = useQuery(ALL_CLASS, { variables: { filters: {} } })
   

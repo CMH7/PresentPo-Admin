@@ -71,10 +71,19 @@ export default function ViewReport() {
       let tempData = res?.data?.getAllAttendancesWithFilters?.data
       tempData = tempData?.filter((att: Attendance) => att.schedule.match(schedule.data?.getSchedule?.data?.id) || att.schedule.match(` ${schedule.data?.getSchedule?.data?.id}`))
       
+      let month1 = tempData.filter((att: Attendance) => att.date.month == curMonth)
+      let month2 = tempData.filter((att: Attendance) => att.date.month == curMonth + 1)
+      let month3 = tempData.filter((att: Attendance) => att.date.month == curMonth + 2)
+
       let pseudoAttendance: customAttendance[] = []
-      tempData.forEach((attendance: Attendance) => {
-        if (pseudoAttendance.filter((cAtt: customAttendance) => cAtt.day == attendance.date.day).length != 0) {
-          pseudoAttendance.map((cA: customAttendance) => {
+
+      let pseudoAttendance1: customAttendance[] = []
+      let pseudoAttendance2: customAttendance[] = []
+      let pseudoAttendance3: customAttendance[] = []
+
+      month1.forEach((attendance: Attendance) => {
+        if (pseudoAttendance1.filter((cAtt: customAttendance) => cAtt.day == attendance.date.day).length != 0) {
+          pseudoAttendance1.map((cA: customAttendance) => {
             if ( cA.day == attendance.date.day ) {
               if (attendance.special) {
                 cA.special = true
@@ -88,31 +97,67 @@ export default function ViewReport() {
             return cA
           })
         } else {
-          pseudoAttendance.push({ day: attendance.date.day, month: attendance.date.month, presents: attendance.label === 'Present' ? [attendance.qr] : [], lates: attendance.label === 'Late' ? [attendance.qr] : [], special: attendance.special })
+          pseudoAttendance1.push({ day: attendance.date.day, month: attendance.date.month, presents: attendance.label === 'Present' ? [attendance.qr] : [], lates: attendance.label === 'Late' ? [attendance.qr] : [], special: attendance.special })
         }
       })
 
-      let pAtt1 = pseudoAttendance.filter((cA: customAttendance) => cA.month == curMonth)
-      let pAtt2 = pseudoAttendance.filter((cA: customAttendance) => cA.month == curMonth + 1)
-      let pAtt3 = pseudoAttendance.filter((cA: customAttendance) => cA.month == curMonth + 2)
+      month2.forEach((attendance: Attendance) => {
+        if (pseudoAttendance2.filter((cAtt: customAttendance) => cAtt.day == attendance.date.day).length != 0) {
+          pseudoAttendance2.map((cA: customAttendance) => {
+            if ( cA.day == attendance.date.day ) {
+              if (attendance.special) {
+                cA.special = true
+              } else if ( attendance.label === 'Present' ) {
+                cA.presents.push(attendance.qr)
+              } else {
+                cA.lates.push(attendance.qr)
+              }
+              return cA
+            }
+            return cA
+          })
+        } else {
+          pseudoAttendance2.push({ day: attendance.date.day, month: attendance.date.month, presents: attendance.label === 'Present' ? [attendance.qr] : [], lates: attendance.label === 'Late' ? [attendance.qr] : [], special: attendance.special })
+        }
+      })
+      
+      month3.forEach((attendance: Attendance) => {
+        if (pseudoAttendance3.filter((cAtt: customAttendance) => cAtt.day == attendance.date.day).length != 0) {
+          pseudoAttendance3.map((cA: customAttendance) => {
+            if ( cA.day == attendance.date.day ) {
+              if (attendance.special) {
+                cA.special = true
+              } else if ( attendance.label === 'Present' ) {
+                cA.presents.push(attendance.qr)
+              } else {
+                cA.lates.push(attendance.qr)
+              }
+              return cA
+            }
+            return cA
+          })
+        } else {
+          pseudoAttendance3.push({ day: attendance.date.day, month: attendance.date.month, presents: attendance.label === 'Present' ? [attendance.qr] : [], lates: attendance.label === 'Late' ? [attendance.qr] : [], special: attendance.special })
+        }
+      })
 
-      pAtt1.sort((cA: customAttendance, cB: customAttendance) => {
-        if (cA.month < cB.month) return -1
-        if (cA.month > cB.month) return 1
+      pseudoAttendance1.sort((cA: customAttendance, cB: customAttendance) => {
+        if (cA.day < cB.day) return -1
+        if (cA.day > cB.day) return 1
         return 0
       })
-      pAtt2.sort((cA: customAttendance, cB: customAttendance) => {
-        if (cA.month < cB.month) return -1
-        if (cA.month > cB.month) return 1
+      pseudoAttendance2.sort((cA: customAttendance, cB: customAttendance) => {
+        if (cA.day < cB.day) return -1
+        if (cA.day > cB.day) return 1
         return 0
       })
-      pAtt3.sort((cA: customAttendance, cB: customAttendance) => {
-        if (cA.month < cB.month) return -1
-        if (cA.month > cB.month) return 1
+      pseudoAttendance3.sort((cA: customAttendance, cB: customAttendance) => {
+        if (cA.day < cB.day) return -1
+        if (cA.day > cB.day) return 1
         return 0
       })
 
-      pseudoAttendance = [...pAtt1, ...pAtt2, ...pAtt3]
+      pseudoAttendance = [...pseudoAttendance1, ...pseudoAttendance2, ...pseudoAttendance3]
 
       let csv: any[] = []
       csv.push(['Professor', `${faculty.data?.getFaculty?.data?.name?.first} ${faculty.data?.getFaculty?.data?.name?.middle?.charAt(0) !== '' ? `${faculty.data?.getFaculty?.data?.name?.middle?.charAt(0)}.` : ''} ${faculty.data?.getFaculty?.data?.name?.last}${faculty.data?.getFaculty?.data?.credentials !== '' ? `, ${faculty.data?.getFaculty?.data?.credentials}` : ''}`, '', '', '', '', '', '', '', '', '', '', `${months[curMonth - 1]}-${months[curMonth + 1]} ${curYear}`])
@@ -272,7 +317,7 @@ export default function ViewReport() {
                       return (
                         <div key={`${cAttendance.day}${i}`} className={` ${i == attendances.length - 1 ? 'border-r' : ''} w-[40px] h-full border-l border-black flex flex-col items-center justify-center ${cAttendance.special ? 'bg-[#FFD3BA]' : ''} `}>
                           <div className=" w-full border-b border-black flex items-center justify-center poppins text-primary-2 text-[13px] font-bold ">
-                            {cAttendance.month}
+                            {months[cAttendance.month-1]}
                           </div>
                           <div className=" poppins text-primary-2 text-[15px] font-bold ">
                             {cAttendance.day}

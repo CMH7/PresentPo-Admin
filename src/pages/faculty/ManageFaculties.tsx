@@ -5,7 +5,7 @@ import plusPrim from '../../assets/plus prim.png'
 import searchIcon from '../../assets/search 1.png'
 import searchInac from '../../assets/searchInactive.png'
 import { Link, useNavigate } from "react-router-dom"
-import {  useQuery } from "@apollo/client"
+import {  useMutation, useQuery } from "@apollo/client"
 import QueryResult from "../../components/QueryResult"
 import editIcon from '../../assets/edit (1) 1.png'
 import deleteIcon from '../../assets/delete 1.png'
@@ -19,6 +19,7 @@ import ALL_SCHEDULE from "../../gql/GET/ALL/Schedule"
 import ALL_CLASS from "../../gql/GET/ALL/Classs"
 import ALL_FACULTY from "../../gql/GET/ALL/Faculty"
 import { toast } from "react-toastify"
+import DELETE_FACULTY from "../../gql/SET/DEL/Faculty"
 
 export default function ManageFaculties() {
 
@@ -26,9 +27,42 @@ export default function ManageFaculties() {
   const [selectedFaculty, setSelectedFaculty] = useState('')
   const [faculties, setFaculties] = useState<Faculty[]>([])
   const [searchValue, setSearchValue] = useState('')
+  const [facID, setFacID] = useState('')
+  const [deleting, setDeleting] = useState(false)
   const navigate = useNavigate()
 
   const { error, loading, data } = useQuery(ALL_FACULTY, { variables: { filters: {} } })
+  const [deleteFac] = useMutation(DELETE_FACULTY, {
+    onCompleted: (data) => {
+			toast.success(data?.deleteFaculty?.message, {
+				position: "top-right",
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
+      setDeleting(false)
+      setShowModal(false)
+			navigate('/admindashboard/managefaculties', {replace: true})
+		},
+		onError: (e) => {
+			toast.error(`${e}`, {
+				position: "top-right",
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
+			setDeleting(false)
+		}
+  })
+
   const classes = useQuery(ALL_CLASS, { variables: { filters: {} } })
   const schedules = useQuery(ALL_SCHEDULE, { variables: { filters: {} } })
   const subjects = useQuery(ALL_SUBJECTS, { variables: { filters: {} } })
@@ -84,8 +118,24 @@ export default function ManageFaculties() {
               {/* buttons  */}
               <div className="w-full flex justify-evenly absolute bottom-[11px]">
                 {/* proceed button  */}
-                <div onClick={() => { }} className="text-[#D80000] h-full w-2/4 cursor-pointer flex justify-center items-center hover:font-bold">
-                  Delete
+                <div onClick={() => {
+                  deleteFac({
+                    variables: {
+                    deleteFacultyId: facID
+                    }
+                  })
+                  setDeleting(true)
+                 }} className="text-[#D80000] h-full w-2/4 cursor-pointer flex justify-center items-center hover:font-bold">
+                  {
+                    deleting ? 
+                      <div>
+                        deleting...
+                      </div>
+                      :
+                      <div>
+                        Delete
+                      </div>
+                  }
                 </div>
 
                 {/* cancel button  */}
@@ -314,6 +364,7 @@ export default function ManageFaculties() {
                       {/* delete student  */}
                       <div onClick={() => {
                         setSelectedFaculty(`${faculty.name.first} ${faculty.name.middle.charAt(0)}${faculty.name.middle !== '' ? '.' : ''} ${faculty.name.last} ${faculty.name.extension}, ${faculty.credentials}`)
+                        setFacID(faculty.id)
                         setShowModal(true)
                       }} className=" w-[55px] h-full bg-[#D80000] flex items-center justify-center cursor-pointer ">
                         <div className="aspect-square w-[20px] h-auto">

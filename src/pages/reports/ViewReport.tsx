@@ -48,6 +48,8 @@ export default function ViewReport() {
   
   const navigate = useNavigate()
 
+  let curIndex = 0
+
   // checks if admin is empty
   useEffect(() => {
     if (localStorage.getItem('admin') == null) {
@@ -166,10 +168,14 @@ export default function ViewReport() {
       csv.push(['', '', '', '', '', ...pseudoAttendance.map((pA: customAttendance) => {return pA.month}), '', '', ''])
       csv.push(['', '', '', '', '', ...pseudoAttendance.map((pA: customAttendance) => {return pA.day}), '', '', ''])
       
+      let curIndex2 = 0
+
       students.data?.getAllStudentsWithFilters?.data?.flatMap((student: Student, i: number) => {
         if (classes.data?.getAllClassWithFilters?.data?.filter((classs: Classs) => schedule.data?.getSchedule?.data?.class.match(classs.id) || schedule.data?.getSchedule?.data?.class.match(` ${classs.id}`))[0]?.students?.includes(student.id) || classes.data?.getAllClassWithFilters?.data?.filter((classs: Classs) => schedule.data?.getSchedule?.data?.class.match(classs.id) || schedule.data?.getSchedule?.data?.class.match(` ${classs.id}`))[0]?.students?.includes(` ${student.id}`)) {
+          curIndex2++
+
           csv.push([
-            i + 1,
+            curIndex2,
             `${student?.name?.last}`,
             `${student?.name?.first}`,
             `${student?.name?.middle}`,
@@ -390,12 +396,14 @@ export default function ViewReport() {
               {
                 students.data?.getAllStudentsWithFilters?.data?.map((student: Student, i: number) => {
                   if (classes.data?.getAllClassWithFilters?.data?.filter((classs: Classs) => schedule.data?.getSchedule?.data?.class.match(classs.id) || schedule.data?.getSchedule?.data?.class.match(` ${classs.id}`))[0]?.students?.includes(student.id) || classes.data?.getAllClassWithFilters?.data?.filter((classs: Classs) => schedule.data?.getSchedule?.data?.class.match(classs.id) || schedule.data?.getSchedule?.data?.class.match(` ${classs.id}`))[0]?.students?.includes(` ${student.id}`)) {
+                    curIndex++
+
                     return (
                       <div key={`${student.id}`} className=" w-full h-[44px] bg-white hover:bg-gray-200 mb-[2px] flex items-center pl-[20px] ">
                         {/* No.  */}
                         <div className=" h-full w-[50px] shrink-0 flex items-center ">
                           <div className=" poppins font-medium text-[16px] text-primary-2 ">
-                            { i }
+                            { curIndex }
                           </div>
                         </div>
                         

@@ -5,157 +5,14 @@ import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { toast } from "react-toastify";
-
-const ALL_SUBJECTS = gql`
-	query Query($filters: subjectFilters!) {
-		getAllSubjectsWithFilters(filters: $filters) {
-			error
-			message
-			data {
-				id
-				code
-				name
-			}
-		}
-	}
-`
-
-const ALL_FACULTIES = gql`
-	query Query {
-		getAllFacultyWithFilters {
-			error
-			message
-			data {
-				id
-				name {
-					first
-					middle
-					last
-					extension
-				}
-				credentials
-			}
-		}
-	}
-`
-
-const ALL_SCHEDS = gql`
-	query GetAllSchedulesWithFilters($filters: scheduleFilters!) {
-		getAllSchedulesWithFilters(filters: $filters) {
-			error
-			message
-			data {
-				id
-				subject
-				schedule {
-					day
-					start_time {
-						hour
-						minute
-						shift
-					}
-					end_time {
-						hour
-						minute
-						shift
-					}
-				}
-				faculty
-				class
-			}
-		}
-	}
-`
-
-const ALL_CLASS = gql`
-	query GetAllSchedulesWithFilters {
-		getAllClassWithFilters {
-			error
-			message
-			data {
-				id
-				strand
-				year
-				section
-				semester
-			}
-		}
-	}
-`
-
-const ADD_SCHED = gql`
-	mutation Mutation($schedule: newSchedule!) {
-		addSchedule(schedule: $schedule) {
-			error
-			message
-			data {
-				id
-				subject
-				schedule {
-					day
-					start_time {
-						hour
-						minute
-						shift
-					}
-					end_time {
-						hour
-						minute
-						shift
-					}
-				}
-				faculty
-				class
-			}
-		}
-	}
-`
-
-interface Subject {
-	id: string
-	code: string
-	name: string
-}
-
-interface Faculty {
-	id: string
-	name: facName
-	credentials: string
-}
-
-interface facName {
-	first: string
-	middle: string
-	last: string
-	extension: string
-}
-
-interface Classs {
-	id: string
-	strand: string
-	year: number
-	section: string
-	semester: number
-}
-
-interface Schedule {
-	id: string
-	subject: string
-	class: string
-	schedule: ssched
-}
-
-interface ssched {
-	day: string
-	start_time: sstime
-	end_time: sstime
-}
-
-interface sstime {
-	minute: number
-	hour: number
-	shift: string
-}
+import Subject from "../../interfaces/Subject";
+import Faculty from "../../interfaces/Faculty";
+import Classs from "../../interfaces/Classs";
+import ALL_SUBJECTS from "../../gql/GET/ALL/Subject";
+import ALL_FACULTY from "../../gql/GET/ALL/Faculty";
+import ALL_SCHEDULE from "../../gql/GET/ALL/Schedule";
+import ALL_CLASS from "../../gql/GET/ALL/Classs";
+import ADD_SCHEDULE from "../../gql/SET/ADD/Schedule";
 
 export default function AddSchedule() {
 	const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
@@ -168,10 +25,10 @@ export default function AddSchedule() {
 	const navigate = useNavigate()
 
 	const allSubjects = useQuery(ALL_SUBJECTS, { variables: { filters: {} } })
-	const allFaculties = useQuery(ALL_FACULTIES, { variables: { filters: {} } })
-	const allScheds = useQuery(ALL_SCHEDS, { variables: { filters: {} } })
+	const allFaculties = useQuery(ALL_FACULTY, { variables: { filters: {} } })
+	const allScheds = useQuery(ALL_SCHEDULE, { variables: { filters: {} } })
 	const allClass = useQuery(ALL_CLASS, { variables: { filters: {} } })
-	const [addSchedule] = useMutation(ADD_SCHED, {
+	const [addSchedule] = useMutation(ADD_SCHEDULE, {
 		onCompleted: (data) => {
 			toast.success(data?.addSchedule?.message, {
 				position: "top-right",
@@ -209,12 +66,28 @@ export default function AddSchedule() {
 	const [sClass, setSClass] = useState('')
 
 	useEffect(() => {
-    if (localStorage.getItem('admin') == null) {
-      navigate('/', {replace: true})
-		}
+		setSubject(allSubjects.data?.getAllSubjectsWithFilters?.data[0]?.id)
+		setSClass(allClass.data?.getAllClassWithFilters?.data[0]?.id)
 		setFaculty(allFaculties.data?.getAllFacultyWithFilters?.data[0]?.id)
 	}, [allFaculties.data])
 	
+	// checks if admin is empty
+  useEffect(() => {
+    if (localStorage.getItem('admin') == null) {
+      toast.error('Please Sign in first', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      navigate('/', {replace: true})
+    }
+  }, [])
+
   return(
 		<Wrapper>
 			{/* top */}

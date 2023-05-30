@@ -4,50 +4,9 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, gql } from "@apollo/client";
 import { toast } from "react-toastify";
+import EDIT_FACULTY from "../../gql/SET/EDIT/Faculty";
+import GET_FACULTY from "../../gql/GET/Faculty";
 
-const EDIT_FACULTY_OPS = gql`
-	mutation updateFaculty($updateFacultyId: ID!, $updatedFaculty: updatedFaculty!) {
-		updateFaculty(id: $updateFacultyId, updatedFaculty: $updatedFaculty) {
-			error
-			message
-			data {
-				id
-				name {
-					first
-					middle
-					last
-					extension
-				}
-				credentials
-				email
-				password
-			}
-		}
-	}
-`
-const GET_FACULTY_QUERY = gql`
-	query GetFaculty($getFacultyId: ID!) {
-		getFaculty(id: $getFacultyId) {
-			error
-			message
-			data {
-				id
-				name {
-					first
-					middle
-					last
-					extension
-				}
-				credentials
-				email
-				password
-			}
-		}
-	}
-`
-
-/*stated na page na yung 'Edit Faculty'
-after this, go to index.tsx to import the page*/
 export default function EditFaculty() {
 	const { id } = useParams<{ id: string }>();
 
@@ -56,14 +15,14 @@ export default function EditFaculty() {
 	const [lastName, setLastName] = useState('')
 	const [nameExtension, setNameExtension] = useState('')
 	const [credentials, setCredentials] = useState('')
-	const [email, setEmail] = useState('')
+	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
 	const [saving, setSaving] = useState(false)
 	const navigate = useNavigate()
 
-	const { error, loading, data } = useQuery(GET_FACULTY_QUERY, { variables: { getFacultyId: id } } )
+	const { error, loading, data } = useQuery(GET_FACULTY, { variables: { getFacultyId: id } } )
 
-	const [editFaculty] = useMutation(EDIT_FACULTY_OPS, {
+	const [editFaculty] = useMutation(EDIT_FACULTY, {
 		onCompleted: (data) => {
 			toast.success(data?.updateFaculty?.message, {
 				position: "top-right",
@@ -99,7 +58,7 @@ export default function EditFaculty() {
 		setLastName(data?.getFaculty?.data?.name?.last)
 		setNameExtension(data?.getFaculty?.data?.name?.extension)
 		setCredentials(data?.getFaculty?.data?.credentials)
-		setEmail(data?.getFaculty?.data?.email)
+		setUsername(data?.getFaculty?.data?.username)
 		setPassword(data?.getFaculty?.data?.password)
 	}, [data])
 
@@ -142,7 +101,7 @@ export default function EditFaculty() {
 			{/* save button */}
 			<button
 				onClick={() => {
-					if (firstName === '' || lastName === '' || email === '' || password ==='') {
+					if (firstName === '' || lastName === '' || username === '' || password === '' || username === '') {
 						toast.error('Invalid inputs', {
 							position: "top-right",
 							autoClose: 5000,
@@ -155,8 +114,8 @@ export default function EditFaculty() {
 						});
 						return
 					}
+					editFaculty({ variables: { updateFacultyId: id, updatedFaculty: { credentials: credentials, username: username, name: { extension: nameExtension, first: firstName, last: lastName, middle: middleName }, password: password } } } )
 					setSaving(true)
-					editFaculty({ variables: { updateFacultyId: id, updatedFaculty: { credentials: credentials, email: email, name: { extension: nameExtension, first: firstName, last: lastName, middle: middleName }, password: password } } } )
 				}} 
 				className="flex justify-center items-center mt-[50px] mr-[100px] bg-[#11CF00] hover:bg-[#1672ec] text-white font-semibold py-2 px-20 rounded-full focus:outline-none focus:shadow-outline w-[218px] h-[55px]" type="submit"
 			>
@@ -180,7 +139,7 @@ export default function EditFaculty() {
 					</label>
 						<input onChange={(e) => {
 							setFirstName(e.target.value)
-							setEmail(`${e.target.value.split(' ').join('').toLowerCase()}${lastName.split(' ').join('').toLowerCase()}.faculty@present.po`)
+							setUsername(`${e.target.value.split(' ').join('').toLowerCase()}${lastName.split(' ').join('').toLowerCase()}.faculty@present.po`)
 							setPassword(`${e.target.value.split(' ').join('').toLowerCase()}${lastName.split(' ').join('').toLowerCase()}`)
 						}} value={firstName} className=" poppins text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter first name" />
 				</div>
@@ -198,7 +157,7 @@ export default function EditFaculty() {
 					</label>
 						<input onChange={(e) => {
 							setLastName(e.target.value)
-							setEmail(`${firstName.split(' ').join('').toLowerCase()}${e.target.value.split(' ').join('').toLowerCase()}.faculty@present.po`)
+							setUsername(`${firstName.split(' ').join('').toLowerCase()}${e.target.value.split(' ').join('').toLowerCase()}.faculty@present.po`)
 							setPassword(`${firstName.split(' ').join('').toLowerCase()}${e.target.value.split(' ').join('').toLowerCase()}`)
 						}} value={lastName} className=" poppins text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter last name" />
 				</div>
@@ -215,9 +174,9 @@ export default function EditFaculty() {
 
 				<div className="pb-[50px]">
 					<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
-						Email
+						Employee ID/ Username
 					</label>
-					<input onChange={(e) => setEmail(e.target.value)} value={email} className=" poppins text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter email address" />
+					<input onChange={(e) => setUsername(e.target.value)} value={username} className=" poppins text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter username address" />
 				</div>
 
 				<div className="pb-[50px]">

@@ -21,6 +21,7 @@ import ALL_ATTENDANCES from "../../gql/GET/ALL/Attendance";
 
 interface customAttendance {
   day: number
+  month: number
   presents: string[]
   lates: string[]
   special: boolean
@@ -32,7 +33,6 @@ export default function ViewReport() {
   const [curYear, setCurYear] = useState(new Date().getUTCFullYear())
   const [attendances, setAttendances] = useState<customAttendance[]>([])
   const [csvData, setCsvData] = useState<any[]>([])
-  const [csvHeaders, setCsvHeaders] = useState<{ label: string, key: string }[]>([])
 
   const faculty = useQuery(GET_FACULTY, { variables: { getFacultyId: id } })
   const classes = useQuery(ALL_CLASS, { variables: { filters: {} } })
@@ -47,7 +47,7 @@ export default function ViewReport() {
   
   useEffect(() => {
     
-    getAttendances({ variables: { filters: { date: { month: curMonth, year: curYear } } } }).then(res => {
+    getAttendances({ variables: { filters: { date: { month: [curMonth, curMonth + 1, curMonth + 2], year: curYear } } } }).then(res => {
       let tempData = res?.data?.getAllAttendancesWithFilters?.data
       tempData = tempData?.filter((att: Attendance) => att.schedule.match(schedule.data?.getSchedule?.data?.id) || att.schedule.match(` ${schedule.data?.getSchedule?.data?.id}`))
       
@@ -68,19 +68,37 @@ export default function ViewReport() {
             return cA
           })
         } else {
-          pseudoAttendance.push({ day: attendance.date.day, presents: attendance.label === 'Present' ? [attendance.qr] : [], lates: attendance.label === 'Late' ? [attendance.qr] : [], special: attendance.special })
+          pseudoAttendance.push({ day: attendance.date.day, month: attendance.date.month, presents: attendance.label === 'Present' ? [attendance.qr] : [], lates: attendance.label === 'Late' ? [attendance.qr] : [], special: attendance.special })
         }
       })
 
-      pseudoAttendance.sort((cA: customAttendance, cB: customAttendance) => {
-        if (cA.day < cB.day) return -1
-        if (cA.day > cB.day) return 1
+      let pAtt1 = pseudoAttendance.filter((cA: customAttendance) => cA.month == curMonth)
+      let pAtt2 = pseudoAttendance.filter((cA: customAttendance) => cA.month == curMonth + 1)
+      let pAtt3 = pseudoAttendance.filter((cA: customAttendance) => cA.month == curMonth + 2)
+
+      pAtt1.sort((cA: customAttendance, cB: customAttendance) => {
+        if (cA.month < cB.month) return -1
+        if (cA.month > cB.month) return 1
+        return 0
+      })
+      pAtt2.sort((cA: customAttendance, cB: customAttendance) => {
+        if (cA.month < cB.month) return -1
+        if (cA.month > cB.month) return 1
+        return 0
+      })
+      pAtt3.sort((cA: customAttendance, cB: customAttendance) => {
+        if (cA.month < cB.month) return -1
+        if (cA.month > cB.month) return 1
         return 0
       })
 
+      pseudoAttendance = [...pAtt1, ...pAtt2, ...pAtt3]
+
       let csv: any[] = []
-      csv.push(['Professor', `${faculty.data?.getFaculty?.data?.name?.first} ${faculty.data?.getFaculty?.data?.name?.middle?.charAt(0) !== '' ? `${faculty.data?.getFaculty?.data?.name?.middle?.charAt(0)}.` : ''} ${faculty.data?.getFaculty?.data?.name?.last}${faculty.data?.getFaculty?.data?.credentials !== '' ? `, ${faculty.data?.getFaculty?.data?.credentials}` : ''}`, '', '', '', '', '', '', '', '', '', '', `${months[curMonth - 1]}-${curYear}`])
-      csv.push(['No.', 'Last name', 'First name', 'Middle name', 'Extension name', 'Days', ...pseudoAttendance.map((pA: customAttendance, i: number) => { return '' }),  'Presents', 'Lates', 'Absents'])
+      csv.push(['Professor', `${faculty.data?.getFaculty?.data?.name?.first} ${faculty.data?.getFaculty?.data?.name?.middle?.charAt(0) !== '' ? `${faculty.data?.getFaculty?.data?.name?.middle?.charAt(0)}.` : ''} ${faculty.data?.getFaculty?.data?.name?.last}${faculty.data?.getFaculty?.data?.credentials !== '' ? `, ${faculty.data?.getFaculty?.data?.credentials}` : ''}`, '', '', '', '', '', '', '', '', '', '', `${months[curMonth - 1]}-${months[curMonth + 1]} ${curYear}`])
+      csv.push(['No.', 'Last name', 'First name', 'Middle name', 'Extension name', 'Days', ...pseudoAttendance.map((pA: customAttendance, i: number) => { return '' }), 'Presents', 'Lates', 'Absents'])
+      
+      csv.push(['', '', '', '', '', ...pseudoAttendance.map((pA: customAttendance) => {return pA.month}), '', '', ''])
       csv.push(['', '', '', '', '', ...pseudoAttendance.map((pA: customAttendance) => {return pA.day}), '', '', ''])
       
       students.data?.getAllStudentsWithFilters?.data?.flatMap((student: Student, i: number) => {
@@ -154,7 +172,7 @@ export default function ViewReport() {
             {/* actions  */}
             <div className=" w-[188px] flex flex-col items-center gap-y-[22px] ">
               {/* export button  */}
-              <CSVLink data={csvData} filename={`${classes.data?.getAllClassWithFilters?.data?.filter((classs: Classs) => schedule.data?.getSchedule?.data?.class?.match(classs.id) || schedule.data?.getSchedule?.data?.class?.match(` ${classs.id}`) )[0]?.strand} ${classes.data?.getAllClassWithFilters?.data?.filter((classs: Classs) => schedule.data?.getSchedule?.data?.class?.match(classs.id) || schedule.data?.getSchedule?.data?.class?.match(` ${classs.id}`) )[0]?.year}-${classes.data?.getAllClassWithFilters?.data?.filter((classs: Classs) => schedule.data?.getSchedule?.data?.class?.match(classs.id) || schedule.data?.getSchedule?.data?.class?.match(` ${classs.id}`) )[0]?.section} ${months[curMonth - 1]}-${curYear}`} className=" w-full h-[55px] rounded-[50px] bg-primary-2 flex items-center justify-center gap-x-[10px] group hover:bg-white cursor-pointer transition-all " >
+              <CSVLink data={csvData} filename={`${classes.data?.getAllClassWithFilters?.data?.filter((classs: Classs) => schedule.data?.getSchedule?.data?.class?.match(classs.id) || schedule.data?.getSchedule?.data?.class?.match(` ${classs.id}`) )[0]?.strand} ${classes.data?.getAllClassWithFilters?.data?.filter((classs: Classs) => schedule.data?.getSchedule?.data?.class?.match(classs.id) || schedule.data?.getSchedule?.data?.class?.match(` ${classs.id}`) )[0]?.year}-${classes.data?.getAllClassWithFilters?.data?.filter((classs: Classs) => schedule.data?.getSchedule?.data?.class?.match(classs.id) || schedule.data?.getSchedule?.data?.class?.match(` ${classs.id}`) )[0]?.section} ${months[curMonth - 1]}-${curYear}`} className=" border border-white w-full h-[55px] rounded-[50px] bg-primary-2 flex items-center justify-center gap-x-[10px] group hover:bg-white cursor-pointer transition-all " >
                 <img className="group-hover:hidden" src={dl} alt="dl" />
                 <img className="hidden group-hover:block" src={dldark} alt="dldark" />
 
@@ -163,12 +181,15 @@ export default function ViewReport() {
                 </div>
               </CSVLink>
 
-              <div className=" w-[117px] flex flex-col items-center gap-y-[7px] ">
+              <div className=" w-[117px] flex flex-col items-end gap-y-[7px] ">
                 <div className=" poppins text-white text-[14px] font-bold ">
                   Filter by:
                 </div>
 
                 <div className=" flex gap-x-[10px] items-center ">
+                  <div className=" text-white poppins ">
+                    From
+                  </div>
                   <select onChange={e => setCurMonth(parseInt(e.target.value))} value={curMonth} className=" w-[76px] px-[10px] py-[5px] bg-white rounded-[5px] poppins font-bold text-[16px] text-primary-2 outline-0 cursor-pointer " name="months" id="monthss">
                     {
                       months.map((month: string, i: number) => {
@@ -177,6 +198,20 @@ export default function ViewReport() {
                     }
                   </select>
                   
+                  <div className=" text-white poppins ">
+                    To
+                  </div>
+                  <select disabled className=" w-[76px] px-[10px] py-[5px] bg-white rounded-[5px] poppins font-bold text-[16px] text-primary-2 outline-0 cursor-pointer " name="months" id="monthss">
+                    {
+                      months.filter((month: string, i: number) => i + 1 == curMonth + 2).map((month: string, i: number) => {
+                        return <option value={month}>{ month }</option>
+                      })
+                    }
+                  </select>
+                  
+                  <div className=" ml-5 text-white poppins ">
+                    Year
+                  </div>
                   <select onChange={e => setCurYear(parseInt(e.target.value))} value={curYear} className=" w-[76px] px-[10px] py-[5px] bg-white rounded-[5px] poppins font-bold text-[16px] text-primary-2 outline-0 cursor-pointer " name="years" id="yearss">
                     {
                       years.map((year: number) => {
@@ -215,8 +250,11 @@ export default function ViewReport() {
                   {
                     attendances.map((cAttendance: customAttendance, i: number) => {
                       return (
-                        <div key={`${cAttendance.day}${i}`} className={` w-[40px] h-full border-l border-black flex flex-col items-center justify-center gap-y-[10px] ${cAttendance.special ? 'bg-[#FFD3BA]' : ''} `}>
-                          <div className=" poppins text-primary-2 text-[20px] font-bold ">
+                        <div key={`${cAttendance.day}${i}`} className={` ${i == attendances.length - 1 ? 'border-r' : ''} w-[40px] h-full border-l border-black flex flex-col items-center justify-center ${cAttendance.special ? 'bg-[#FFD3BA]' : ''} `}>
+                          <div className=" w-full border-b border-black flex items-center justify-center poppins text-primary-2 text-[13px] font-bold ">
+                            {cAttendance.month}
+                          </div>
+                          <div className=" poppins text-primary-2 text-[15px] font-bold ">
                             {cAttendance.day}
                           </div>
                         </div>
@@ -234,7 +272,7 @@ export default function ViewReport() {
                     Total
                   </div>
 
-                  <div className=" aspect-square w-[15px] h-auto relative group ">
+                  <div className=" aspect-square w-[15px] h-auto relative group bg-black ">
                     <img className=" w-full h-full " src={infoIcon} alt="information icon" />
 
                     <div className=" shadow-lg transition-all py-[8px] group-hover:opacity-100 opacity-0 absolute top-0 right-0 w-[205px] h-[78px] flex flex-col bg-white rounded-[10px] ">
@@ -308,12 +346,12 @@ export default function ViewReport() {
                           {                              
                             attendances.map((cAttendance: customAttendance, i: number) => {
                               if (cAttendance.special) {
-                                return <div key={`${cAttendance.day}${i}`} className=" w-[40px] h-full border-l border-black flex flex-col items-center justify-center gap-y-[10px] bg-[#FFD3BA] " />
+                                return <div key={`${cAttendance.day}${i}`} className={` ${i == attendances.length - 1 ? 'border-r' : ''} w-[40px] h-full border-l border-black flex flex-col items-center justify-center gap-y-[10px] bg-[#FFD3BA] `} />
                               }
                               
                               if (cAttendance.presents.includes(student.id) || cAttendance.presents.includes(` ${student.id}`)) {
                                 return (
-                                  <div key={`${cAttendance.day}${i}`} className=" w-[40px] h-full border-l border-black flex flex-col items-center justify-center gap-y-[10px] ">
+                                  <div key={`${cAttendance.day}${i}`} className={` ${i == attendances.length - 1 ? 'border-r' : ''} w-[40px] h-full border-l border-black flex flex-col items-center justify-center gap-y-[10px]`} >
                                     <div className=" poppins text-primary-2 text-[20px] font-bold ">
                                       P
                                     </div>
@@ -323,7 +361,7 @@ export default function ViewReport() {
                               
                               if (cAttendance.lates.includes(student.id) || cAttendance.lates.includes(` ${student.id}`)) {
                                 return (
-                                  <div key={`${cAttendance.day}${i}`} className=" w-[40px] h-full border-l border-black flex flex-col items-center justify-center gap-y-[10px] ">
+                                  <div key={`${cAttendance.day}${i}`} className={` ${i == attendances.length - 1 ? 'border-r' : ''} w-[40px] h-full border-l border-black flex flex-col items-center justify-center gap-y-[10px]`} >
                                     <div className=" poppins text-[#FFB800] text-[20px] font-bold ">
                                       L
                                     </div>
@@ -332,7 +370,7 @@ export default function ViewReport() {
                               } 
 
                               return (
-                                <div key={`${cAttendance.day}${i}`} className=" w-[40px] h-full border-l border-black flex flex-col items-center justify-center gap-y-[10px] ">
+                                <div key={`${cAttendance.day}${i}`} className={` ${i == attendances.length - 1 ? 'border-r' : ''} w-[40px] h-full border-l border-black flex flex-col items-center justify-center gap-y-[10px]`} >
                                   <div className=" poppins text-[#D80000] text-[20px] font-bold ">
                                     A
                                   </div>

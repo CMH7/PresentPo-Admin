@@ -4,43 +4,21 @@ import { useEffect, useState } from "react";
 import { gql, useMutation } from "@apollo/client";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import ADD_FACULTY from "../../gql/SET/ADD/Faculty";
 
-const ADD_FACULTY_OPS = gql`
-	mutation addFaculty($newFaculty: newFaculty!) {
-  addFaculty(newFaculty: $newFaculty) {
-    error
-    message
-    data {
-      id
-      name {
-        first
-        middle
-        last
-        extension
-      }
-      credentials
-      email
-      password
-    }
-  }
-}
-`
-
-/*stated na page na yung 'Add Faculty'
-after this, go to index.tsx to import the page*/
 export default function AddFaculty() {
 	const [firstName, setFirstName] = useState('')
 	const [middleName, setMiddleName] = useState('')
 	const [lastName, setLastName] = useState('')
 	const [extension, setExtension] = useState('')
 	const [credentials, setCredentials] = useState('')
-	const [email, setEmail] = useState('.faculty@present.po')
+	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
 	const [adding, setAdding] = useState(false)
 
 	const navigate = useNavigate()
 
-	const [addFaculty] = useMutation(ADD_FACULTY_OPS, {
+	const [addFaculty] = useMutation(ADD_FACULTY, {
 		onCompleted: (data) => {
 			toast.success(data?.addFaculty?.message, {
 				position: "top-right",
@@ -70,8 +48,19 @@ export default function AddFaculty() {
 		}
 	})
 
-	useEffect(() => {
+	// checks if admin is empty
+  useEffect(() => {
     if (localStorage.getItem('admin') == null) {
+      toast.error('Please Sign in first', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       navigate('/', {replace: true})
     }
   }, [])
@@ -111,7 +100,7 @@ export default function AddFaculty() {
 							return
 						}
 						setAdding(true)
-							addFaculty({ variables: { newFaculty: { name: { middle: middleName, first: firstName, last: lastName, extension: extension }, credentials: credentials, email: email, password: password } } })
+							addFaculty({ variables: { newFaculty: { name: { middle: middleName, first: firstName, last: lastName, extension: extension }, credentials: credentials, username: username, password: password } } })
 					}}
 					className="flex justify-center items-center mt-[50px] mr-[100px] bg-[#11CF00] hover:bg-[#1672ec] text-white font-semibold py-2 px-20 rounded-full focus:outline-none focus:shadow-outline w-[218px] h-[55px]" type="submit"
 					>
@@ -141,8 +130,6 @@ export default function AddFaculty() {
 						<input
 							onChange={(e) => {
 								setFirstName(e.target.value)
-								setEmail(`${e.target.value.split(' ').join('').toLowerCase()}${lastName.split(' ').join('').toLowerCase()}.faculty@present.po`)
-								setPassword(`${e.target.value.split(' ').join('').toLowerCase()}${lastName.split(' ').join('').toLowerCase()}`)
 							}}
 							value={firstName}
 							className=" poppins text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline"
@@ -173,8 +160,7 @@ export default function AddFaculty() {
 						<input
 							onChange={(e) => {
 								setLastName(e.target.value)
-								setEmail(`${firstName.split(' ').join('').toLowerCase()}${e.target.value.split(' ').join('').toLowerCase()}.faculty@present.po`)
-								setPassword(`${firstName.split(' ').join('').toLowerCase()}${e.target.value.split(' ').join('').toLowerCase()}`)
+								setPassword(`${e.target.value}`.replaceAll(' ', '').toLowerCase())
 							}}
 							value={lastName}
 							className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline"
@@ -200,17 +186,18 @@ export default function AddFaculty() {
 						/>
 					</div>
 
-					{/* email  */}
+					{/* username  */}
 					<div className="pb-[50px]">
 						<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
-							Email
+							Employee ID/ Username
 						</label>
 						<input
-								readOnly={true}
-								value={email}
-								className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline"
-								type="email"
-								placeholder="Enter email address"
+							onChange={e => {
+								setUsername(e.target.value)
+							}}
+							value={username}
+							className="poppins  text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline"
+							placeholder="Enter username"
 						/>
 					</div>
 

@@ -1,9 +1,9 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Wrapper from "../../components/Wrapper";
 import chevronLeft from '../../assets/left-arrow 1.png'
 import searchIcon from '../../assets/search 1.png'
 import searchInac from '../../assets/searchInactive.png'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import QueryResult from "../../components/QueryResult";
 import { useQuery } from "@apollo/client";
 import GET_FACULTY from "../../gql/GET/Faculty";
@@ -13,6 +13,7 @@ import Classs from "../../interfaces/Classs";
 import ALL_SUBJECTS from "../../gql/GET/ALL/Subject";
 import ALL_CLASS from "../../gql/GET/ALL/Classs";
 import ALL_SCHEDULE from "../../gql/GET/ALL/Schedule";
+import { toast } from "react-toastify";
 
 
 export default function FacultySubjectsHandled() {
@@ -25,6 +26,24 @@ export default function FacultySubjectsHandled() {
   const subjects = useQuery(ALL_SUBJECTS, { variables: { filters: {} } })
   const classes = useQuery(ALL_CLASS, { variables: { filters: {} } })
   
+  const navigate = useNavigate()
+
+  // checks if admin is empty
+  useEffect(() => {
+    if (localStorage.getItem('admin') == null) {
+      toast.error('Please Sign in first', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      navigate('/', {replace: true})
+    }
+  }, [])
 
   return (
     <Wrapper centered={true}>

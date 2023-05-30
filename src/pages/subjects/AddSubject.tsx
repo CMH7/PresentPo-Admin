@@ -29,8 +29,19 @@ export default function AddSubject() {
 	const [adding, setAdding] = useState(false)
 	const navigate = useNavigate()
 
-	useEffect(() => {
+	// checks if admin is empty
+  useEffect(() => {
     if (localStorage.getItem('admin') == null) {
+      toast.error('Please Sign in first', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       navigate('/', {replace: true})
     }
   }, [])

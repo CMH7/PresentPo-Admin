@@ -1,20 +1,36 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Wrapper from "../../components/Wrapper";
 import chevronLeft from '../../assets/left-arrow 1.png'
 import searchIcon from '../../assets/search 1.png'
 import searchInac from '../../assets/searchInactive.png'
-import editIcon from '../../assets/edit (1) 1.png'
-import deleteIcon from '../../assets/delete 1.png'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import QueryResult from "../../components/QueryResult";
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import Faculty from "../../interfaces/Faculty";
 import ALL_FACULTY from "../../gql/GET/ALL/Faculty";
+import { toast } from "react-toastify";
 
 export default function FacultyList() {
   const [searchValue, setSearchValue] = useState('')
   const faculties = useQuery(ALL_FACULTY, { variables: { filters: {} } })
-  
+  const navigate = useNavigate()
+
+  // checks if admin is empty
+  useEffect(() => {
+    if (localStorage.getItem('admin') == null) {
+      toast.error('Please Sign in first', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      navigate('/', {replace: true})
+    }
+  }, [])
 
   return (
     <Wrapper centered={true}>

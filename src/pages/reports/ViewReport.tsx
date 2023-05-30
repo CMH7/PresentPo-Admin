@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Wrapper from "../../components/Wrapper";
 import chevronLeft from '../../assets/left-arrow 1.png'
 import dl from '../../assets/dl.png'
@@ -18,6 +18,7 @@ import ALL_SUBJECTS from "../../gql/GET/ALL/Subject";
 import GET_SCHEDULE from "../../gql/GET/Schedule";
 import ALL_STUDENTS from "../../gql/GET/ALL/Students";
 import ALL_ATTENDANCES from "../../gql/GET/ALL/Attendance";
+import { toast } from "react-toastify";
 
 interface customAttendance {
   day: number
@@ -45,6 +46,25 @@ export default function ViewReport() {
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
   const years = [2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033, 2034, 2035, 2036]
   
+  const navigate = useNavigate()
+
+  // checks if admin is empty
+  useEffect(() => {
+    if (localStorage.getItem('admin') == null) {
+      toast.error('Please Sign in first', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      navigate('/', {replace: true})
+    }
+  }, [])
+
   useEffect(() => {
     
     getAttendances({ variables: { filters: { date: { month: [curMonth, curMonth + 1, curMonth + 2], year: curYear } } } }).then(res => {

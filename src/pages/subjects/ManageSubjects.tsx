@@ -11,6 +11,7 @@ import { gql, useQuery } from "@apollo/client"
 import QueryResult from "../../components/QueryResult"
 import { useEffect, useState } from "react"
 import React from "react"
+import { toast } from "react-toastify"
 
 const GET_ALL_SUBJECTS_OPS = gql`
     query GetAllStudentsWithFilters($filters: subjectFilters!) {
@@ -45,8 +46,19 @@ export default function ManageSubjects() {
     setSubjects(data?.getAllSubjectsWithFilters?.data)
   }, [loading])
 
+  // checks if admin is empty
   useEffect(() => {
     if (localStorage.getItem('admin') == null) {
+      toast.error('Please Sign in first', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       navigate('/', {replace: true})
     }
   }, [])

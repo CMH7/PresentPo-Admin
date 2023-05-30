@@ -7,155 +7,68 @@ import searchInac from '../../assets/searchInactive.png'
 import editIcon from '../../assets/edit (1) 1.png'
 import deleteIcon from '../../assets/delete 1.png'
 import { Link, useNavigate } from "react-router-dom"
-import { gql, useQuery } from "@apollo/client"
+import { gql, useMutation, useQuery } from "@apollo/client"
 import QueryResult from "../../components/QueryResult"
 import { useEffect, useState } from "react"
 import React from "react"
-
-const ALL_SCHED = gql`
-  query GetAllSchedulesWithFilters($filters: scheduleFilters!) {
-    getAllSchedulesWithFilters(filters: $filters) {
-      error
-      message
-      data {
-        id
-        subject
-        schedule {
-          day
-          start_time {
-            hour
-            minute
-            shift
-          }
-          end_time {
-            hour
-            minute
-            shift
-          }
-        }
-        faculty
-        class
-      }
-    }
-  }
-`
-
-const ALL_SUBJECT = gql`
-    query GetAllStudentsWithFilters($filters: subjectFilters!) {
-        getAllSubjectsWithFilters(filters: $filters) {
-            error
-            message
-            data {
-                id
-                code
-                name
-            }
-        }
-    }
-`
-
-const ALL_FACULTY = gql`
-  query GetAllFacultyWithFilters {
-    getAllFacultyWithFilters {
-      error
-      message
-      data {
-        id
-        name {
-          first
-          middle
-          last
-          extension
-        }
-        credentials
-        email
-        password
-      }
-    }
-  }
-`
-
-const ALL_CLASS = gql`
-  query GetAllClassWithFilters {
-    getAllClassWithFilters {
-      error
-      message
-      data {
-        id
-        strand
-        year
-        section
-        semester
-        students
-      }
-    }
-  }
-`
-
-interface Schedule {
-  id: string
-  faculty: string
-  class: string
-  schedule: ScheduleSched
-  subject: string
-}
-
-interface ScheduleSched {
-  day: string
-  start_time: Time
-  end_time: Time
-}
-
-interface Time {
-  minute: number
-  hour: number
-  shift: string
-}
-
-interface Subject {
-    id: string
-    code: string
-    name: string
-}
-
-interface Faculty {
-  id: string
-  email: string
-  password: string
-  name: Name
-  credentials: string
-}
-
-interface Name {
-  first: string
-  middle: string
-  last: string
-  extension: string
-}
-
-interface Classs {
-  id: string
-  strand: string
-  year: number
-  section: string
-  semester: number
-  students: string[]
-}
+import Schedule from "../../interfaces/Schedule"
+import Subject from "../../interfaces/Subject"
+import Faculty from "../../interfaces/Faculty"
+import Classs from "../../interfaces/Classs"
+import ALL_SCHEDULE from "../../gql/GET/ALL/Schedule"
+import ALL_SUBJECTS from "../../gql/GET/ALL/Subject"
+import ALL_FACULTY from "../../gql/GET/ALL/Faculty"
+import ALL_CLASS from "../../gql/GET/ALL/Classs"
+import { toast } from "react-toastify"
+import DELETE_SCHEDULE from "../../gql/SET/DEL/Schedule"
 
 export default function ManageSchedules() {
 
   const [showModal, setShowModal] = useState(false)
-  const [selectedSubject, setSelectedSubject] = useState('')
+  const [selectedSched, setSelectedSched] = useState('')
   const [schedules, setSchedules] = useState<Schedule[]>([])
   const [subjects, setSubjects] = useState<Subject[]>([])
   const [faculties, setFaculties] = useState<Faculty[]>([])
   const [classes, setClasses] = useState<Classs[]>([])
   const [searchValue, setSearchValue] = useState('')
+  const [schedID, setSchedID] = useState('')
+  const [deleting, setDeleting] = useState(false)
 
-  const allSchedules = useQuery(ALL_SCHED, { variables: { filters: {} }})
-  const allSubjects = useQuery(ALL_SUBJECT, { variables: { filters: {} } })
+  const allSchedules = useQuery(ALL_SCHEDULE, { variables: { filters: {} }})
+  const allSubjects = useQuery(ALL_SUBJECTS, { variables: { filters: {} } })
   const allFaculties = useQuery(ALL_FACULTY, { variables: { filters: {} } })
   const allClasses = useQuery(ALL_CLASS, { variables: { filters: {} } })
+  const [deleteSched] = useMutation(DELETE_SCHEDULE, {
+    onCompleted: (data) => {
+			// toast.success(data?.deleteSchedule?.message, {
+			// 	position: "top-right",
+			// 	autoClose: 5000,
+			// 	hideProgressBar: false,
+			// 	closeOnClick: true,
+			// 	pauseOnHover: true,
+			// 	draggable: true,
+			// 	progress: undefined,
+			// 	theme: "light",
+			// });
+      setDeleting(false)
+      setShowModal(false)
+      // navigate('/admindashboard/manageschedules', {replace: true})
+      location.reload()
+		},
+		onError: (e) => {
+			toast.error(`${e}`, {
+				position: "top-right",
+				autoClose: 5000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
+			setDeleting(false)
+		}
+  })
 
   const navigate = useNavigate()
 
@@ -166,8 +79,19 @@ export default function ManageSchedules() {
     setClasses(allClasses.data?.getAllClassWithFilters?.data)
   }, [allClasses.loading])
 
+  // checks if admin is empty
   useEffect(() => {
     if (localStorage.getItem('admin') == null) {
+      toast.error('Please Sign in first', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       navigate('/', {replace: true})
     }
   }, [])
@@ -193,7 +117,7 @@ export default function ManageSchedules() {
             <div className="w-[500px] h-[205px] bg-white rounded-[20px] flex flex-col items-center pt-[55px] relative">
               {/* message  */}
               <div className="w-[388px] overflow-hidden text-clip text-center">
-                Are you sure you want to delete this schedule <br /> <span className="italic">{ selectedSubject }</span> ?
+                Are you sure you want to delete this schedule <br /> <span className="italic">{ selectedSched }</span> ?
               </div>
 
               {/* divider  */}
@@ -202,8 +126,24 @@ export default function ManageSchedules() {
               {/* buttons  */}
               <div className="w-full flex justify-evenly absolute bottom-[11px]">
                 {/* proceed button  */}
-                <div onClick={() => { }} className="text-[#D80000] h-full w-2/4 cursor-pointer flex justify-center items-center hover:font-bold">
-                  Delete
+                <div onClick={() => { 
+                  deleteSched({
+                    variables: {
+                    deleteScheduleId: schedID
+                    }
+                  })
+                  setDeleting(true)
+                }} className="text-[#D80000] h-full w-2/4 cursor-pointer flex justify-center items-center hover:font-bold">
+                  {
+                    deleting ?
+                      <div>
+                        deleting...
+                      </div>
+                      :
+                      <div>
+                        Delete
+                      </div>
+                  }
                 </div>
 
                 {/* cancel button  */}
@@ -253,7 +193,7 @@ export default function ManageSchedules() {
 
           {/* add student button  */}
           <Link to='/admindashboard/manageschedules/addschedule' replace={true}>
-            <div className="group w-[220px] h-[55px] flex items-center justify-center bg-primary-2 hover:bg-white transition-all rounded-[50px] cursor-pointer">
+            <div className=" border border-white group w-[220px] h-[55px] flex items-center justify-center bg-primary-2 hover:bg-white transition-all rounded-[50px] cursor-pointer">
               {/* icon  */}
               <div className="aspect-square w-[20px] h-auto ">
                 <img className="group-hover:hidden" src={plusWhite} alt="plus white icon" />
@@ -266,18 +206,6 @@ export default function ManageSchedules() {
               </div>
             </div>
           </Link>
-
-          {/* filter dropdown  */}
-          {/* <div className=" ml-[20px] w-[160px] h-[55px] border-[1px] border-white flex justify-center items-center rounded-[50px] cursor-pointer ">
-
-            <div className=" poppins font-semibold text-[20px] text-white select-none ">
-              Filter
-            </div>
- 
-            <div className=" ml-[10px] aspect-square w-[20px] h-auto ">
-              <img src={tri} alt="dropdown icon" />
-            </div>
-          </div> */}
         </div>
       </div>
 
@@ -433,17 +361,22 @@ export default function ManageSchedules() {
                     {/* actions  */}
                     <div className="absolute z-10 top-0 -right-[200px] group-hover:right-0 transition-all w-fit h-full flex items-center">
                       {/* edit subject  */}
-                      <Link className="w-[55px] h-full" to={`/admindashboard/managesubjects/editsubject/${schedule.id}`}>
+                      {/* <Link className="w-[55px] h-full" to={`/admindashboard/managesubjects/editsubject/${schedule.id}`}>
                         <div className=" w-full h-full bg-primary-1 flex items-center justify-center cursor-pointer ">
                           <div className="aspect-square w-[20px] h-auto">
                             <img src={editIcon} alt="edit icon" />
                           </div>
                         </div>
-                      </Link>
+                      </Link> */}
 
                       {/* delete student  */}
                       <div onClick={() => {
-                        setSelectedSubject(`(`)
+                        setSelectedSched(`${
+                          subjects?.filter((subject: Subject) => {
+                            return schedule.subject.match(subject.id) ||  schedule.subject.match(` ${subject.id}`)
+                          })[0]?.name
+                          }, ${schedule.schedule.day} ${schedule.schedule.start_time.hour % 12 < 10 ? `0${schedule.schedule.start_time.hour}` : schedule.schedule.start_time.hour % 12}:${schedule.schedule.start_time.minute}${schedule.schedule.start_time.shift}-${schedule.schedule.end_time.hour}:${schedule.schedule.end_time.minute}${schedule.schedule.end_time.shift}`)
+                        setSchedID(schedule.id)
                         setShowModal(true)
                       }} className=" w-[55px] h-full bg-[#D80000] flex items-center justify-center cursor-pointer ">
                         <div className="aspect-square w-[20px] h-auto">

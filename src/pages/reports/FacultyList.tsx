@@ -9,31 +9,11 @@ import { useState } from 'react'
 import QueryResult from "../../components/QueryResult";
 import { gql, useQuery } from "@apollo/client";
 import Faculty from "../../interfaces/Faculty";
-
-const ALL_FACULTIES = gql`
-  query GetAllAttendancesWithFilters {
-    getAllFacultyWithFilters {
-      error
-      message
-      data {
-        id
-        name {
-          first
-          middle
-          last
-          extension
-        }
-        credentials
-        email
-        password
-      }
-    }
-  }
-`
+import ALL_FACULTY from "../../gql/GET/ALL/Faculty";
 
 export default function FacultyList() {
   const [searchValue, setSearchValue] = useState('')
-  const faculties = useQuery(ALL_FACULTIES, { variables: { filters: {} } })
+  const faculties = useQuery(ALL_FACULTY, { variables: { filters: {} } })
   
 
   return (
@@ -141,14 +121,14 @@ export default function FacultyList() {
                       {/* middle name  */}
                       <div className=" h-full w-[200px] shrink-0 flex items-center ">
                         <div className=" poppins font-medium text-[16px] text-primary-2 ">
-                          { faculty.name.middle }
+                          { faculty.name.middle !== '' ? faculty.name.middle : '-' }
                         </div>
                       </div>
                       
                       {/* first name */}
                       <div className=" h-full grow flex items-center ">
                         <div className=" poppins font-medium text-[16px] text-primary-2 ">
-                          { faculty.credentials }
+                          { faculty.credentials !== '' ? faculty.credentials : '-' }
                         </div>
                       </div>
 

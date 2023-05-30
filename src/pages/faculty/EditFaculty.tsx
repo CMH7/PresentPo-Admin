@@ -176,7 +176,7 @@ export default function EditFaculty() {
 					<label className="text-white poppins font-semibold pb-[10px] text-[20px] ">
 						Employee ID/ Username
 					</label>
-					<input onChange={(e) => setUsername(e.target.value)} value={username} className=" poppins text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter username address" />
+					<input onChange={(e) => setUsername(e.target.value)} value={username} className=" poppins text-[14px] appearance-none border rounded-[10px] w-full py-[12px] px-[25px] placeholder:text-phGray leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter username" />
 				</div>
 
 				<div className="pb-[50px]">

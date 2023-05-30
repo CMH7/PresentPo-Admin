@@ -196,15 +196,7 @@ export default function AddSchedule() {
 								<select onChange={e => setStartTime({...startTime, hour: parseInt(e.target.value)})} value={startTime.hour} className="peer h-[48px] w-2/4 rounded-[10px] border border-blue-gray-200 bg-white poppins text-[16px] font-medium text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
 									{
 										hours.map((hour: number, i: number) => {
-											if (startTime.shift === 'AM' && hour > 5 && hour < 12) {
-												if (!(endTime.shift === 'AM' && endTime.hour >= hour)) {
-													return <option key={`${hour}${i}`} value={hour}> { `${hour < 10 ? '0' : ''}${hour}` } </option>
-												}
-											} else if (startTime.shift === 'PM' && hour <= 12 && hour != 11 && hour != 10 && hour != 9 && hour != 8) {
-												if (!(endTime.shift === 'PM' && endTime.hour > hour)) {
-													return <option key={`${hour}${i}`} value={hour}> { `${hour < 10 ? '0' : ''}${hour}` } </option>
-												}
-											}
+											return <option key={`${hour}a`} value={hour}> { `${hour < 10 ? '0' : ''}${hour}` } </option>
 										})
 									}
 								</select>
@@ -223,7 +215,7 @@ export default function AddSchedule() {
 							<div className="mt-[7px] w-full">
 								<select onChange={e => setStartTime({...startTime, shift: e.target.value})} value={startTime.shift} className="peer h-[48px] w-[217px] rounded-[10px] border border-blue-gray-200 bg-white poppins text-[16px] font-medium text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
 									<option value="AM">AM</option>
-									<option className={`${endTime.shift === 'PM' ? '' : 'hidden'}`} value="PM">PM</option>
+									<option value="PM">PM</option>
 								</select>
 							</div>
 						</div>
@@ -242,15 +234,7 @@ export default function AddSchedule() {
 								<select onChange={e => setEndTime({...endTime, hour: parseInt(e.target.value)})} value={endTime.hour} className="peer h-[48px] w-2/4 rounded-[10px] border border-blue-gray-200 bg-white poppins text-[16px] font-medium text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
 									{
 										hours.map((hour: number, i: number) => {
-											if (endTime.shift === 'AM' && hour > 5 && hour < 12) {
-												if (!(startTime.shift === 'AM' && startTime.hour >= hour)) {
-													return <option key={`${hour}${i}`} value={hour}> { `${hour < 10 ? '0' : ''}${hour}` } </option>
-												}
-											} else if (endTime.shift === 'PM' && hour <= 12 && hour != 11 && hour != 10 && hour != 9 && hour != 8) {
-												if (!(startTime.shift === 'PM' && startTime.hour >= hour)) {
-													return <option key={`${hour}${i}`} value={hour}> { `${hour < 10 ? '0' : ''}${hour}` } </option>
-												}
-											}
+											return <option key={`${hour}b`} value={hour}> { `${hour < 10 ? '0' : ''}${hour}` } </option>
 										})
 									}
 								</select>
@@ -268,7 +252,7 @@ export default function AddSchedule() {
 							{/* shift  */}
 							<div className="mt-[7px] w-full">
 								<select onChange={e => setEndTime({...endTime, shift: e.target.value})} value={endTime.shift} className="peer h-[48px] w-[217px] rounded-[10px] border border-blue-gray-200 bg-white poppins text-[16px] font-medium text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 empty:!bg-red-500 disabled:border-0 disabled:bg-blue-gray-50">
-									<option className={`${startTime.shift === 'AM' ? '' : 'hidden'}`} value="AM">AM</option>
+									<option value="AM">AM</option>
 									<option value="PM">PM</option>
 								</select>
 							</div>

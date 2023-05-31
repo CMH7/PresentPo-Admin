@@ -18,7 +18,7 @@ import logout1 from '../assets/logout 1.png';
 import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useQuery } from "@apollo/client";
+import { useLazyQuery, useQuery } from "@apollo/client";
 import { CChart } from '@coreui/react-chartjs'
 import Admin from "../interfaces/Admin";
 import { toast } from "react-toastify";
@@ -31,7 +31,8 @@ import dl from '../assets/dl.png'
 import dldark from '../assets/dldark.png'
 import { CSVLink } from "react-csv";
 import { utcToZonedTime } from "date-fns-tz";
-import { format } from "date-fns";
+import { format, setYear } from "date-fns";
+import { CFormCheck } from "@coreui/react";
 
 
 export default function AdminDashboard() {
@@ -40,14 +41,21 @@ export default function AdminDashboard() {
   const [adminn, setAdminn] = useState<Admin>()
   const [csvData, setCsvData] = useState<any[]>([])
   const [formattedDate2, setFormattedDate2] = useState('')
+  const [curMonth, setCurMonth] = useState(new Date().getMonth() + 1)
+  const [curYear, setCurYear] = useState(2023)
+  const [thisDay, setThisDay] = useState(true)
+  const [monthly, setMonthly] = useState(false)
+  const [yearly, setYearly] = useState(false)
+  const [chartData, setChartData] = useState<any[]>([])
 
   const navigate = useNavigate()
 
   const logsData = useQuery(ALL_LOGS, { variables: { filters: { } } })
   const students = useQuery(ALL_STUDENTS, { variables: { filters: {} } })
-  const attendances = useQuery(ALL_ATTENDANCES, { variables: { filters: { special: false, date: { day: time.getDate(), month: time.getMonth() + 1, year: time.getFullYear() } } } })
+  const [getAllAttendances] = useLazyQuery(ALL_ATTENDANCES)
 
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  const years = [2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033, 2034, 2035, 2036]
   
   useEffect(() => {
     let datee = new Date();
@@ -77,6 +85,20 @@ export default function AdminDashboard() {
     navigate('/')
   }
 
+  function downloadimage() {
+    let pic = document.getElementById("pic")
+    //@ts-ignore
+    html2canvas(pic, { allowTaint: true }).then(function (canvas) {
+
+    var link = document.createElement("a")
+    document.body.appendChild(link);
+    link.download = `Present Late Monitor Chart PresentPo.jpg`
+    link.href = canvas.toDataURL()
+    link.target = '_blank'
+    link.click()
+    });
+  }
+
   // checker of admin creds
   useEffect(() => {
     if (localStorage.getItem('admin') == null) {
@@ -94,8 +116,32 @@ export default function AdminDashboard() {
     } else {
       //@ts-ignore
       setAdminn(JSON.parse(localStorage.getItem('admin')))
+
+      getAllAttendances({ variables: { filters: { special: false, date: { day: time.getDate(), month: time.getMonth() + 1, year: time.getFullYear() } } } }).then((res) => {
+        setChartData([res.data?.getAllAttendancesWithFilters?.data?.filter((att: Attendance) => att.label === 'Present').length, res.data?.getAllAttendancesWithFilters?.data?.filter((att: Attendance) => att.label === 'Late').length])
+      })
     }
   }, [])
+
+  useEffect(() => {
+    if (thisDay) {
+      getAllAttendances({ variables: { filters: { special: false, date: { day: time.getDate(), month: time.getMonth() + 1, year: time.getFullYear() } } } }).then((res) => {
+        setChartData([res.data?.getAllAttendancesWithFilters?.data?.filter((att: Attendance) => att.label === 'Present').length, res.data?.getAllAttendancesWithFilters?.data?.filter((att: Attendance) => att.label === 'Late').length])
+      })
+    }
+      
+    if (monthly) {
+      getAllAttendances({ variables: { filters: { special: false, date: { month: curMonth, year: curYear } } } }).then((res) => {
+        setChartData([res.data?.getAllAttendancesWithFilters?.data?.filter((att: Attendance) => att.label === 'Present').length, res.data?.getAllAttendancesWithFilters?.data?.filter((att: Attendance) => att.label === 'Late').length])
+      })
+    }
+    
+    if (yearly) {
+      getAllAttendances({ variables: { filters: { special: false, date: { year: curYear } } } }).then((res) => {
+        setChartData([res.data?.getAllAttendancesWithFilters?.data?.filter((att: Attendance) => att.label === 'Present').length, res.data?.getAllAttendancesWithFilters?.data?.filter((att: Attendance) => att.label === 'Late').length])
+      })
+    }
+  }, [thisDay, monthly, yearly, curMonth, curYear])
 
   return(
     <Wrapper centered={true}>
@@ -283,23 +329,74 @@ export default function AdminDashboard() {
               />
             </div>
             
-            <div className=" bg-white rounded-[20px] w-[771px] h-[453px] flex items-center justify-center ">
-              <CChart
-                width={400}
-                height={400}
-                type="doughnut"
-                data={{
-                  labels: ['Present', 'Late'],
-                  datasets: [
+            <div className=" bg-white rounded-[20px] w-[771px] h-[453px] flex justify-between ">
+              <div id='pic' className=" h-full w-fit flex flex-col items-center gap-y-3 p-3 ">
+                <div className=" text-[15px] text-primary-2 poppins font-semibold self-start ">
+                  Present and Late Monitoring
+                </div>
+              
+                <CChart
+                  width={400}
+                  height={400}
+                  type="polarArea"
+                  data={{
+                    labels: ['Present', 'Late'],
+                    datasets: [
+                      {
+                        backgroundColor: ['#072d5f', '#1672ec'],
+                        data: chartData,
+                      },
+                    ],
+                  }}
+                />
+              </div>
+
+
+              <div className=" h-full w-2/6 flex flex-col items-center gap-y-3 p-3 ">
+                <div onClick={() => downloadimage()} className=" hover:bg-primary-2 self-end transitio-all cursor-pointer group hover:text-white flex items-center justify-center gap-x-[10px] h-fit w-fit border border-primary-2 py-2 px-4 rounded-full text-primary-2 poppins font-semibold text-[13px] ">
+                  <img className=" aspect-square w-[15px] h-auto group-hover:hidden" src={dldark} alt="dldark" />
+                  <img className=" aspect-square w-[15px] h-auto hidden group-hover:block" src={dl} alt="dl" />
+
+                  <div>
+                    Download chart
+                  </div>
+                </div>
+                <div className=" flex flex-col justify-center gap-y-[20px] h-1/2 w-full border-b border-primary-2 ">
+                  <CFormCheck onClick={() => {
+                    setThisDay(true)
+                    setMonthly(false)
+                    setYearly(false)
+                  }} className="  text-primary-2 text-[15px] poppins font-semibold " label="  Today" checked={thisDay} />
+                  <CFormCheck onClick={() => {
+                    setThisDay(false)
+                    setMonthly(true)
+                    setYearly(false)
+                  }} className="  text-primary-2 text-[15px] poppins font-semibold " label="  Monthly" checked={monthly} />
+                  <CFormCheck onClick={() => {
+                    setThisDay(false)
+                    setMonthly(false)
+                    setYearly(true)
+                  }} className="  text-primary-2 text-[15px] poppins font-semibold " label="  Yearly" checked={yearly} />
+                </div>
+
+                <div aria-disabled={!monthly} className={` flex items-center justify-center gap-x-[10px] w-full ${!monthly ? 'hidden' : ''} transition-all `}>
+                  <select onChange={e => setCurMonth(parseInt(e.target.value))} value={curMonth} className=" w-1/2 px-[10px] py-[5px] bg-white rounded-[5px] poppins font-bold text-[16px] text-primary-2 border border-primary-2 cursor-pointer " name="months" id="monthss">
+                      {
+                        months.map((month: string, i: number) => {
+                          return <option value={i + 1} key={`${month}${i}`}>{ month }</option>
+                        })
+                      }
+                  </select>
+
+                  <select onChange={e => setCurYear(parseInt(e.target.value))} value={curYear} className=" w-1/2 px-[10px] py-[5px] bg-white rounded-[5px] poppins font-bold text-[16px] text-primary-2 border border-primary-2 cursor-pointer " name="years" id="yearss">
                     {
-                      backgroundColor: ['#072d5f', '#1672ec'],
-                      data: [attendances.data?.getAllAttendancesWithFilters?.data?.filter((att: Attendance) => att.label === 'Present').length, attendances.data?.getAllAttendancesWithFilters?.data?.filter((att: Attendance) => att.label === 'Late').length],
-                      hoverOffset: 0,
-                      label: 'Present-Late Ratio'
-                    },
-                  ],
-                }}
-              />
+                      years.map((year: number) => {
+                        return <option value={year} key={year}>{ year }</option>
+                      })
+                    }
+                  </select>
+                </div>
+              </div>
             </div>
           </div>
 

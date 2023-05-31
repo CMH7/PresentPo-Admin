@@ -6,8 +6,8 @@ import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client';
 import { ToastContainer } from 'react-toastify';
 
 const client = new ApolloClient({
-  uri: 'https://presentpo-backend.herokuapp.com/graphql',
-  // uri: 'http://localhost:3000/graphql',
+  // uri: 'https://presentpo-backend.herokuapp.com/graphql',
+  uri: 'http://localhost:3000/graphql',
   cache: new InMemoryCache(),
 });
 
